@@ -18,7 +18,7 @@ Godot 4 / GDScript Android first-person flower-sorting prototype. The project is
 
 ## Next steps
 
-See `ke-hoach-little-bloom-android.md` for the full GDD, 16–20 week plan, asset licensing checklist, release schedule and acceptance criteria. Replace placeholder art only after the Android touch loop feels comfortable.
+Start with `PRODUCT_SPEC.md` for the product scope and requirements. Use `ROADMAP_CHECKLIST.md` to track work part by part, and `ke-hoach-little-bloom-android.md` for the 16–20 week implementation plan. Replace placeholder art only after the Android touch loop feels comfortable.
 
 ## License notes
 

@@ -13,7 +13,7 @@ var controls: TouchControls
 var head: Node3D
 var camera: Camera3D
 var ray: RayCast3D
-var held_visual: MeshInstance3D
+var held_root: Node3D
 var gravity := float(ProjectSettings.get_setting("physics/3d/default_gravity"))
 
 func _ready() -> void:
@@ -36,15 +36,9 @@ func _ready() -> void:
 	ray.collision_mask = 2
 	ray.enabled = true
 	camera.add_child(ray)
-	held_visual = MeshInstance3D.new()
-	var held_mesh := SphereMesh.new()
-	held_mesh.radius = 0.12
-	held_mesh.height = 0.2
-	held_visual.mesh = held_mesh
-	held_visual.position = Vector3(0.38, -0.3, -0.58)
-	var material := StandardMaterial3D.new()
-	held_visual.material_override = material
-	camera.add_child(held_visual)
+	held_root = Node3D.new()
+	held_root.position = Vector3(0.36, -0.3, -0.58)
+	camera.add_child(held_root)
 	controls = TouchControls.new()
 	controls.name = "TouchControls"
 	get_tree().root.add_child.call_deferred(controls)
@@ -110,8 +104,33 @@ func _on_interact() -> void:
 	interact_pressed = true
 
 func _update_held_visual() -> void:
-	held_visual.visible = not GameState.inventory.is_empty()
-	if not GameState.inventory.is_empty():
-		var type := GameState.flower_type_from_id(GameState.inventory[0])
-		var material := held_visual.material_override as StandardMaterial3D
-		material.albedo_color = GameState.FLOWER_TYPES[type].color
+	for child in held_root.get_children():
+		held_root.remove_child(child)
+		child.queue_free()
+	for index in GameState.inventory.size():
+		var flower_id: String = GameState.inventory[index]
+		var type := GameState.flower_type_from_id(flower_id)
+		var flower := Node3D.new()
+		flower.position = Vector3(float(index % 3) * 0.11, float(index / 3) * 0.12, -float(index / 3) * 0.04)
+		var stem := MeshInstance3D.new()
+		var stem_mesh := CylinderMesh.new()
+		stem_mesh.top_radius = 0.012
+		stem_mesh.bottom_radius = 0.018
+		stem_mesh.height = 0.2
+		stem.mesh = stem_mesh
+		stem.position.y = -0.08
+		var stem_material := StandardMaterial3D.new()
+		stem_material.albedo_color = Color("#5c9567")
+		stem.material_override = stem_material
+		flower.add_child(stem)
+		var bloom := MeshInstance3D.new()
+		var bloom_mesh := SphereMesh.new()
+		bloom_mesh.radius = 0.07
+		bloom_mesh.height = 0.13
+		bloom.mesh = bloom_mesh
+		bloom.position.y = 0.03
+		var bloom_material := StandardMaterial3D.new()
+		bloom_material.albedo_color = GameState.FLOWER_TYPES[type].color
+		bloom.material_override = bloom_material
+		flower.add_child(bloom)
+		held_root.add_child(flower)

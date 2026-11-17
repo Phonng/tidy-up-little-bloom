@@ -20,6 +20,8 @@ func _ready() -> void:
 	load_game()
 
 func pickup(flower_id: String) -> bool:
+	if is_complete() or not _is_valid_flower_id(flower_id):
+		return false
 	if inventory.size() >= MAX_CARRY:
 		notice.emit("Tay đang đầy")
 		return false
@@ -39,10 +41,13 @@ func place_one(flower_type: String) -> bool:
 		notice.emit("Hãy mang " + type_name(flower_type) + " đến đây")
 		return false
 	var flower_id := inventory[index]
+	if placed_count(flower_type) >= TARGET_PER_TYPE:
+		notice.emit("Giỏ " + type_name(flower_type) + " đã đầy")
+		return false
 	inventory.remove_at(index)
 	placed_ids.append(flower_id)
 	_save_and_notify()
-	if placed_ids.size() >= FLOWER_TYPES.size() * TARGET_PER_TYPE:
+	if is_complete():
 		completed.emit()
 	return true
 
@@ -61,6 +66,16 @@ func placed_count(flower_type: String) -> int:
 		if flower_type_from_id(flower_id) == flower_type:
 			count += 1
 	return count
+
+func is_complete() -> bool:
+	return placed_ids.size() >= FLOWER_TYPES.size() * TARGET_PER_TYPE
+
+func _is_valid_flower_id(flower_id: String) -> bool:
+	var parts := flower_id.split("_")
+	if parts.size() != 2 or not FLOWER_TYPES.has(parts[0]) or not parts[1].is_valid_int():
+		return false
+	var number := int(parts[1])
+	return number >= 1 and number <= TARGET_PER_TYPE
 
 func _save_and_notify() -> void:
 	save_game()
@@ -82,13 +97,15 @@ func load_game() -> void:
 	var parsed: Variant = JSON.parse_string(file.get_as_text())
 	if not parsed is Dictionary or parsed.get("schema_version", 0) != 1:
 		return
-	var raw_inventory: Array = parsed.get("inventory", [])
-	var raw_placed: Array = parsed.get("placed_ids", [])
+	var raw_inventory: Variant = parsed.get("inventory", [])
+	var raw_placed: Variant = parsed.get("placed_ids", [])
+	if not raw_inventory is Array or not raw_placed is Array:
+		return
 	for flower_id in raw_inventory:
-		if flower_id is String and flower_type_from_id(flower_id) in FLOWER_TYPES and inventory.size() < MAX_CARRY:
+		if flower_id is String and _is_valid_flower_id(flower_id) and flower_id not in inventory and inventory.size() < MAX_CARRY:
 			inventory.append(flower_id)
 	for flower_id in raw_placed:
-		if flower_id is String and flower_type_from_id(flower_id) in FLOWER_TYPES and flower_id not in inventory:
+		if flower_id is String and _is_valid_flower_id(flower_id) and flower_id not in inventory and flower_id not in placed_ids and placed_count(flower_type_from_id(flower_id)) < TARGET_PER_TYPE:
 			placed_ids.append(flower_id)
 
 func reset_game() -> void:

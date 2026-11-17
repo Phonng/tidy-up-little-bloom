@@ -8,6 +8,7 @@ signal interact_requested
 var prompt_label: Label
 var progress_label: Label
 var inventory_label: Label
+var detail_label: Label
 var notice_label: Label
 var joystick_base: ColorRect
 var joystick_knob: ColorRect
@@ -17,6 +18,7 @@ var _move_origin := Vector2.ZERO
 var _move_value := Vector2.ZERO
 var _interact_rect := Rect2()
 var _pause_rect := Rect2()
+var _completion_overlay: Control
 
 func _ready() -> void:
 	layer = 10
@@ -26,6 +28,8 @@ func _ready() -> void:
 	GameState.notice.connect(_show_notice)
 	GameState.completed.connect(_show_complete)
 	_refresh()
+	if GameState.is_complete():
+		_show_complete()
 
 func _build_ui() -> void:
 	var root := Control.new()
@@ -56,8 +60,12 @@ func _build_ui() -> void:
 	root.add_child(progress_label)
 	inventory_label = Label.new()
 	inventory_label.add_theme_font_size_override("font_size", 18)
-	inventory_label.position = Vector2(28, 60)
+	inventory_label.position = Vector2(28, 92)
 	root.add_child(inventory_label)
+	detail_label = Label.new()
+	detail_label.add_theme_font_size_override("font_size", 16)
+	detail_label.position = Vector2(28, 62)
+	root.add_child(detail_label)
 	prompt_label = Label.new()
 	prompt_label.add_theme_font_size_override("font_size", 22)
 	prompt_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
@@ -83,6 +91,7 @@ func _build_ui() -> void:
 	pause_button.position = Vector2(-82, 20)
 	pause_button.pressed.connect(_toggle_pause)
 	root.add_child(pause_button)
+	_build_completion_overlay(root)
 
 func _input(event: InputEvent) -> void:
 	var size := get_viewport().get_visible_rect().size
@@ -125,8 +134,19 @@ func set_prompt(value: String) -> void:
 func _refresh() -> void:
 	if is_instance_valid(progress_label):
 		progress_label.text = GameState.progress_text()
-		var carried := " · ".join(GameState.inventory.map(func(id: String): return GameState.type_name(GameState.flower_type_from_id(id))))
-		inventory_label.text = "Đang cầm %d/%d: %s" % [GameState.inventory.size(), GameState.MAX_CARRY, carried]
+		var totals: Array[String] = []
+		for flower_type in GameState.FLOWER_TYPES:
+			totals.append("%s %d/%d" % [GameState.type_name(flower_type), GameState.placed_count(flower_type), GameState.TARGET_PER_TYPE])
+		detail_label.text = "   ·   ".join(PackedStringArray(totals))
+		var carried_counts: Dictionary = {}
+		for flower_id in GameState.inventory:
+			var flower_type := GameState.flower_type_from_id(flower_id)
+			carried_counts[flower_type] = int(carried_counts.get(flower_type, 0)) + 1
+		var carried: Array[String] = []
+		for flower_type in GameState.FLOWER_TYPES:
+			if carried_counts.has(flower_type):
+				carried.append("%s ×%d" % [GameState.type_name(flower_type), carried_counts[flower_type]])
+		inventory_label.text = "Đang cầm %d/%d: %s" % [GameState.inventory.size(), GameState.MAX_CARRY, " · ".join(PackedStringArray(carried))]
 
 func _show_notice(message: String) -> void:
 	if not is_instance_valid(notice_label):
@@ -142,5 +162,50 @@ func _toggle_pause() -> void:
 		_show_notice("Đã tạm dừng — chạm Ⅱ để tiếp tục")
 
 func _show_complete() -> void:
-	_show_notice("Tiệm hoa đã gọn gàng! 🌸")
+	_completion_overlay.visible = true
+	get_tree().paused = true
+
+func _build_completion_overlay(root: Control) -> void:
+	_completion_overlay = Control.new()
+	_completion_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_completion_overlay.process_mode = Node.PROCESS_MODE_ALWAYS
+	_completion_overlay.visible = false
+	_completion_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	_completion_overlay.z_index = 20
+	root.add_child(_completion_overlay)
+	var dim := ColorRect.new()
+	dim.color = Color(0.12, 0.12, 0.12, 0.72)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	_completion_overlay.add_child(dim)
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.position = Vector2(-210, -130)
+	panel.size = Vector2(420, 260)
+	panel.custom_minimum_size = Vector2(420, 260)
+	_completion_overlay.add_child(panel)
+	var column := VBoxContainer.new()
+	column.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_theme_constant_override("separation", 18)
+	panel.add_child(column)
+	var title := Label.new()
+	title.text = "Tiệm hoa đã gọn gàng! 🌸"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 28)
+	column.add_child(title)
+	var summary := Label.new()
+	summary.text = "Bạn đã xếp đủ 30 bông hoa."
+	summary.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(summary)
+	var replay := Button.new()
+	replay.text = "Chơi lại"
+	replay.custom_minimum_size = Vector2(180, 54)
+	replay.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	replay.pressed.connect(_restart_level)
+	column.add_child(replay)
+
+func _restart_level() -> void:
+	get_tree().paused = false
+	GameState.reset_game()
+	get_tree().reload_current_scene()
 

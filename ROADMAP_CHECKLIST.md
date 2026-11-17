@@ -2,12 +2,14 @@
 
 Checklist này là bảng theo dõi công việc của project. Mỗi phần sẽ được xử lý riêng; chỉ chuyển sang phần tiếp theo sau khi phần hiện tại hoàn tất hoặc có vướng mắc được ghi rõ.
 
+Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các quyết định scope và acceptance criteria cần theo tài liệu này trước khi mở rộng prototype.
+
 ## Trạng thái nhanh
 
 | Phần | Hạng mục | Trạng thái |
 |---|---|---|
 | 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Đã dựng; cần mở trong Godot để xác nhận trực quan |
-| 2 | Vòng chơi nhặt, mang và phân loại hoa | Prototype có; sẽ hoàn thiện sau khi nền chạy được |
+| 2 | Vòng chơi nhặt, mang và phân loại hoa | Đã bổ sung; còn SFX và kiểm tra trong Godot/Android |
 | 3 | Save/load an toàn, Continue và reset | Prototype có; cần hoàn thiện kiểm tra dữ liệu |
 | 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Chưa làm |
 | 5 | Art pass và quản lý license asset | Chưa làm; hiện dùng placeholder tự sinh |
@@ -31,12 +33,15 @@ Checklist này là bảng theo dõi công việc của project. Mỗi phần s�
 
 ## Phần 2 — Vòng chơi cốt lõi
 
-- [ ] Kiểm tra nhặt hoa, giới hạn mang 5 bông và phản hồi khi tay đầy.
-- [ ] Kiểm tra giỏ chỉ nhận đúng loại; sai loại không làm mất hoa.
-- [ ] Hiển thị đủ các loại hoa đang cầm, không chỉ một biểu tượng đại diện.
-- [ ] Hiển thị tiến độ từng giỏ và toàn màn.
-- [ ] Hoàn thành 30/30 thì dừng tương tác gameplay và hiện màn hoàn thành.
-- [ ] Thêm phản hồi âm thanh/visual cơ bản khi nhặt, đặt đúng và đặt sai.
+- [x] Logic nhặt hoa, giới hạn mang 5 bông và phản hồi khi tay đầy.
+- [x] Giỏ chỉ nhận đúng loại; sai loại không làm mất hoa.
+- [x] Biểu diễn các bông đang cầm bằng model màu tương ứng và đếm theo loại trong HUD.
+- [x] Hiển thị tiến độ từng loại và tổng tiến độ.
+- [x] Hiển thị các bông đã đặt ở trong giỏ.
+- [x] Hoàn thành 30/30 thì hiện màn hoàn thành và cho chơi lại.
+- [x] Có phản hồi trực quan khi tay đầy, chọn sai giỏ, tăng tiến độ và hoàn thành.
+- [ ] Thêm/điều chỉnh SFX nhặt, đặt đúng, đặt sai và hoàn thành trong audio polish.
+- [ ] Mở project bằng Godot và kiểm tra trọn vòng chơi trên desktop/Android.
 
 **Kết quả cần đạt:** người mới có thể hoàn thành một lượt 30 bông mà không cần debug hoặc giải thích miệng.
 
