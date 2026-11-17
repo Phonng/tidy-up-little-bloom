@@ -42,6 +42,10 @@ func _ready() -> void:
 	elif not SettingsManager.tutorial_seen:
 		_show_tutorial()
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_clear_touch_input()
+
 func _build_ui() -> void:
 	var root := Control.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -107,6 +111,8 @@ func _build_ui() -> void:
 	_build_completion_overlay(root)
 
 func _input(event: InputEvent) -> void:
+	if _has_modal_overlay():
+		return
 	var size := get_viewport().get_visible_rect().size
 	_interact_rect = Rect2(Vector2(size.x - 200, size.y - 140), Vector2(200, 140))
 	_pause_rect = Rect2(Vector2(size.x - 92, 12), Vector2(92, 78))
@@ -234,6 +240,7 @@ func _pause_button(label: String, action: Callable) -> Button:
 	return button
 
 func _open_pause() -> void:
+	_clear_touch_input()
 	pause_overlay.visible = true
 	pause_card.visible = true
 	settings_panel.visible = false
@@ -308,6 +315,7 @@ func _build_tutorial_overlay(root: Control) -> void:
 	column.add_child(skip)
 
 func _show_tutorial() -> void:
+	_clear_touch_input()
 	tutorial_step = 0
 	_update_tutorial_page()
 	tutorial_overlay.visible = true
@@ -336,8 +344,24 @@ func _finish_tutorial() -> void:
 	get_tree().paused = false
 
 func _show_complete() -> void:
+	_clear_touch_input()
 	_completion_overlay.visible = true
 	get_tree().paused = true
+
+func _has_modal_overlay() -> bool:
+	return (is_instance_valid(pause_overlay) and pause_overlay.visible) \
+		or (is_instance_valid(tutorial_overlay) and tutorial_overlay.visible) \
+		or (is_instance_valid(_completion_overlay) and _completion_overlay.visible)
+
+func _clear_touch_input() -> void:
+	_move_touch = -1
+	_look_touch = -1
+	_move_value = Vector2.ZERO
+	if is_instance_valid(joystick_base):
+		joystick_base.visible = false
+	if is_instance_valid(joystick_knob):
+		joystick_knob.visible = false
+	move_changed.emit(Vector2.ZERO)
 
 func _build_completion_overlay(root: Control) -> void:
 	_completion_overlay = Control.new()

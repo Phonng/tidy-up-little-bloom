@@ -86,7 +86,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Chọn baseline Godot 4.7.2 stable theo release archive ngày 17/11/2026; ghi trong `ANDROID_RELEASE_GUIDE.md`.
 - [ ] Cấu hình Android SDK/JDK; preset Android Play đã được thêm.
 - [x] Bật landscape; thêm icon project vector gốc.
-- [ ] Hoàn thiện launcher icon sizes, safe area, multi-touch và resume trên Android thật.
+- [ ] Hoàn thiện launcher icon sizes, safe area, multi-touch và resume trên Android thật. Trạng thái input cảm ứng được xóa khi mở modal hoặc ứng dụng vào nền; còn xác minh hành vi trên thiết bị.
 - [x] Đặt target SDK 36 trong preset; xác nhận manifest sau khi export.
 - [ ] Đo FPS/tải/nhiệt trên máy yếu và máy tầm trung.
 - [ ] Tối ưu ánh sáng, texture, material, collision theo số đo.
