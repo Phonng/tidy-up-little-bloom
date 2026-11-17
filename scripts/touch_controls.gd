@@ -16,6 +16,11 @@ var pause_overlay: Control
 var pause_card: Control
 var settings_panel: SettingsPanel
 var reset_dialog: ConfirmationDialog
+var tutorial_overlay: Control
+var tutorial_title: Label
+var tutorial_body: Label
+var tutorial_next: Button
+var tutorial_step := 0
 var _move_touch := -1
 var _look_touch := -1
 var _move_origin := Vector2.ZERO
@@ -34,6 +39,8 @@ func _ready() -> void:
 	_refresh()
 	if GameState.is_complete():
 		_show_complete()
+	elif not SettingsManager.tutorial_seen:
+		_show_tutorial()
 
 func _build_ui() -> void:
 	var root := Control.new()
@@ -96,6 +103,7 @@ func _build_ui() -> void:
 	pause_button.pressed.connect(_toggle_pause)
 	root.add_child(pause_button)
 	_build_pause_overlay(root)
+	_build_tutorial_overlay(root)
 	_build_completion_overlay(root)
 
 func _input(event: InputEvent) -> void:
@@ -254,6 +262,78 @@ func _reset_progress() -> void:
 func _go_to_menu() -> void:
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+func _build_tutorial_overlay(root: Control) -> void:
+	tutorial_overlay = Control.new()
+	tutorial_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	tutorial_overlay.process_mode = Node.PROCESS_MODE_ALWAYS
+	tutorial_overlay.visible = false
+	tutorial_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	tutorial_overlay.z_index = 15
+	root.add_child(tutorial_overlay)
+	var dim := ColorRect.new()
+	dim.color = Color(0.12, 0.12, 0.12, 0.68)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	tutorial_overlay.add_child(dim)
+	var panel := PanelContainer.new()
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.position = Vector2(-230, -165)
+	panel.size = Vector2(460, 330)
+	panel.custom_minimum_size = Vector2(460, 330)
+	tutorial_overlay.add_child(panel)
+	var column := VBoxContainer.new()
+	column.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_theme_constant_override("separation", 18)
+	panel.add_child(column)
+	tutorial_title = Label.new()
+	tutorial_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tutorial_title.add_theme_font_size_override("font_size", 28)
+	column.add_child(tutorial_title)
+	tutorial_body = Label.new()
+	tutorial_body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tutorial_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	tutorial_body.custom_minimum_size.x = 390
+	column.add_child(tutorial_body)
+	tutorial_next = Button.new()
+	tutorial_next.custom_minimum_size = Vector2(200, 54)
+	tutorial_next.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	tutorial_next.pressed.connect(_advance_tutorial)
+	column.add_child(tutorial_next)
+	var skip := Button.new()
+	skip.text = "Bỏ qua hướng dẫn"
+	skip.flat = true
+	skip.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	skip.pressed.connect(_finish_tutorial)
+	column.add_child(skip)
+
+func _show_tutorial() -> void:
+	tutorial_step = 0
+	_update_tutorial_page()
+	tutorial_overlay.visible = true
+	get_tree().paused = true
+
+func _update_tutorial_page() -> void:
+	var pages := [
+		["Di chuyển", "Dùng joystick bên trái để đi quanh tiệm. Trên máy tính, dùng WASD hoặc phím mũi tên."],
+		["Quan sát", "Vuốt vùng bên phải để nhìn quanh. Trên máy tính, nhấn vào game rồi di chuyển chuột."],
+		["Nhặt và xếp hoa", "Ngắm một bông rồi nhấn NHẶT / ĐẶT. Mang tối đa 5 bông và đặt vào giỏ có đúng loại hoa."],
+	]
+	tutorial_title.text = "Hướng dẫn %d/3 · %s" % [tutorial_step + 1, pages[tutorial_step][0]]
+	tutorial_body.text = pages[tutorial_step][1]
+	tutorial_next.text = "Bắt đầu" if tutorial_step == 2 else "Tiếp tục"
+
+func _advance_tutorial() -> void:
+	if tutorial_step < 2:
+		tutorial_step += 1
+		_update_tutorial_page()
+	else:
+		_finish_tutorial()
+
+func _finish_tutorial() -> void:
+	SettingsManager.mark_tutorial_seen()
+	tutorial_overlay.visible = false
+	get_tree().paused = false
 
 func _show_complete() -> void:
 	_completion_overlay.visible = true

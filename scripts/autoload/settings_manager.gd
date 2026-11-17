@@ -6,6 +6,7 @@ var look_sensitivity := 1.0
 var invert_y := false
 var music_volume := 0.7
 var sfx_volume := 0.8
+var tutorial_seen := false
 
 func _ready() -> void:
 	_ensure_audio_bus("Music")
@@ -29,6 +30,7 @@ func load_settings() -> void:
 	invert_y = bool(config.get_value("controls", "invert_y", false))
 	music_volume = clampf(float(config.get_value("audio", "music_volume", 0.7)), 0.0, 1.0)
 	sfx_volume = clampf(float(config.get_value("audio", "sfx_volume", 0.8)), 0.0, 1.0)
+	tutorial_seen = bool(config.get_value("progress", "tutorial_seen", false))
 
 func save_settings() -> void:
 	var config := ConfigFile.new()
@@ -36,6 +38,7 @@ func save_settings() -> void:
 	config.set_value("controls", "invert_y", invert_y)
 	config.set_value("audio", "music_volume", music_volume)
 	config.set_value("audio", "sfx_volume", sfx_volume)
+	config.set_value("progress", "tutorial_seen", tutorial_seen)
 	var error := config.save(SETTINGS_PATH)
 	if error != OK:
 		push_warning("Could not save settings")
@@ -56,6 +59,10 @@ func set_music_volume(value: float) -> void:
 func set_sfx_volume(value: float) -> void:
 	sfx_volume = clampf(value, 0.0, 1.0)
 	_apply_audio()
+	save_settings()
+
+func mark_tutorial_seen() -> void:
+	tutorial_seen = true
 	save_settings()
 
 func _apply_audio() -> void:
