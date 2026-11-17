@@ -10,7 +10,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 |---|---|---|
 | 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Đã dựng; cần mở trong Godot để xác nhận trực quan |
 | 2 | Vòng chơi nhặt, mang và phân loại hoa | Đã bổ sung; còn SFX và kiểm tra trong Godot/Android |
-| 3 | Save/load an toàn, Continue và reset | Prototype có; cần hoàn thiện kiểm tra dữ liệu |
+| 3 | Save/load an toàn, Continue và reset | Đã gia cố lưu/phục hồi; còn UI reset và xác minh trên máy |
 | 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Chưa làm |
 | 5 | Art pass và quản lý license asset | Chưa làm; hiện dùng placeholder tự sinh |
 | 6 | Tối ưu và đóng gói Android | Chưa làm |
@@ -47,11 +47,13 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 
 ## Phần 3 — Lưu tiến độ
 
-- [ ] Lưu sau mỗi lần nhặt/đặt và khi ứng dụng vào nền.
-- [ ] Phục hồi inventory và hoa đã đặt sau khi thoát/mở lại.
-- [ ] Chặn ID trùng, ID lạ, dữ liệu vượt số lượng mục tiêu và file save hỏng.
+- [x] Lưu sau mỗi lần nhặt/đặt và khi ứng dụng vào nền/đóng game.
+- [x] Phục hồi inventory và hoa đã đặt sau khi thoát/mở lại.
+- [x] Chặn ID trùng, ID lạ, dữ liệu vượt số lượng mục tiêu và file save sai cấu trúc.
+- [x] Ghi save tạm, giữ bản dự phòng trong lúc thay file và phục hồi bản dự phòng nếu cần.
 - [ ] Thêm reset tiến độ có hộp xác nhận.
-- [ ] Đặt schema version và cách xử lý save cũ.
+- [x] Đặt schema version và từ chối cấu trúc/schema không hợp lệ.
+- [ ] Xác minh thoát đột ngột và phục hồi save trên desktop/Android.
 
 **Kết quả cần đạt:** thoát đột ngột không làm mất tiến độ đã lưu; save lỗi không làm game crash.
 

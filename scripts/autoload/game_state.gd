@@ -5,6 +5,9 @@ signal notice(message: String)
 signal completed
 
 const SAVE_PATH := "user://little_bloom_save.json"
+const TEMP_SAVE_PATH := "user://little_bloom_save.tmp"
+const BACKUP_SAVE_PATH := "user://little_bloom_save.bak"
+const SCHEMA_VERSION := 1
 const MAX_CARRY := 5
 const TARGET_PER_TYPE := 10
 const FLOWER_TYPES := {
@@ -18,6 +21,10 @@ var placed_ids: Array[String] = []
 
 func _ready() -> void:
 	load_game()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
+		save_game()
 
 func pickup(flower_id: String) -> bool:
 	if is_complete() or not _is_valid_flower_id(flower_id):
@@ -78,35 +85,107 @@ func _is_valid_flower_id(flower_id: String) -> bool:
 	return number >= 1 and number <= TARGET_PER_TYPE
 
 func _save_and_notify() -> void:
-	save_game()
+	if not save_game():
+		notice.emit("Không lưu được tiến độ. Hãy kiểm tra dung lượng thiết bị.")
 	changed.emit()
 
-func save_game() -> void:
-	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+func save_game() -> bool:
+	var file := FileAccess.open(TEMP_SAVE_PATH, FileAccess.WRITE)
 	if file == null:
-		push_warning("Could not write save file")
-		return
-	file.store_string(JSON.stringify({"schema_version": 1, "inventory": inventory, "placed_ids": placed_ids}))
+		push_warning("Could not open temporary save file")
+		return false
+	file.store_string(JSON.stringify({
+		"schema_version": SCHEMA_VERSION,
+		"inventory": inventory,
+		"placed_ids": placed_ids,
+	}))
+	file.flush()
+	var write_error := file.get_error()
+	file.close()
+	if write_error != OK:
+		_remove_save_file(TEMP_SAVE_PATH)
+		push_warning("Could not flush temporary save file")
+		return false
+
+	var save_absolute := ProjectSettings.globalize_path(SAVE_PATH)
+	var temp_absolute := ProjectSettings.globalize_path(TEMP_SAVE_PATH)
+	var backup_absolute := ProjectSettings.globalize_path(BACKUP_SAVE_PATH)
+	if FileAccess.file_exists(SAVE_PATH):
+		_remove_save_file(BACKUP_SAVE_PATH)
+		var backup_error := DirAccess.rename_absolute(save_absolute, backup_absolute)
+		if backup_error != OK:
+			_remove_save_file(TEMP_SAVE_PATH)
+			push_warning("Could not preserve previous save file")
+			return false
+	var replace_error := DirAccess.rename_absolute(temp_absolute, save_absolute)
+	if replace_error != OK:
+		if FileAccess.file_exists(BACKUP_SAVE_PATH):
+			DirAccess.rename_absolute(backup_absolute, save_absolute)
+		_remove_save_file(TEMP_SAVE_PATH)
+		push_warning("Could not replace save file")
+		return false
+	_remove_save_file(BACKUP_SAVE_PATH)
+	return true
+
+func _remove_save_file(path: String) -> void:
+	if FileAccess.file_exists(path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+func _read_save(path: String) -> Variant:
+	if not FileAccess.file_exists(path):
+		return null
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return null
+	return JSON.parse_string(file.get_as_text())
+
+func _is_save_valid(parsed: Variant) -> bool:
+	if not parsed is Dictionary:
+		return false
+	if parsed.get("schema_version", 0) != SCHEMA_VERSION:
+		return false
+	return parsed.get("inventory", []) is Array and parsed.get("placed_ids", []) is Array
 
 func load_game() -> void:
-	if not FileAccess.file_exists(SAVE_PATH):
+	var parsed := _read_save(SAVE_PATH)
+	var recovered_from_backup := false
+	if not _is_save_valid(parsed):
+		var backup := _read_save(BACKUP_SAVE_PATH)
+		if _is_save_valid(backup):
+			parsed = backup
+			recovered_from_backup = true
+	if not _is_save_valid(parsed):
+		if FileAccess.file_exists(SAVE_PATH) or FileAccess.file_exists(BACKUP_SAVE_PATH):
+			push_warning("Save file is invalid or uses an unsupported schema")
 		return
-	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
-	if file == null:
-		return
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if not parsed is Dictionary or parsed.get("schema_version", 0) != 1:
-		return
+	if recovered_from_backup:
+		_remove_save_file(SAVE_PATH)
+		DirAccess.rename_absolute(
+			ProjectSettings.globalize_path(BACKUP_SAVE_PATH),
+			ProjectSettings.globalize_path(SAVE_PATH)
+		)
 	var raw_inventory: Variant = parsed.get("inventory", [])
 	var raw_placed: Variant = parsed.get("placed_ids", [])
-	if not raw_inventory is Array or not raw_placed is Array:
-		return
+	var restored_inventory: Array[String] = []
+	var restored_placed: Array[String] = []
+	var seen_ids: Dictionary = {}
 	for flower_id in raw_inventory:
-		if flower_id is String and _is_valid_flower_id(flower_id) and flower_id not in inventory and inventory.size() < MAX_CARRY:
-			inventory.append(flower_id)
+		if flower_id is String and _is_valid_flower_id(flower_id) and not seen_ids.has(flower_id) and restored_inventory.size() < MAX_CARRY:
+			restored_inventory.append(flower_id)
+			seen_ids[flower_id] = true
 	for flower_id in raw_placed:
-		if flower_id is String and _is_valid_flower_id(flower_id) and flower_id not in inventory and flower_id not in placed_ids and placed_count(flower_type_from_id(flower_id)) < TARGET_PER_TYPE:
-			placed_ids.append(flower_id)
+		if not (flower_id is String and _is_valid_flower_id(flower_id)):
+			continue
+		var flower_type := flower_type_from_id(flower_id)
+		var type_count := 0
+		for already_placed in restored_placed:
+			if flower_type_from_id(already_placed) == flower_type:
+				type_count += 1
+		if not seen_ids.has(flower_id) and type_count < TARGET_PER_TYPE:
+			restored_placed.append(flower_id)
+			seen_ids[flower_id] = true
+	inventory = restored_inventory
+	placed_ids = restored_placed
 
 func reset_game() -> void:
 	inventory.clear()
