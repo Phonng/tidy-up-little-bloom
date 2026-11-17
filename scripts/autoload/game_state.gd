@@ -77,6 +77,9 @@ func placed_count(flower_type: String) -> int:
 func is_complete() -> bool:
 	return placed_ids.size() >= FLOWER_TYPES.size() * TARGET_PER_TYPE
 
+func has_progress() -> bool:
+	return not inventory.is_empty() or not placed_ids.is_empty()
+
 func _is_valid_flower_id(flower_id: String) -> bool:
 	var parts := flower_id.split("_")
 	if parts.size() != 2 or not FLOWER_TYPES.has(parts[0]) or not parts[1].is_valid_int():

@@ -11,7 +11,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 | 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Đã dựng; cần mở trong Godot để xác nhận trực quan |
 | 2 | Vòng chơi nhặt, mang và phân loại hoa | Đã bổ sung; còn SFX và kiểm tra trong Godot/Android |
 | 3 | Save/load an toàn, Continue và reset | Đã gia cố lưu/phục hồi; còn UI reset và xác minh trên máy |
-| 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Chưa làm |
+| 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Menu/pause/cài đặt nền đã có; còn onboarding và xác minh UI |
 | 5 | Art pass và quản lý license asset | Chưa làm; hiện dùng placeholder tự sinh |
 | 6 | Tối ưu và đóng gói Android | Chưa làm |
 | 7 | Kiểm thử người chơi, Google Play và phát hành | Chưa làm |
@@ -59,11 +59,13 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 
 ## Phần 4 — UI và trải nghiệm người chơi
 
-- [ ] Màn hình title: Chơi mới / Tiếp tục / Cài đặt.
-- [ ] Pause menu có tiếp tục, cài đặt và về menu.
-- [ ] Màn hình hoàn thành có chơi lại và về menu.
+- [x] Màn hình title: Chơi mới / Tiếp tục / Cài đặt.
+- [x] Pause menu có tiếp tục, cài đặt, xóa tiến độ và về menu.
+- [x] Màn hình hoàn thành có chơi lại.
+- [x] Có hộp xác nhận trước khi xóa tiến độ.
+- [x] Lưu độ nhạy nhìn, đảo trục Y, âm lượng nhạc và hiệu ứng vào cấu hình cục bộ.
 - [ ] Hướng dẫn 3 bước ngay trong level và cho phép bỏ qua.
-- [ ] Điều chỉnh độ nhạy nhìn, đảo trục dọc, âm lượng nhạc/SFX.
+- [ ] Kết nối audio bus với nhạc/SFX thực tế khi có audio asset.
 - [ ] Kiểm tra chữ, safe area và kích thước nút trên điện thoại nhỏ.
 
 ## Phần 5 — Art pass và giấy phép

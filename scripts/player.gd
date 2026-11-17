@@ -69,8 +69,10 @@ func _physics_process(delta: float) -> void:
 		velocity.y = 0
 	move_and_slide()
 	var delta_look := look_delta + touch_look
-	rotate_y(-delta_look.x * LOOK_SENSITIVITY)
-	head.rotate_x(-delta_look.y * LOOK_SENSITIVITY)
+	var sensitivity := LOOK_SENSITIVITY * SettingsManager.look_sensitivity
+	var vertical_sign := -1.0 if SettingsManager.invert_y else 1.0
+	rotate_y(-delta_look.x * sensitivity)
+	head.rotate_x(-delta_look.y * sensitivity * vertical_sign)
 	head.rotation.x = clampf(head.rotation.x, deg_to_rad(-75), deg_to_rad(75))
 	look_delta = Vector2.ZERO
 	touch_look = Vector2.ZERO

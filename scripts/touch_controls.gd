@@ -12,6 +12,10 @@ var detail_label: Label
 var notice_label: Label
 var joystick_base: ColorRect
 var joystick_knob: ColorRect
+var pause_overlay: Control
+var pause_card: Control
+var settings_panel: SettingsPanel
+var reset_dialog: ConfirmationDialog
 var _move_touch := -1
 var _look_touch := -1
 var _move_origin := Vector2.ZERO
@@ -91,6 +95,7 @@ func _build_ui() -> void:
 	pause_button.position = Vector2(-82, 20)
 	pause_button.pressed.connect(_toggle_pause)
 	root.add_child(pause_button)
+	_build_pause_overlay(root)
 	_build_completion_overlay(root)
 
 func _input(event: InputEvent) -> void:
@@ -157,9 +162,98 @@ func _show_notice(message: String) -> void:
 		notice_label.text = ""
 
 func _toggle_pause() -> void:
-	get_tree().paused = not get_tree().paused
-	if get_tree().paused:
-		_show_notice("Đã tạm dừng — chạm Ⅱ để tiếp tục")
+	if pause_overlay.visible:
+		_close_pause()
+	else:
+		_open_pause()
+
+func _build_pause_overlay(root: Control) -> void:
+	pause_overlay = Control.new()
+	pause_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	pause_overlay.process_mode = Node.PROCESS_MODE_ALWAYS
+	pause_overlay.visible = false
+	pause_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	pause_overlay.z_index = 10
+	root.add_child(pause_overlay)
+	var dim := ColorRect.new()
+	dim.color = Color(0.12, 0.12, 0.12, 0.68)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	pause_overlay.add_child(dim)
+	pause_card = PanelContainer.new()
+	pause_card.set_anchors_preset(Control.PRESET_CENTER)
+	pause_card.position = Vector2(-210, -220)
+	pause_card.size = Vector2(420, 440)
+	pause_card.custom_minimum_size = Vector2(420, 440)
+	pause_overlay.add_child(pause_card)
+	var column := VBoxContainer.new()
+	column.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_theme_constant_override("separation", 14)
+	pause_card.add_child(column)
+	var title := Label.new()
+	title.text = "Tạm dừng"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 30)
+	column.add_child(title)
+	var resume := _pause_button("Tiếp tục", _close_pause)
+	column.add_child(resume)
+	var settings := _pause_button("Cài đặt", _open_pause_settings)
+	column.add_child(settings)
+	var reset := _pause_button("Xóa tiến độ", _confirm_reset)
+	column.add_child(reset)
+	var menu := _pause_button("Về menu", _go_to_menu)
+	column.add_child(menu)
+	settings_panel = SettingsPanel.new()
+	settings_panel.set_anchors_preset(Control.PRESET_CENTER)
+	settings_panel.position = Vector2(-225, -235)
+	settings_panel.visible = false
+	settings_panel.closed.connect(_close_pause_settings)
+	settings_panel.reset_requested.connect(_confirm_reset)
+	pause_overlay.add_child(settings_panel)
+	reset_dialog = ConfirmationDialog.new()
+	reset_dialog.title = "Xóa tiến độ?"
+	reset_dialog.dialog_text = "Tiến độ chơi đã lưu sẽ bị xóa. Bạn có muốn tiếp tục không?"
+	reset_dialog.process_mode = Node.PROCESS_MODE_ALWAYS
+	reset_dialog.confirmed.connect(_reset_progress)
+	pause_overlay.add_child(reset_dialog)
+
+func _pause_button(label: String, action: Callable) -> Button:
+	var button := Button.new()
+	button.text = label
+	button.custom_minimum_size = Vector2(270, 52)
+	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	button.pressed.connect(action)
+	return button
+
+func _open_pause() -> void:
+	pause_overlay.visible = true
+	pause_card.visible = true
+	settings_panel.visible = false
+	get_tree().paused = true
+
+func _close_pause() -> void:
+	get_tree().paused = false
+	pause_overlay.visible = false
+
+func _open_pause_settings() -> void:
+	pause_card.visible = false
+	settings_panel.visible = true
+
+func _close_pause_settings() -> void:
+	settings_panel.visible = false
+	pause_card.visible = true
+
+func _confirm_reset() -> void:
+	reset_dialog.popup_centered()
+
+func _reset_progress() -> void:
+	GameState.reset_game()
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+func _go_to_menu() -> void:
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 func _show_complete() -> void:
 	_completion_overlay.visible = true

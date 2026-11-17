@@ -6,7 +6,7 @@ Godot 4 / GDScript Android first-person flower-sorting prototype. The project is
 
 1. Install a Godot 4 stable editor.
 2. Open this folder or `project.godot` in Godot.
-3. Press Run. Desktop controls: WASD/arrows to move, click to capture the mouse, mouse to look, E to interact, Esc to release the mouse.
+3. Press Run. The title screen offers New Game, Continue, and Settings. Desktop controls: WASD/arrows to move, click to capture the mouse, mouse to look, E to interact, Esc to release the mouse.
 4. Android uses landscape touch controls: left side to move, drag on the right to look, and the lower-right button to pick up/place.
 
 ## Current prototype
