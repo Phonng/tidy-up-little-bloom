@@ -6,6 +6,7 @@ var continue_button: Button
 var settings_panel: SettingsPanel
 var reset_dialog: ConfirmationDialog
 var new_game_dialog: ConfirmationDialog
+var credits_dialog: AcceptDialog
 
 func _ready() -> void:
 	_build_menu()
@@ -59,6 +60,12 @@ func _build_menu() -> void:
 	settings.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	settings.pressed.connect(_open_settings)
 	column.add_child(settings)
+	var credits := Button.new()
+	credits.text = "Credits & giấy phép"
+	credits.custom_minimum_size = Vector2(270, 50)
+	credits.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	credits.pressed.connect(_open_credits)
+	column.add_child(credits)
 	settings_panel = SettingsPanel.new()
 	settings_panel.set_anchors_preset(Control.PRESET_CENTER)
 	settings_panel.position = Vector2(-225, -235)
@@ -73,6 +80,10 @@ func _build_menu() -> void:
 	new_game_dialog.dialog_text = "Tiến độ hiện tại sẽ bị xóa. Bạn có muốn bắt đầu lại không?"
 	new_game_dialog.confirmed.connect(_begin_new_game)
 	add_child(new_game_dialog)
+	credits_dialog = AcceptDialog.new()
+	credits_dialog.title = "Credits & giấy phép"
+	credits_dialog.dialog_text = _load_credits()
+	add_child(credits_dialog)
 
 func _update_continue_button() -> void:
 	continue_button.visible = GameState.has_progress()
@@ -106,3 +117,13 @@ func _make_reset_dialog() -> ConfirmationDialog:
 func _reset_progress() -> void:
 	GameState.reset_game()
 	_update_continue_button()
+
+func _open_credits() -> void:
+	credits_dialog.popup_centered(Vector2i(760, 580))
+
+func _load_credits() -> String:
+	var credits := "Little Bloom\n\n"
+	var license_file := FileAccess.open("res://licenses/GODOT_MIT.txt", FileAccess.READ)
+	if license_file != null:
+		credits += license_file.get_as_text()
+	return credits

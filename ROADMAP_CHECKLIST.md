@@ -76,7 +76,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Thêm cửa sổ, cây chậu và thảm chào trong blockout tiệm.
 - [x] Ghi trạng thái không dùng asset bên thứ ba trong `ASSET_LEDGER.md`.
 - [ ] Thay hoặc hoàn thiện các props blockout còn lại.
-- [ ] Thêm credits/third-party licenses trong game.
+- [x] Thêm credits/license Godot trong menu game; asset ledger hiện không có asset bên thứ ba.
 - [ ] Kiểm tra art pass trực quan trong Godot trên màn hình ngang.
 
 **Không đưa asset vào build nếu chưa xác minh quyền dùng thương mại và attribution.**

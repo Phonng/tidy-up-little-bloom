@@ -15,6 +15,7 @@ Godot 4 / GDScript Android first-person flower-sorting prototype. The project is
 - Three flower types, three baskets, 30 flowers, five-item carry limit.
 - Context interaction, progress HUD, local save and resume.
 - The room, flower silhouettes and baskets use original procedural low-poly meshes; no third-party assets are included yet.
+- Main menu includes a Godot Engine license entry under Credits & licenses.
 
 ## Next steps
 
