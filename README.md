@@ -23,7 +23,7 @@ Start with `PRODUCT_SPEC.md` for the product scope and requirements. Use `ROADMA
 
 ## Android release
 
-See `ANDROID_RELEASE_GUIDE.md` before creating an Android export preset. Do not commit `export_presets.cfg` or signing credentials.
+See `ANDROID_RELEASE_GUIDE.md` for the Android setup. The tracked Play export preset uses application ID `com.phonng.littlebloom`; keep release credentials in Godot's local `.godot/export_credentials.cfg`, never in Git.
 
 ## License notes
 

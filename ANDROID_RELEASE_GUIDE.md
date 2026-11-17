@@ -8,7 +8,8 @@ Last checked: 17 November 2026. This file records the project setup decisions; r
 - **Renderer:** Compatibility / OpenGL, selected for broad mobile reach. Confirm visual quality and frame time on target devices before release.
 - **Orientation:** landscape.
 - **Project icon:** original SVG at `assets/ui/little_bloom_icon.svg`. The Android export preset still needs launcher icon images in the resolutions requested by Godot.
-- **Application ID:** not set yet. Choose a reverse-DNS identifier you control before the first Play upload; changing it later creates a different Android app identity.
+- **Application ID:** `com.phonng.littlebloom`, derived from the GitHub account name the user provided. Confirm that the ID is available in Play Console before the first upload; changing it after publishing creates a different Android app identity.
+- **Export preset:** `export_presets.cfg` contains the non-secret Android Play preset: AAB, ARM64, target SDK 36, version code 1, and the application ID above. Godot credentials belong under `.godot/export_credentials.cfg`; the `.godot/` directory is excluded from Git.
 
 ## Android SDK and JDK
 
@@ -31,9 +32,9 @@ As of 31 August 2026, new apps and app updates submitted to Google Play must tar
 
 - [ ] Install the matching export templates for the selected Godot editor version.
 - [ ] Configure JDK 17 and Android SDK paths in Godot Editor Settings.
-- [ ] Add an Android export preset and set a permanent reverse-DNS application ID.
+- [x] Add a tracked Android Play export preset with application ID `com.phonng.littlebloom`.
 - [ ] Enable Gradle build and export format AAB for Google Play.
-- [ ] Set target SDK 36 or higher; confirm the final manifest reports that target.
+- [x] Set target SDK 36 in the preset; confirm the final manifest after exporting.
 - [ ] Add main and adaptive launcher icons at the sizes requested by the editor.
 - [ ] Enable only the ARM architectures needed for the supported device range; keep ARM64.
 - [ ] Generate a release keystore outside the repository and keep its passwords private.
@@ -42,7 +43,7 @@ As of 31 August 2026, new apps and app updates submitted to Google Play must tar
 
 ## Secrets and version control
 
-`export_presets.cfg` remains ignored because it can contain signing paths and passwords. Never commit the release keystore, signing passwords, or private keys. Keep the keystore backed up securely outside this repository. Increase the Android version code for every Play release.
+Godot's export documentation says `export_presets.cfg` is safe to commit; private export credentials are stored separately in `.godot/export_credentials.cfg`. Never commit the release keystore, signing passwords, or private keys. Keep the keystore backed up securely outside this repository. Increase the Android version code for every Play release. [Godot export configuration files](https://docs.godotengine.org/en/4.7/tutorials/export/exporting_projects.html)
 
 ## Performance work
 
