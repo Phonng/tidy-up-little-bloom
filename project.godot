@@ -4,7 +4,10 @@ config_version=5
 [application]
 config/name="Little Bloom"
 run/main_scene="res://scenes/main_menu.tscn"
-config/features=PackedStringArray("4.3", "GL Compatibility")
+config/description="A cozy first-person flower shop tidy-up game."
+config/version="0.1.0"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://assets/ui/little_bloom_icon.svg"
 
 [display]
 window/size/viewport_width=1280

@@ -13,7 +13,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 | 3 | Save/load an toàn, Continue và reset | Đã gia cố lưu/phục hồi; còn UI reset và xác minh trên máy |
 | 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Luồng và onboarding đã có; còn xác minh UI trên thiết bị |
 | 5 | Art pass và quản lý license asset | Hoa/giỏ/props đầu tiên đã tự dựng; còn credits và kiểm tra hình ảnh |
-| 6 | Tối ưu và đóng gói Android | Chưa làm |
+| 6 | Tối ưu và đóng gói Android | Phiên bản/requirements đã ghi; build và đo máy còn chờ |
 | 7 | Kiểm thử người chơi, Google Play và phát hành | Chưa làm |
 
 ## Phần 1 — Nền project và điều khiển
@@ -83,9 +83,11 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 
 ## Phần 6 — Android và hiệu năng
 
-- [ ] Chọn phiên bản Godot stable và ghi lại phiên bản editor/export templates.
+- [x] Chọn baseline Godot 4.7.2 stable theo release archive ngày 17/11/2026; ghi trong `ANDROID_RELEASE_GUIDE.md`.
 - [ ] Cấu hình Android SDK/JDK và export preset.
-- [ ] Kiểm tra landscape, safe area, multi-touch và resume sau khi app vào nền.
+- [x] Bật landscape; thêm icon project vector gốc.
+- [ ] Hoàn thiện launcher icon sizes, safe area, multi-touch và resume trên Android thật.
+- [ ] Đặt target SDK 36 hoặc cao hơn, rồi xác nhận manifest theo yêu cầu Play hiện hành.
 - [ ] Đo FPS/tải/nhiệt trên máy yếu và máy tầm trung.
 - [ ] Tối ưu ánh sáng, texture, material, collision theo số đo.
 - [ ] Xuất AAB release và cất signing key an toàn ngoài repo.
