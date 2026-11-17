@@ -37,6 +37,10 @@ func _build_room() -> void:
 	_add_box("Shelf", Vector3(4.2, 1.8, 0.35), Vector3(-2.7, 0.9, -4.25), Color("#9a694a"), true)
 	_add_box("ShelfBoard1", Vector3(4.2, 0.12, 0.5), Vector3(-2.7, 0.7, -4.0), Color("#bc8b62"), true)
 	_add_box("ShelfBoard2", Vector3(4.2, 0.12, 0.5), Vector3(-2.7, 1.35, -4.0), Color("#bc8b62"), true)
+	_add_window()
+	_add_potted_plant(Vector3(4.05, 0, -3.55), Color("#d96b78"))
+	_add_potted_plant(Vector3(-4.05, 0, -2.75), Color("#e6a34e"))
+	_add_box("WelcomeMat", Vector3(2.4, 0.035, 1.0), Vector3(0, 0.02, 4.2), Color("#9e7064"), false)
 
 func _build_level_objects() -> void:
 	var types: Array[String] = ["rose", "tulip", "daisy"]
@@ -63,6 +67,66 @@ func _build_player() -> void:
 	player.position = Vector3(0, 0, 3.7)
 	add_child(player)
 
+func _add_window() -> void:
+	var center := Vector3(2.65, 2.0, -4.78)
+	_add_box("WindowGlass", Vector3(2.35, 1.25, 0.05), center, Color("#b9d9d4"), false)
+	_add_box("WindowFrameTop", Vector3(2.55, 0.12, 0.12), center + Vector3(0, 0.69, 0.04), Color("#8a6048"), false)
+	_add_box("WindowFrameBottom", Vector3(2.55, 0.12, 0.12), center + Vector3(0, -0.69, 0.04), Color("#8a6048"), false)
+	_add_box("WindowFrameLeft", Vector3(0.12, 1.3, 0.12), center + Vector3(-1.25, 0, 0.04), Color("#8a6048"), false)
+	_add_box("WindowFrameRight", Vector3(0.12, 1.3, 0.12), center + Vector3(1.25, 0, 0.04), Color("#8a6048"), false)
+	_add_box("WindowMullion", Vector3(0.08, 1.22, 0.08), center + Vector3(0, 0, 0.08), Color("#8a6048"), false)
+	_add_box("WindowCrossbar", Vector3(2.35, 0.07, 0.08), center + Vector3(0, 0, 0.08), Color("#8a6048"), false)
+
+func _add_potted_plant(at: Vector3, flower_color: Color) -> void:
+	var pot := MeshInstance3D.new()
+	var pot_mesh := CylinderMesh.new()
+	pot_mesh.top_radius = 0.25
+	pot_mesh.bottom_radius = 0.18
+	pot_mesh.height = 0.36
+	pot.mesh = pot_mesh
+	pot.position = at + Vector3(0, 0.18, 0)
+	pot.material_override = _material(Color("#bd8062"))
+	add_child(pot)
+	var soil := MeshInstance3D.new()
+	var soil_mesh := CylinderMesh.new()
+	soil_mesh.top_radius = 0.21
+	soil_mesh.bottom_radius = 0.21
+	soil_mesh.height = 0.025
+	soil.mesh = soil_mesh
+	soil.position = at + Vector3(0, 0.37, 0)
+	soil.material_override = _material(Color("#594537"))
+	add_child(soil)
+	var stem := MeshInstance3D.new()
+	var stem_mesh := CylinderMesh.new()
+	stem_mesh.top_radius = 0.025
+	stem_mesh.bottom_radius = 0.04
+	stem_mesh.height = 0.82
+	stem.mesh = stem_mesh
+	stem.position = at + Vector3(0, 0.78, 0)
+	stem.material_override = _material(Color("#648b60"))
+	add_child(stem)
+	for index in 5:
+		var angle := TAU * float(index) / 5.0
+		var leaf := MeshInstance3D.new()
+		var leaf_mesh := SphereMesh.new()
+		leaf_mesh.radial_segments = 8
+		leaf_mesh.rings = 4
+		leaf.mesh = leaf_mesh
+		leaf.scale = Vector3(0.25, 0.07, 0.12)
+		leaf.position = at + Vector3(cos(angle) * 0.2, 0.86 + float(index % 2) * 0.16, sin(angle) * 0.2)
+		leaf.rotation.y = -angle
+		leaf.material_override = _material(Color("#739b70"))
+		add_child(leaf)
+	var bloom := MeshInstance3D.new()
+	var bloom_mesh := SphereMesh.new()
+	bloom_mesh.radial_segments = 8
+	bloom_mesh.rings = 4
+	bloom.mesh = bloom_mesh
+	bloom.scale = Vector3(0.15, 0.12, 0.15)
+	bloom.position = at + Vector3(0, 1.34, 0)
+	bloom.material_override = _material(flower_color)
+	add_child(bloom)
+
 func _add_box(object_name: String, size: Vector3, at: Vector3, color: Color, solid: bool) -> void:
 	var node: Node3D
 	if solid:
@@ -87,3 +151,9 @@ func _add_box(object_name: String, size: Vector3, at: Vector3, color: Color, sol
 	visual.material_override = material
 	node.add_child(visual)
 	add_child(node)
+
+func _material(color: Color) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = 0.9
+	return material

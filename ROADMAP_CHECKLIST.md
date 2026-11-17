@@ -12,7 +12,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 | 2 | Vòng chơi nhặt, mang và phân loại hoa | Đã bổ sung; còn SFX và kiểm tra trong Godot/Android |
 | 3 | Save/load an toàn, Continue và reset | Đã gia cố lưu/phục hồi; còn UI reset và xác minh trên máy |
 | 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Luồng và onboarding đã có; còn xác minh UI trên thiết bị |
-| 5 | Art pass và quản lý license asset | Chưa làm; hiện dùng placeholder tự sinh |
+| 5 | Art pass và quản lý license asset | Hoa/giỏ/props đầu tiên đã tự dựng; còn credits và kiểm tra hình ảnh |
 | 6 | Tối ưu và đóng gói Android | Chưa làm |
 | 7 | Kiểm thử người chơi, Google Play và phát hành | Chưa làm |
 
@@ -70,12 +70,14 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 
 ## Phần 5 — Art pass và giấy phép
 
-- [ ] Chốt bảng màu, tỷ lệ và quy tắc phong cách.
-- [ ] Chọn tối đa 1–2 nguồn asset phù hợp; xác nhận license của từng gói.
-- [ ] Hoàn thiện model hoa/giỏ dễ nhận diện từ góc nhìn FPS.
-- [ ] Thay props blockout cần thiết bằng asset có license rõ.
-- [ ] Ghi từng asset vào `ASSET_LEDGER.md`, lưu license gốc.
+- [x] Chốt bảng màu, tỷ lệ và quy tắc phong cách trong tài liệu sản phẩm.
+- [x] Chọn hướng dùng model tự dựng trong Godot cho prototype; chưa thêm asset bên thứ ba.
+- [x] Tạo silhouette hoa hồng, tulip, cúc và giỏ có nhãn/hoa hiển thị.
+- [x] Thêm cửa sổ, cây chậu và thảm chào trong blockout tiệm.
+- [x] Ghi trạng thái không dùng asset bên thứ ba trong `ASSET_LEDGER.md`.
+- [ ] Thay hoặc hoàn thiện các props blockout còn lại.
 - [ ] Thêm credits/third-party licenses trong game.
+- [ ] Kiểm tra art pass trực quan trong Godot trên màn hình ngang.
 
 **Không đưa asset vào build nếu chưa xác minh quyền dùng thương mại và attribution.**
 

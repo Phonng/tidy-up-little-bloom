@@ -27,11 +27,18 @@ func _ready() -> void:
 	body.position.y = 0.26
 	body.material_override = _material(Color("#c99465"))
 	add_child(body)
+	for level in 3:
+		var slat_y := 0.12 + float(level) * 0.15
+		_add_wood_slat(Vector3(0, slat_y, 0.335), Vector3(0.82, 0.035, 0.035), Color("#a9774e"))
+		_add_wood_slat(Vector3(0, slat_y, -0.335), Vector3(0.82, 0.035, 0.035), Color("#a9774e"))
+		_add_wood_slat(Vector3(0.405, slat_y, 0), Vector3(0.035, 0.035, 0.65), Color("#b98558"))
+		_add_wood_slat(Vector3(-0.405, slat_y, 0), Vector3(0.035, 0.035, 0.65), Color("#b98558"))
+	_add_wood_slat(Vector3(0, 0.52, 0), Vector3(0.86, 0.07, 0.72), Color("#d6b17c"))
 	var label := MeshInstance3D.new()
 	var label_mesh := BoxMesh.new()
 	label_mesh.size = Vector3(0.38, 0.12, 0.04)
 	label.mesh = label_mesh
-	label.position = Vector3(0, 0.57, -0.34)
+	label.position = Vector3(0, 0.57, 0.35)
 	label.material_override = _material(tint)
 	add_child(label)
 	contents_root = Node3D.new()
@@ -83,3 +90,12 @@ func _material(color: Color) -> StandardMaterial3D:
 	material.albedo_color = color
 	material.roughness = 0.9
 	return material
+
+func _add_wood_slat(at: Vector3, size: Vector3, color: Color) -> void:
+	var slat := MeshInstance3D.new()
+	var slat_mesh := BoxMesh.new()
+	slat_mesh.size = size
+	slat.mesh = slat_mesh
+	slat.position = at
+	slat.material_override = _material(color)
+	add_child(slat)
