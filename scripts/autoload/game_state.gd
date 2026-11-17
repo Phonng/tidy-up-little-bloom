@@ -2,6 +2,9 @@ extends Node
 
 signal changed
 signal notice(message: String)
+signal picked_up
+signal placement_rejected
+signal placed_correctly
 signal completed
 
 const SAVE_PATH := "user://little_bloom_save.json"
@@ -36,6 +39,7 @@ func pickup(flower_id: String) -> bool:
 		return false
 	inventory.append(flower_id)
 	_save_and_notify()
+	picked_up.emit()
 	return true
 
 func place_one(flower_type: String) -> bool:
@@ -45,6 +49,8 @@ func place_one(flower_type: String) -> bool:
 			index = i
 			break
 	if index < 0:
+		if not inventory.is_empty():
+			placement_rejected.emit()
 		notice.emit("Hãy mang " + type_name(flower_type) + " đến đây")
 		return false
 	var flower_id := inventory[index]
@@ -54,6 +60,7 @@ func place_one(flower_type: String) -> bool:
 	inventory.remove_at(index)
 	placed_ids.append(flower_id)
 	_save_and_notify()
+	placed_correctly.emit()
 	if is_complete():
 		completed.emit()
 	return true

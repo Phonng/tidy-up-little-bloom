@@ -1,6 +1,7 @@
 # Asset ledger
 
-No third-party assets are currently included. The room decor, flower silhouettes, baskets and HUD are original procedural meshes/UI created in GDScript. No external asset license or attribution is needed for the current build. Godot Engine's MIT notice still needs to be shown in an in-game credits/licenses screen before distribution.
+No third-party assets are currently included. The room decor, flower silhouettes, baskets and HUD are original procedural meshes/UI created in GDScript. The four short sound effects in `assets/audio/` are generated specifically for this project from synthesized waveforms; they do not use samples or third-party recordings. No external asset license or attribution is needed for the current build. Godot Engine's MIT notice is included in the in-game credits/licenses screen.
 
 | ID | Name | Creator | Source URL | Download date | License | Attribution | Source file | Used file |
 |---|---|---|---|---|---|---|---|---|
+| SFX-01 | Pickup, correct placement, rejected placement, level complete | Little Bloom project | Generated locally; no source recording | 2026-11-17 | Original synthesized audio | None | Procedural waveform generation | `assets/audio/*.wav` |

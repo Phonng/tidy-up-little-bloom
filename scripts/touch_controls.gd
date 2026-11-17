@@ -1,6 +1,11 @@
 extends CanvasLayer
 class_name TouchControls
 
+const SFX_PICKUP: AudioStream = preload("res://assets/audio/pickup.wav")
+const SFX_PLACE: AudioStream = preload("res://assets/audio/place.wav")
+const SFX_REJECT: AudioStream = preload("res://assets/audio/reject.wav")
+const SFX_COMPLETE: AudioStream = preload("res://assets/audio/complete.wav")
+
 signal move_changed(value: Vector2)
 signal look_changed(delta: Vector2)
 signal interact_requested
@@ -28,13 +33,20 @@ var _move_value := Vector2.ZERO
 var _interact_rect := Rect2()
 var _pause_rect := Rect2()
 var _completion_overlay: Control
+var _sfx_player: AudioStreamPlayer
 
 func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_ui()
+	_sfx_player = AudioStreamPlayer.new()
+	_sfx_player.bus = "SFX"
+	add_child(_sfx_player)
 	GameState.changed.connect(_refresh)
 	GameState.notice.connect(_show_notice)
+	GameState.picked_up.connect(_play_pickup_sfx)
+	GameState.placement_rejected.connect(_play_reject_sfx)
+	GameState.placed_correctly.connect(_play_place_sfx)
 	GameState.completed.connect(_show_complete)
 	_refresh()
 	if GameState.is_complete():
@@ -345,8 +357,23 @@ func _finish_tutorial() -> void:
 
 func _show_complete() -> void:
 	_clear_touch_input()
+	_play_sfx(SFX_COMPLETE)
 	_completion_overlay.visible = true
 	get_tree().paused = true
+
+func _play_pickup_sfx() -> void:
+	_play_sfx(SFX_PICKUP)
+
+func _play_place_sfx() -> void:
+	if not GameState.is_complete():
+		_play_sfx(SFX_PLACE)
+
+func _play_reject_sfx() -> void:
+	_play_sfx(SFX_REJECT)
+
+func _play_sfx(stream: AudioStream) -> void:
+	_sfx_player.stream = stream
+	_sfx_player.play()
 
 func _has_modal_overlay() -> bool:
 	return (is_instance_valid(pause_overlay) and pause_overlay.visible) \

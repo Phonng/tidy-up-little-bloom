@@ -40,7 +40,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Hiển thị các bông đã đặt ở trong giỏ.
 - [x] Hoàn thành 30/30 thì hiện màn hoàn thành và cho chơi lại.
 - [x] Có phản hồi trực quan khi tay đầy, chọn sai giỏ, tăng tiến độ và hoàn thành.
-- [ ] Thêm/điều chỉnh SFX nhặt, đặt đúng, đặt sai và hoàn thành trong audio polish.
+- [x] Thêm SFX nhặt, đặt đúng, đặt sai và hoàn thành bằng âm tổng hợp gốc; còn nghe/điều chỉnh trong Godot.
 - [ ] Mở project bằng Godot và kiểm tra trọn vòng chơi trên desktop/Android.
 
 **Kết quả cần đạt:** người mới có thể hoàn thành một lượt 30 bông mà không cần debug hoặc giải thích miệng.
@@ -65,7 +65,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Có hộp xác nhận trước khi xóa tiến độ.
 - [x] Lưu độ nhạy nhìn, đảo trục Y, âm lượng nhạc và hiệu ứng vào cấu hình cục bộ.
 - [x] Hướng dẫn 3 bước lần đầu trong level, có nút bỏ qua và lưu lựa chọn.
-- [ ] Kết nối audio bus với nhạc/SFX thực tế khi có audio asset.
+- [ ] Kết nối nhạc và xác minh mix audio; bus SFX đã nối với các hiệu ứng tổng hợp gốc.
 - [ ] Kiểm tra chữ, safe area và kích thước nút trên điện thoại nhỏ.
 
 ## Phần 5 — Art pass và giấy phép

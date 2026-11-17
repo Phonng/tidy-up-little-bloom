@@ -41,7 +41,7 @@ func _ready() -> void:
 	camera.add_child(held_root)
 	controls = TouchControls.new()
 	controls.name = "TouchControls"
-	get_tree().root.add_child.call_deferred(controls)
+	add_child(controls)
 	controls.move_changed.connect(_on_move_changed)
 	controls.look_changed.connect(_on_look_changed)
 	controls.interact_requested.connect(_on_interact)
