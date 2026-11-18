@@ -1,10 +1,14 @@
 extends StaticBody3D
 class_name FlowerBasket
 
+const FlowerScript = preload("res://scripts/flower.gd")
+
 var flower_type := "rose"
 var tint := Color("#d96b78")
 var contents_root: Node3D
 var drawn_count := -1
+var _placed_stems: MultiMesh
+var _placed_blooms: MultiMesh
 
 func setup(type: String, color: Color) -> void:
 	flower_type = type
@@ -44,6 +48,8 @@ func _ready() -> void:
 	contents_root = Node3D.new()
 	contents_root.name = "PlacedFlowers"
 	add_child(contents_root)
+	_placed_stems = _make_contents_batch(FlowerScript.build_stem_mesh(), Color("#5c9567"))
+	_placed_blooms = _make_contents_batch(FlowerScript.build_bloom_mesh(flower_type), tint)
 	GameState.changed.connect(_sync_contents)
 	_sync_contents()
 
@@ -53,37 +59,31 @@ func interact(_actor: Node) -> void:
 func focus_text() -> String:
 	return "Đặt " + GameState.type_name(flower_type)
 
+func _make_contents_batch(mesh: Mesh, color: Color) -> MultiMesh:
+	var multimesh := MultiMesh.new()
+	multimesh.transform_format = MultiMesh.TRANSFORM_3D
+	multimesh.mesh = mesh
+	var visual := MultiMeshInstance3D.new()
+	visual.multimesh = multimesh
+	visual.material_override = _material(color)
+	contents_root.add_child(visual)
+	return multimesh
+
 func _sync_contents() -> void:
 	var count := GameState.placed_count(flower_type)
 	if count == drawn_count:
 		return
 	drawn_count = count
-	for child in contents_root.get_children():
-		contents_root.remove_child(child)
-		child.queue_free()
+	_placed_stems.instance_count = count
+	_placed_blooms.instance_count = count
 	for index in count:
-		var flower := Node3D.new()
 		var column := index % 5
-		var row := index / 5
-		flower.position = Vector3(-0.25 + float(column) * 0.125, 0.54 + float(row) * 0.11, -0.18 + float(row) * 0.26)
-		var stem := MeshInstance3D.new()
-		var stem_mesh := CylinderMesh.new()
-		stem_mesh.top_radius = 0.009
-		stem_mesh.bottom_radius = 0.014
-		stem_mesh.height = 0.13
-		stem.mesh = stem_mesh
-		stem.position.y = 0.06
-		stem.material_override = _material(Color("#5c9567"))
-		flower.add_child(stem)
-		var bloom := MeshInstance3D.new()
-		var bloom_mesh := SphereMesh.new()
-		bloom_mesh.radius = 0.065
-		bloom_mesh.height = 0.11
-		bloom.mesh = bloom_mesh
-		bloom.position.y = 0.15
-		bloom.material_override = _material(tint)
-		flower.add_child(bloom)
-		contents_root.add_child(flower)
+		var row := floori(float(index) / 5.0) % 5
+		var layer := floori(float(index) / 25.0)
+		var position := Vector3(-0.27 + float(column) * 0.135, 0.54 + float(layer) * 0.12, -0.18 + float(row) * 0.09)
+		var transform := Transform3D(Basis.IDENTITY.scaled(Vector3(0.4, 0.4, 0.4)), position)
+		_placed_stems.set_instance_transform(index, transform)
+		_placed_blooms.set_instance_transform(index, transform)
 
 func _material(color: Color) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()

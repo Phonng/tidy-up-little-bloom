@@ -6,6 +6,7 @@ const PlayerScript = preload("res://scripts/player.gd")
 
 const ROOM_WIDTH := 24.0
 const ROOM_DEPTH := 22.0
+const UPPER_FLOOR_Y := 4.2
 
 func _ready() -> void:
 	_build_lighting()
@@ -43,12 +44,74 @@ func _build_room() -> void:
 	_add_box("ShelfBoard2", Vector3(4.2, 0.12, 0.5), Vector3(-7.0, 1.35, -9.0), Color("#bc8b62"), true)
 	_add_box("DisplayIslandLeft", Vector3(2.4, 0.72, 1.0), Vector3(-3.8, 0.36, -1.0), Color("#b98558"), true)
 	_add_box("DisplayIslandRight", Vector3(2.4, 0.72, 1.0), Vector3(3.8, 0.36, -1.0), Color("#b98558"), true)
-	_add_window()
+	_add_box("UpperFloor", Vector3(ROOM_WIDTH, 0.2, 10.4), Vector3(0, UPPER_FLOOR_Y - 0.1, -6.0), Color("#d5bea0"), true)
+	_add_box("UpperBackWall", Vector3(ROOM_WIDTH, 3.2, 0.2), Vector3(0, UPPER_FLOOR_Y + 1.5, -half_depth), Color("#efe6d6"), true)
+	_add_box("UpperLeftWall", Vector3(0.2, 3.2, 10.4), Vector3(-half_width, UPPER_FLOOR_Y + 1.5, -6.0), Color("#e8ddca"), true)
+	_add_box("UpperRightWall", Vector3(0.2, 3.2, 10.4), Vector3(half_width, UPPER_FLOOR_Y + 1.5, -6.0), Color("#e8ddca"), true)
+	_add_box("UpperFrontRailLeft", Vector3(9.3, 0.9, 0.16), Vector3(-7.35, UPPER_FLOOR_Y + 0.45, -0.78), Color("#bc8b62"), true)
+	_add_box("UpperFrontRailRight", Vector3(9.3, 0.9, 0.16), Vector3(7.35, UPPER_FLOOR_Y + 0.45, -0.78), Color("#bc8b62"), true)
+	for side in [-1.0, 1.0]:
+		for depth in [-10.6, -1.35]:
+			_add_box("UpperFloorSupport", Vector3(0.32, UPPER_FLOOR_Y, 0.32), Vector3(side * 8.5, UPPER_FLOOR_Y / 2.0, depth), Color("#9a694a"), true)
+	_add_ramp()
+	_add_wall_cabinets(0.0)
+	_add_wall_cabinets(UPPER_FLOOR_Y)
+	_add_window_at(2.0)
+	_add_window_at(UPPER_FLOOR_Y + 2.0)
 	_add_potted_plant(Vector3(9.8, 0, -9.0), Color("#d96b78"))
 	_add_potted_plant(Vector3(-9.8, 0, -9.0), Color("#e6a34e"))
 	_add_potted_plant(Vector3(9.8, 0, 9.0), Color("#9d82c4"))
 	_add_potted_plant(Vector3(-9.8, 0, 9.0), Color("#edbd48"))
+	_add_potted_plant(Vector3(9.8, UPPER_FLOOR_Y, -9.0), Color("#b266aa"))
+	_add_potted_plant(Vector3(-9.8, UPPER_FLOOR_Y, -9.0), Color("#f2eee0"))
 	_add_box("WelcomeMat", Vector3(3.2, 0.035, 1.2), Vector3(0, 0.02, 9.2), Color("#9e7064"), false)
+
+func _add_ramp() -> void:
+	var ramp := StaticBody3D.new()
+	ramp.name = "StairRamp"
+	ramp.position = Vector3(0, 2.0, 4.05)
+	ramp.rotation.x = atan(UPPER_FLOOR_Y / 10.2)
+	var shape := BoxShape3D.new()
+	shape.size = Vector3(3.0, 0.24, 10.8)
+	var collision := CollisionShape3D.new()
+	collision.shape = shape
+	ramp.add_child(collision)
+	var visual := MeshInstance3D.new()
+	var mesh := BoxMesh.new()
+	mesh.size = shape.size
+	visual.mesh = mesh
+	visual.material_override = _material(Color("#bc8b62"))
+	ramp.add_child(visual)
+	for side in [-1.0, 1.0]:
+		var rail_shape := BoxShape3D.new()
+		rail_shape.size = Vector3(0.14, 0.84, 10.8)
+		var rail_collision := CollisionShape3D.new()
+		rail_collision.shape = rail_shape
+		rail_collision.position = Vector3(side * 1.42, 0.52, 0)
+		ramp.add_child(rail_collision)
+		var rail_visual := MeshInstance3D.new()
+		var rail_mesh := BoxMesh.new()
+		rail_mesh.size = rail_shape.size
+		rail_visual.mesh = rail_mesh
+		rail_visual.position = rail_collision.position
+		rail_visual.material_override = _material(Color("#9a694a"))
+		ramp.add_child(rail_visual)
+	add_child(ramp)
+
+func _add_wall_cabinets(floor_y: float) -> void:
+	var base_y := floor_y + 2.15
+	var back_z := -ROOM_DEPTH / 2.0 + 0.48
+	_add_box("WallCabinetBackBody", Vector3(4.6, 0.92, 0.72), Vector3(0, base_y, back_z), Color("#9a694a"), false)
+	for index in 4:
+		var x := -1.68 + float(index) * 1.12
+		_add_box("WallCabinetBackDoor", Vector3(1.02, 0.78, 0.06), Vector3(x, base_y, back_z + 0.39), Color("#e4d5bd"), false)
+		_add_box("WallCabinetBackKnob", Vector3(0.055, 0.055, 0.055), Vector3(x + 0.34, base_y, back_z + 0.44), Color("#d4a65e"), false)
+	for side in [-1.0, 1.0]:
+		var side_x := side * (ROOM_WIDTH / 2.0 - 0.48)
+		_add_box("WallCabinetSideBody", Vector3(0.72, 0.92, 4.2), Vector3(side_x, base_y, -6.0), Color("#9a694a"), false)
+		for index in 3:
+			var z := -7.4 + float(index) * 1.4
+			_add_box("WallCabinetSideDoor", Vector3(0.06, 0.78, 1.28), Vector3(side_x - side * 0.39, base_y, z), Color("#e4d5bd"), false)
 
 func _build_shop_props() -> void:
 	_add_pendant_lamp()
@@ -138,14 +201,17 @@ func _add_decorative_vase(at: Vector3, bloom_color: Color, leaf_color: Color) ->
 	add_child(bloom)
 
 func _build_level_objects() -> void:
-	var types: Array[String] = ["rose", "tulip", "daisy", "sunflower", "lavender", "peony"]
+	var types: Array[String] = ["rose", "tulip", "daisy", "sunflower", "lavender", "peony", "orchid", "lily", "cosmos"]
 	var basket_spots := {
-		"rose": Vector3(-10.0, 0, -6.5),
-		"tulip": Vector3(10.0, 0, -6.5),
-		"daisy": Vector3(-10.0, 0, 0),
-		"sunflower": Vector3(10.0, 0, 0),
-		"lavender": Vector3(-10.0, 0, 6.5),
-		"peony": Vector3(10.0, 0, 6.5),
+		"rose": Vector3(-9.5, 0, -7.6),
+		"tulip": Vector3(9.5, 0, -7.6),
+		"daisy": Vector3(-9.5, 0, -1.8),
+		"sunflower": Vector3(9.5, 0, -1.8),
+		"lavender": Vector3(-9.5, 0, 4.8),
+		"peony": Vector3(9.5, 0, 4.8),
+		"orchid": Vector3(-9.7, UPPER_FLOOR_Y, -7.8),
+		"lily": Vector3(9.7, UPPER_FLOOR_Y, -7.8),
+		"cosmos": Vector3(0.0, UPPER_FLOOR_Y, -2.4),
 	}
 	for flower_type in types:
 		var tint: Color = GameState.FLOWER_TYPES[flower_type].color
@@ -153,15 +219,50 @@ func _build_level_objects() -> void:
 		basket.setup(flower_type, tint)
 		basket.position = basket_spots[flower_type]
 		add_child(basket)
+	var lower_positions: Array[Vector3] = []
+	for row in 24:
+		for column in 27:
+			var x := -9.5 + float(column) * (19.0 / 26.0)
+			var z := -9.5 + float(row) * (19.0 / 23.0)
+			if x > -1.75 and x < 1.75 and z > -1.4:
+				continue
+			if absf(x) < 2.2 and z < -7.0:
+				continue
+			if absf(absf(x) - 8.5) < 0.7 and absf(z + 1.35) < 0.7:
+				continue
+			if absf(absf(x) - 3.8) < 1.5 and absf(z + 1.0) < 1.0:
+				continue
+			var blocked_by_basket := false
+			for basket_value in basket_spots.values():
+				var basket_position: Vector3 = basket_value
+				if is_zero_approx(basket_position.y) and Vector2(x, z).distance_to(Vector2(basket_position.x, basket_position.z)) < 1.05:
+					blocked_by_basket = true
+					break
+			if blocked_by_basket:
+				continue
+			lower_positions.append(Vector3(x, 0, z))
+	var upper_positions: Array[Vector3] = []
+	for row in 20:
+		for column in 30:
+			var x := -9.0 + float(column) * (18.0 / 29.0)
+			var z := -10.0 + float(row) * (8.4 / 19.0)
+			if absf(x) < 1.75 and z > -3.0:
+				continue
+			var blocked_by_basket := false
+			for basket_value in basket_spots.values():
+				var basket_position: Vector3 = basket_value
+				if is_equal_approx(basket_position.y, UPPER_FLOOR_Y) and Vector2(x, z).distance_to(Vector2(basket_position.x, basket_position.z)) < 1.1:
+					blocked_by_basket = true
+					break
+			if blocked_by_basket:
+				continue
+			upper_positions.append(Vector3(x, UPPER_FLOOR_Y, z))
 	var type_counts: Dictionary = {}
+	var pickup_nodes_by_type: Dictionary = {}
 	for flower_type in types:
 		type_counts[flower_type] = 0
-	var zone_centers: Array[Vector2] = [
-		Vector2(-6.0, -6.0), Vector2(0.0, -6.0), Vector2(6.0, -6.0),
-		Vector2(-6.0, 0.0), Vector2(0.0, 0.0), Vector2(6.0, 0.0),
-		Vector2(-6.0, 6.0), Vector2(0.0, 6.0), Vector2(6.0, 6.0),
-	]
-	var total_flowers := types.size() * GameState.TARGET_PER_TYPE
+	var total_flowers: int = GameState.TOTAL_FLOWERS
+	var flowers_per_floor := floori(float(total_flowers) / 2.0)
 	for flower_index in total_flowers:
 		var flower_type: String = types[flower_index % types.size()]
 		var type_number: int = type_counts[flower_type] + 1
@@ -169,24 +270,68 @@ func _build_level_objects() -> void:
 		var flower_id := "%s_%02d" % [flower_type, type_number]
 		if flower_id in GameState.placed_ids or flower_id in GameState.inventory:
 			continue
+		var floor_index := 0 if flower_index < flowers_per_floor else 1
+		var floor_flowers_before := flower_index if floor_index == 0 else flower_index - flowers_per_floor
+		var candidates: Array[Vector3] = lower_positions if floor_index == 0 else upper_positions
+		if candidates.size() < flowers_per_floor:
+			push_error("Not enough flower positions on floor %d" % floor_index)
+			return
+		var slot := floori(float(floor_flowers_before) * float(candidates.size()) / float(flowers_per_floor))
+		var flower_position: Vector3 = candidates[slot]
 		var flower := FlowerScript.new()
 		var tint: Color = GameState.FLOWER_TYPES[flower_type].color
 		flower.setup(flower_id, flower_type, tint)
-		var zone := flower_index % zone_centers.size()
-		var spot := floori(float(flower_index) / float(zone_centers.size()))
-		var angle := TAU * float(spot) / 7.0
-		var radius := 1.25 + float(spot % 3) * 0.18
-		var center: Vector2 = zone_centers[zone]
-		flower.position = Vector3(center.x + cos(angle) * radius, 0, center.y + sin(angle) * radius)
+		var jitter_strength := 0.14 if floor_index == 0 else 0.08
+		var jitter_phase := float(flower_index) * 1.618
+		flower.position = flower_position + Vector3(cos(jitter_phase) * jitter_strength, 0, sin(jitter_phase) * jitter_strength)
 		add_child(flower)
+		if not pickup_nodes_by_type.has(flower_type):
+			pickup_nodes_by_type[flower_type] = []
+		pickup_nodes_by_type[flower_type].append(flower)
+	var stem_positions: Array[Vector3] = []
+	for flower_type in types:
+		for flower in pickup_nodes_by_type[flower_type]:
+			stem_positions.append(flower.position)
+	var stem_batch := _create_flower_batch(
+		FlowerScript.build_stem_mesh(), stem_positions, _material(Color("#5c9567")), "SharedFlowerStems"
+	)
+	var stem_index := 0
+	for flower_type in types:
+		var flower_nodes: Array = pickup_nodes_by_type[flower_type]
+		var bloom_positions: Array[Vector3] = []
+		for flower in flower_nodes:
+			bloom_positions.append(flower.position)
+		var bloom_batch := _create_flower_batch(
+			FlowerScript.build_bloom_mesh(flower_type),
+			bloom_positions,
+			_material(GameState.FLOWER_TYPES[flower_type].color),
+			"BloomBatch_" + flower_type
+		)
+		for index in flower_nodes.size():
+			flower_nodes[index].set_visual_batches(stem_batch, stem_index, bloom_batch, index)
+			stem_index += 1
+
+func _create_flower_batch(mesh: Mesh, positions: Array[Vector3], material: Material, batch_name: String) -> MultiMeshInstance3D:
+	var batch := MultiMeshInstance3D.new()
+	batch.name = batch_name
+	var multimesh := MultiMesh.new()
+	multimesh.transform_format = MultiMesh.TRANSFORM_3D
+	multimesh.mesh = mesh
+	multimesh.instance_count = positions.size()
+	for index in positions.size():
+		multimesh.set_instance_transform(index, Transform3D(Basis.IDENTITY, positions[index]))
+	batch.multimesh = multimesh
+	batch.material_override = material
+	add_child(batch)
+	return batch
 
 func _build_player() -> void:
 	var player := PlayerScript.new()
 	player.position = Vector3(0, 0, 9.0)
 	add_child(player)
 
-func _add_window() -> void:
-	var center := Vector3(6.2, 2.0, -10.78)
+func _add_window_at(center_y: float) -> void:
+	var center := Vector3(6.2, center_y, -10.78)
 	_add_box("WindowGlass", Vector3(2.35, 1.25, 0.05), center, Color("#b9d9d4"), false)
 	_add_box("WindowFrameTop", Vector3(2.55, 0.12, 0.12), center + Vector3(0, 0.69, 0.04), Color("#8a6048"), false)
 	_add_box("WindowFrameBottom", Vector3(2.55, 0.12, 0.12), center + Vector3(0, -0.69, 0.04), Color("#8a6048"), false)

@@ -12,7 +12,7 @@ const TEMP_SAVE_PATH := "user://little_bloom_save.tmp"
 const BACKUP_SAVE_PATH := "user://little_bloom_save.bak"
 const SCHEMA_VERSION := 1
 const MAX_CARRY := 5
-const TARGET_PER_TYPE := 10
+const TOTAL_FLOWERS := 600
 const FLOWER_TYPES := {
 	"rose": {"name": "Hoa hồng", "color": Color("#d96b78")},
 	"tulip": {"name": "Hoa tulip", "color": Color("#e6a34e")},
@@ -20,6 +20,20 @@ const FLOWER_TYPES := {
 	"sunflower": {"name": "Hoa hướng dương", "color": Color("#edbd48")},
 	"lavender": {"name": "Hoa oải hương", "color": Color("#9d82c4")},
 	"peony": {"name": "Hoa mẫu đơn", "color": Color("#e995ae")},
+	"orchid": {"name": "Hoa lan", "color": Color("#b266aa")},
+	"lily": {"name": "Hoa ly", "color": Color("#f2eee0")},
+	"cosmos": {"name": "Hoa sao nhái", "color": Color("#e785a3")},
+}
+const FLOWER_TARGETS := {
+	"rose": 67,
+	"tulip": 67,
+	"daisy": 67,
+	"sunflower": 67,
+	"lavender": 67,
+	"peony": 67,
+	"orchid": 66,
+	"lily": 66,
+	"cosmos": 66,
 }
 
 var inventory: Array[String] = []
@@ -57,7 +71,7 @@ func place_one(flower_type: String) -> bool:
 		notice.emit("Hãy mang " + type_name(flower_type) + " đến đây")
 		return false
 	var flower_id := inventory[index]
-	if placed_count(flower_type) >= TARGET_PER_TYPE:
+	if placed_count(flower_type) >= flower_target(flower_type):
 		notice.emit("Giỏ " + type_name(flower_type) + " đã đầy")
 		return false
 	inventory.remove_at(index)
@@ -74,8 +88,11 @@ func flower_type_from_id(flower_id: String) -> String:
 func type_name(flower_type: String) -> String:
 	return str(FLOWER_TYPES.get(flower_type, {"name": "hoa"}).name)
 
+func flower_target(flower_type: String) -> int:
+	return int(FLOWER_TARGETS.get(flower_type, 0))
+
 func progress_text() -> String:
-	return "Đã xếp %d/%d" % [placed_ids.size(), FLOWER_TYPES.size() * TARGET_PER_TYPE]
+	return "Đã xếp %d/%d" % [placed_ids.size(), TOTAL_FLOWERS]
 
 func placed_count(flower_type: String) -> int:
 	var count := 0
@@ -85,7 +102,7 @@ func placed_count(flower_type: String) -> int:
 	return count
 
 func is_complete() -> bool:
-	return placed_ids.size() >= FLOWER_TYPES.size() * TARGET_PER_TYPE
+	return placed_ids.size() >= TOTAL_FLOWERS
 
 func has_progress() -> bool:
 	return not inventory.is_empty() or not placed_ids.is_empty()
@@ -95,7 +112,7 @@ func _is_valid_flower_id(flower_id: String) -> bool:
 	if parts.size() != 2 or not FLOWER_TYPES.has(parts[0]) or not parts[1].is_valid_int():
 		return false
 	var number := int(parts[1])
-	return number >= 1 and number <= TARGET_PER_TYPE
+	return number >= 1 and number <= flower_target(parts[0])
 
 func _save_and_notify() -> void:
 	if not save_game():
@@ -194,7 +211,7 @@ func load_game() -> void:
 		for already_placed in restored_placed:
 			if flower_type_from_id(already_placed) == flower_type:
 				type_count += 1
-		if not seen_ids.has(flower_id) and type_count < TARGET_PER_TYPE:
+		if not seen_ids.has(flower_id) and type_count < flower_target(flower_type):
 			restored_placed.append(flower_id)
 			seen_ids[flower_id] = true
 	inventory = restored_inventory

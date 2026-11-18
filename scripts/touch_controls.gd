@@ -87,10 +87,10 @@ func _build_ui() -> void:
 	root.add_child(progress_label)
 	inventory_label = Label.new()
 	inventory_label.add_theme_font_size_override("font_size", 18)
-	inventory_label.position = Vector2(28, 92)
+	inventory_label.position = Vector2(28, 124)
 	root.add_child(inventory_label)
 	detail_label = Label.new()
-	detail_label.add_theme_font_size_override("font_size", 16)
+	detail_label.add_theme_font_size_override("font_size", 13)
 	detail_label.position = Vector2(28, 62)
 	root.add_child(detail_label)
 	prompt_label = Label.new()
@@ -167,8 +167,16 @@ func _refresh() -> void:
 		progress_label.text = GameState.progress_text()
 		var totals: Array[String] = []
 		for flower_type in GameState.FLOWER_TYPES:
-			totals.append("%s %d/%d" % [GameState.type_name(flower_type), GameState.placed_count(flower_type), GameState.TARGET_PER_TYPE])
-		detail_label.text = "   ·   ".join(PackedStringArray(totals))
+			totals.append("%s %d/%d" % [GameState.type_name(flower_type), GameState.placed_count(flower_type), GameState.flower_target(flower_type)])
+		var total_lines: Array[String] = []
+		for row in 3:
+			var row_totals: Array[String] = []
+			for column in 3:
+				var index := row * 3 + column
+				if index < totals.size():
+					row_totals.append(totals[index])
+			total_lines.append("   ·   ".join(PackedStringArray(row_totals)))
+		detail_label.text = "\n".join(PackedStringArray(total_lines))
 		var carried_counts: Dictionary = {}
 		for flower_id in GameState.inventory:
 			var flower_type := GameState.flower_type_from_id(flower_id)
@@ -335,7 +343,7 @@ func _show_tutorial() -> void:
 
 func _update_tutorial_page() -> void:
 	var pages := [
-		["Di chuyển", "Dùng joystick bên trái để đi quanh tiệm. Trên máy tính, dùng WASD hoặc phím mũi tên."],
+		["Di chuyển", "Dùng joystick bên trái để đi quanh tiệm và lên dốc tới tầng lửng. Trên máy tính, dùng WASD hoặc phím mũi tên."],
 		["Quan sát", "Vuốt vùng bên phải để nhìn quanh. Trên máy tính, nhấn vào game rồi di chuyển chuột."],
 		["Nhặt và xếp hoa", "Ngắm một bông rồi nhấn NHẶT / ĐẶT. Mang tối đa 5 bông và đặt vào giỏ có đúng loại hoa."],
 	]
