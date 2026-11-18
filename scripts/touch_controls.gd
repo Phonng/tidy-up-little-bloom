@@ -419,7 +419,7 @@ func _build_completion_overlay(root: Control) -> void:
 	title.add_theme_font_size_override("font_size", 28)
 	column.add_child(title)
 	var summary := Label.new()
-	summary.text = "Bạn đã xếp đủ 30 bông hoa."
+	summary.text = "Bạn đã xếp đủ %d bông hoa." % GameState.placed_ids.size()
 	summary.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(summary)
 	var replay := Button.new()

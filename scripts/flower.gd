@@ -74,6 +74,31 @@ func _add_flower_head() -> void:
 			var center := _make_lobe(tint.darkened(0.12), Vector3(0.055, 0.105, 0.05))
 			center.position.y = 0.52
 			add_child(center)
+		"sunflower":
+			for petal_index in 10:
+				var angle := TAU * float(petal_index) / 10.0
+				var petal := _make_lobe(Color("#f1c84f"), Vector3(0.09, 0.045, 0.055))
+				petal.position = Vector3(cos(angle) * 0.105, 0.49, sin(angle) * 0.105)
+				petal.rotation.y = -angle
+				add_child(petal)
+			var center := _make_lobe(Color("#76543e"), Vector3(0.078, 0.07, 0.078))
+			center.position.y = 0.49
+			add_child(center)
+		"lavender":
+			for bloom_index in 5:
+				var bloom := _make_lobe(Color("#a78acb"), Vector3(0.047, 0.055, 0.045))
+				bloom.position = Vector3(0.0, 0.38 + float(bloom_index) * 0.055, float(bloom_index % 2) * 0.035)
+				add_child(bloom)
+		"peony":
+			for petal_index in 10:
+				var angle := TAU * float(petal_index) / 10.0
+				var petal := _make_lobe(tint.lightened(0.08), Vector3(0.078, 0.07, 0.065))
+				petal.position = Vector3(cos(angle) * 0.075, 0.48 + float(petal_index % 2) * 0.035, sin(angle) * 0.075)
+				petal.rotation.y = -angle
+				add_child(petal)
+			var center := _make_lobe(tint.darkened(0.12), Vector3(0.055, 0.06, 0.055))
+			center.position.y = 0.52
+			add_child(center)
 		_:
 			for petal_index in 6:
 				var angle := TAU * float(petal_index) / 6.0

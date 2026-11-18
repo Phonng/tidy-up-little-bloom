@@ -17,6 +17,9 @@ const FLOWER_TYPES := {
 	"rose": {"name": "Hoa hồng", "color": Color("#d96b78")},
 	"tulip": {"name": "Hoa tulip", "color": Color("#e6a34e")},
 	"daisy": {"name": "Hoa cúc", "color": Color("#f2d976")},
+	"sunflower": {"name": "Hoa hướng dương", "color": Color("#edbd48")},
+	"lavender": {"name": "Hoa oải hương", "color": Color("#9d82c4")},
+	"peony": {"name": "Hoa mẫu đơn", "color": Color("#e995ae")},
 }
 
 var inventory: Array[String] = []

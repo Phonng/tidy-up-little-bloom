@@ -16,7 +16,7 @@
 - [ ] Inventory stops at five and shows the full-hands notice without removing the sixth flower.
 - [ ] Correct basket accepts one matching flower; a wrong basket keeps the flower and plays the reject SFX.
 - [ ] Progress increments once per successful placement; placed flowers appear in the basket.
-- [ ] Place all 30 flowers; completion screen appears once, plays the completion cue, and Replay resets the level.
+- [ ] Find and sort all 60 flowers across six types; completion appears once, plays the completion cue, and Replay resets the level.
 - [ ] Music and SFX sliders independently control their audio; zero volume mutes the corresponding bus.
 - [ ] Pause, settings, reset confirmation, return to menu, Continue, New Game confirmation, and Credits work.
 - [ ] Reset confirmation clears inventory and placed progress; canceling it preserves both.
@@ -30,7 +30,7 @@
 - [ ] Check notches, system bars, text wrapping, modal sizes, and thumb reach in landscape.
 - [ ] Open pause while moving, then resume; the player remains still until the joystick is touched again.
 - [ ] Send the app to background while moving and while paused; resume without stuck input or lost saved progress.
-- [ ] Complete pickup, wrong basket, correct basket, full inventory, reset, and 30/30 completion on device.
+- [ ] Complete pickup, wrong basket, correct basket, full inventory, reset, and 60/60 completion on device.
 - [ ] Run for 15 minutes; record FPS, load time, memory, temperature, OS version, and any crash.
 
 Record device model, Android version, Godot version, build date, result, and reproduction steps for every issue.

@@ -4,7 +4,8 @@ const FlowerScript = preload("res://scripts/flower.gd")
 const BasketScript = preload("res://scripts/basket.gd")
 const PlayerScript = preload("res://scripts/player.gd")
 
-const ROOM_SIZE := 10.0
+const ROOM_WIDTH := 24.0
+const ROOM_DEPTH := 22.0
 
 func _ready() -> void:
 	_build_lighting()
@@ -29,19 +30,25 @@ func _build_lighting() -> void:
 	add_child(sun)
 
 func _build_room() -> void:
-	_add_box("Floor", Vector3(ROOM_SIZE, 0.2, ROOM_SIZE), Vector3(0, -0.1, 0), Color("#d9c6a8"), true)
-	_add_box("BackWall", Vector3(ROOM_SIZE, 3.2, 0.2), Vector3(0, 1.5, -ROOM_SIZE / 2), Color("#efe6d6"), true)
-	_add_box("LeftWall", Vector3(0.2, 3.2, ROOM_SIZE), Vector3(-ROOM_SIZE / 2, 1.5, 0), Color("#e8ddca"), true)
-	_add_box("RightWall", Vector3(0.2, 3.2, ROOM_SIZE), Vector3(ROOM_SIZE / 2, 1.5, 0), Color("#e8ddca"), true)
-	_add_box("FrontWall", Vector3(ROOM_SIZE, 3.2, 0.2), Vector3(0, 1.5, ROOM_SIZE / 2), Color("#efe6d6"), true)
-	_add_box("Counter", Vector3(3.0, 0.9, 0.8), Vector3(0, 0.45, -2.5), Color("#a87552"), true)
-	_add_box("Shelf", Vector3(4.2, 1.8, 0.35), Vector3(-2.7, 0.9, -4.25), Color("#9a694a"), true)
-	_add_box("ShelfBoard1", Vector3(4.2, 0.12, 0.5), Vector3(-2.7, 0.7, -4.0), Color("#bc8b62"), true)
-	_add_box("ShelfBoard2", Vector3(4.2, 0.12, 0.5), Vector3(-2.7, 1.35, -4.0), Color("#bc8b62"), true)
+	var half_width := ROOM_WIDTH / 2.0
+	var half_depth := ROOM_DEPTH / 2.0
+	_add_box("Floor", Vector3(ROOM_WIDTH, 0.2, ROOM_DEPTH), Vector3(0, -0.1, 0), Color("#d9c6a8"), true)
+	_add_box("BackWall", Vector3(ROOM_WIDTH, 3.2, 0.2), Vector3(0, 1.5, -half_depth), Color("#efe6d6"), true)
+	_add_box("LeftWall", Vector3(0.2, 3.2, ROOM_DEPTH), Vector3(-half_width, 1.5, 0), Color("#e8ddca"), true)
+	_add_box("RightWall", Vector3(0.2, 3.2, ROOM_DEPTH), Vector3(half_width, 1.5, 0), Color("#e8ddca"), true)
+	_add_box("FrontWall", Vector3(ROOM_WIDTH, 3.2, 0.2), Vector3(0, 1.5, half_depth), Color("#efe6d6"), true)
+	_add_box("Counter", Vector3(3.6, 0.9, 0.9), Vector3(0, 0.45, -8.1), Color("#a87552"), true)
+	_add_box("Shelf", Vector3(4.2, 1.8, 0.35), Vector3(-7.0, 0.9, -9.25), Color("#9a694a"), true)
+	_add_box("ShelfBoard1", Vector3(4.2, 0.12, 0.5), Vector3(-7.0, 0.7, -9.0), Color("#bc8b62"), true)
+	_add_box("ShelfBoard2", Vector3(4.2, 0.12, 0.5), Vector3(-7.0, 1.35, -9.0), Color("#bc8b62"), true)
+	_add_box("DisplayIslandLeft", Vector3(2.4, 0.72, 1.0), Vector3(-3.8, 0.36, -1.0), Color("#b98558"), true)
+	_add_box("DisplayIslandRight", Vector3(2.4, 0.72, 1.0), Vector3(3.8, 0.36, -1.0), Color("#b98558"), true)
 	_add_window()
-	_add_potted_plant(Vector3(4.05, 0, -3.55), Color("#d96b78"))
-	_add_potted_plant(Vector3(-4.05, 0, -2.75), Color("#e6a34e"))
-	_add_box("WelcomeMat", Vector3(2.4, 0.035, 1.0), Vector3(0, 0.02, 4.2), Color("#9e7064"), false)
+	_add_potted_plant(Vector3(9.8, 0, -9.0), Color("#d96b78"))
+	_add_potted_plant(Vector3(-9.8, 0, -9.0), Color("#e6a34e"))
+	_add_potted_plant(Vector3(9.8, 0, 9.0), Color("#9d82c4"))
+	_add_potted_plant(Vector3(-9.8, 0, 9.0), Color("#edbd48"))
+	_add_box("WelcomeMat", Vector3(3.2, 0.035, 1.2), Vector3(0, 0.02, 9.2), Color("#9e7064"), false)
 
 func _build_shop_props() -> void:
 	_add_pendant_lamp()
@@ -55,7 +62,7 @@ func _add_pendant_lamp() -> void:
 	cord_mesh.bottom_radius = 0.018
 	cord_mesh.height = 0.52
 	cord.mesh = cord_mesh
-	cord.position = Vector3(0, 2.91, -0.2)
+	cord.position = Vector3(0, 2.91, -5.0)
 	cord.material_override = _material(Color("#775b48"))
 	add_child(cord)
 	var shade := MeshInstance3D.new()
@@ -64,7 +71,7 @@ func _add_pendant_lamp() -> void:
 	shade_mesh.bottom_radius = 0.34
 	shade_mesh.height = 0.22
 	shade.mesh = shade_mesh
-	shade.position = Vector3(0, 2.54, -0.2)
+	shade.position = Vector3(0, 2.54, -5.0)
 	shade.material_override = _material(Color("#e6b76b"))
 	add_child(shade)
 	var bulb := MeshInstance3D.new()
@@ -72,7 +79,7 @@ func _add_pendant_lamp() -> void:
 	bulb_mesh.radius = 0.095
 	bulb_mesh.height = 0.19
 	bulb.mesh = bulb_mesh
-	bulb.position = Vector3(0, 2.39, -0.2)
+	bulb.position = Vector3(0, 2.39, -5.0)
 	var bulb_material := _material(Color("#ffe5a8"))
 	bulb_material.emission_enabled = true
 	bulb_material.emission = Color("#f8d99a")
@@ -81,16 +88,16 @@ func _add_pendant_lamp() -> void:
 	add_child(bulb)
 
 func _add_counter_gifts() -> void:
-	_add_box("GiftBoxSage", Vector3(0.42, 0.3, 0.36), Vector3(-0.88, 1.04, -2.48), Color("#8da78a"), false)
-	_add_box("GiftRibbonSage", Vector3(0.09, 0.31, 0.37), Vector3(-0.88, 1.04, -2.48), Color("#f0ddbd"), false)
-	_add_box("GiftBoxRose", Vector3(0.34, 0.24, 0.32), Vector3(0.92, 1.01, -2.5), Color("#d9868b"), false)
-	_add_box("GiftRibbonRose", Vector3(0.07, 0.25, 0.33), Vector3(0.92, 1.01, -2.5), Color("#f4e5ca"), false)
-	_add_box("TissuePaper", Vector3(0.6, 0.025, 0.38), Vector3(0.0, 0.92, -2.48), Color("#e7cfae"), false)
+	_add_box("GiftBoxSage", Vector3(0.42, 0.3, 0.36), Vector3(-0.88, 1.04, -8.08), Color("#8da78a"), false)
+	_add_box("GiftRibbonSage", Vector3(0.09, 0.31, 0.37), Vector3(-0.88, 1.04, -8.08), Color("#f0ddbd"), false)
+	_add_box("GiftBoxRose", Vector3(0.34, 0.24, 0.32), Vector3(0.92, 1.01, -8.1), Color("#d9868b"), false)
+	_add_box("GiftRibbonRose", Vector3(0.07, 0.25, 0.33), Vector3(0.92, 1.01, -8.1), Color("#f4e5ca"), false)
+	_add_box("TissuePaper", Vector3(0.6, 0.025, 0.38), Vector3(0.0, 0.92, -8.08), Color("#e7cfae"), false)
 
 func _add_shelf_vases() -> void:
-	_add_decorative_vase(Vector3(-4.05, 1.42, -3.82), Color("#d96b78"), Color("#719b73"))
-	_add_decorative_vase(Vector3(-2.75, 1.42, -3.82), Color("#e6a34e"), Color("#84a87d"))
-	_add_decorative_vase(Vector3(-1.45, 1.42, -3.82), Color("#f2d976"), Color("#739b70"))
+	_add_decorative_vase(Vector3(-8.2, 1.42, -9.05), Color("#d96b78"), Color("#719b73"))
+	_add_decorative_vase(Vector3(-7.0, 1.42, -9.05), Color("#e6a34e"), Color("#84a87d"))
+	_add_decorative_vase(Vector3(-5.8, 1.42, -9.05), Color("#f2d976"), Color("#739b70"))
 
 func _add_decorative_vase(at: Vector3, bloom_color: Color, leaf_color: Color) -> void:
 	var vase := MeshInstance3D.new()
@@ -131,32 +138,55 @@ func _add_decorative_vase(at: Vector3, bloom_color: Color, leaf_color: Color) ->
 	add_child(bloom)
 
 func _build_level_objects() -> void:
-	var types: Array[String] = ["rose", "tulip", "daisy"]
-	for type_index in types.size():
-		var flower_type := types[type_index]
+	var types: Array[String] = ["rose", "tulip", "daisy", "sunflower", "lavender", "peony"]
+	var basket_spots := {
+		"rose": Vector3(-10.0, 0, -6.5),
+		"tulip": Vector3(10.0, 0, -6.5),
+		"daisy": Vector3(-10.0, 0, 0),
+		"sunflower": Vector3(10.0, 0, 0),
+		"lavender": Vector3(-10.0, 0, 6.5),
+		"peony": Vector3(10.0, 0, 6.5),
+	}
+	for flower_type in types:
 		var tint: Color = GameState.FLOWER_TYPES[flower_type].color
 		var basket := BasketScript.new()
 		basket.setup(flower_type, tint)
-		basket.position = Vector3(-3.2 + type_index * 3.2, 0, 1.8)
+		basket.position = basket_spots[flower_type]
 		add_child(basket)
-		for flower_index in range(GameState.TARGET_PER_TYPE):
-			var flower_id := "%s_%02d" % [flower_type, flower_index + 1]
-			if flower_id in GameState.placed_ids or flower_id in GameState.inventory:
-				continue
-			var flower := FlowerScript.new()
-			flower.setup(flower_id, flower_type, tint)
-			var row := flower_index / 5
-			var column := flower_index % 5
-			flower.position = Vector3(-4.3 + float(column) * 0.65 + float(type_index) * 3.0, 0, 0.4 + float(row) * 1.05)
-			add_child(flower)
+	var type_counts: Dictionary = {}
+	for flower_type in types:
+		type_counts[flower_type] = 0
+	var zone_centers: Array[Vector2] = [
+		Vector2(-6.0, -6.0), Vector2(0.0, -6.0), Vector2(6.0, -6.0),
+		Vector2(-6.0, 0.0), Vector2(0.0, 0.0), Vector2(6.0, 0.0),
+		Vector2(-6.0, 6.0), Vector2(0.0, 6.0), Vector2(6.0, 6.0),
+	]
+	var total_flowers := types.size() * GameState.TARGET_PER_TYPE
+	for flower_index in total_flowers:
+		var flower_type: String = types[flower_index % types.size()]
+		var type_number: int = type_counts[flower_type] + 1
+		type_counts[flower_type] = type_number
+		var flower_id := "%s_%02d" % [flower_type, type_number]
+		if flower_id in GameState.placed_ids or flower_id in GameState.inventory:
+			continue
+		var flower := FlowerScript.new()
+		var tint: Color = GameState.FLOWER_TYPES[flower_type].color
+		flower.setup(flower_id, flower_type, tint)
+		var zone := flower_index % zone_centers.size()
+		var spot := floori(float(flower_index) / float(zone_centers.size()))
+		var angle := TAU * float(spot) / 7.0
+		var radius := 1.25 + float(spot % 3) * 0.18
+		var center: Vector2 = zone_centers[zone]
+		flower.position = Vector3(center.x + cos(angle) * radius, 0, center.y + sin(angle) * radius)
+		add_child(flower)
 
 func _build_player() -> void:
 	var player := PlayerScript.new()
-	player.position = Vector3(0, 0, 3.7)
+	player.position = Vector3(0, 0, 9.0)
 	add_child(player)
 
 func _add_window() -> void:
-	var center := Vector3(2.65, 2.0, -4.78)
+	var center := Vector3(6.2, 2.0, -10.78)
 	_add_box("WindowGlass", Vector3(2.35, 1.25, 0.05), center, Color("#b9d9d4"), false)
 	_add_box("WindowFrameTop", Vector3(2.55, 0.12, 0.12), center + Vector3(0, 0.69, 0.04), Color("#8a6048"), false)
 	_add_box("WindowFrameBottom", Vector3(2.55, 0.12, 0.12), center + Vector3(0, -0.69, 0.04), Color("#8a6048"), false)

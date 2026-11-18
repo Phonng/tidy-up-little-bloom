@@ -18,7 +18,7 @@ Ghé thăm một tiệm hoa nhỏ và giúp nơi đây trở nên ngăn nắp h�
 
 Khám phá căn phòng ở góc nhìn thứ nhất, nhặt những bông hoa đang nằm trên sàn rồi xếp chúng vào đúng giỏ. Mỗi lần mang được tối đa năm bông, vì vậy hãy chọn đường đi và sắp xếp từng lượt theo nhịp của riêng bạn.
 
-• Phân loại hoa hồng, tulip và hoa cúc vào đúng giỏ.
+• Tìm và phân loại sáu loại hoa: hồng, tulip, cúc, hướng dương, oải hương và mẫu đơn.
 • Theo dõi tiến độ của từng loại hoa và cả căn phòng.
 • Lưu tiến độ trên thiết bị để có thể quay lại sau.
 • Chơi ngoại tuyến, không tính giờ và không có hình phạt.
