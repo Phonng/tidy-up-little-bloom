@@ -9,7 +9,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 | Phần | Hạng mục | Trạng thái |
 |---|---|---|
 | 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Đã thêm hai bàn tay gắn camera; cần chạy lại sau cập nhật hai tầng và còn thử input thực tế |
-| 2 | Vòng chơi nhặt, mang và phân loại hoa | Đã cập nhật 9 loại/600 bông; cần kiểm tra scene và chơi hết vòng trên thiết bị |
+| 2 | Vòng chơi nhặt, mang và phân loại hoa | Đã cập nhật 9 loại/504 bông; cần kiểm tra scene và chơi hết vòng trên thiết bị |
 | 3 | Save/load an toàn, Continue và reset | Lưu/phục hồi và hộp xác nhận đã có; còn thử phục hồi và thoát đột ngột |
 | 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Luồng, audio và onboarding đã có; còn cân chỉnh UI/âm thanh trên thiết bị |
 | 5 | Art pass và quản lý license asset | Props procedural, tiệm hai tầng, tủ áp tường và 9 giỏ phân loại đã thêm; còn review trực quan trong game |
@@ -38,12 +38,12 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Biểu diễn các bông đang cầm bằng model màu tương ứng và đếm theo loại trong HUD.
 - [x] Hiển thị tiến độ từng loại và tổng tiến độ.
 - [x] Hiển thị các bông đã đặt ở trong giỏ.
-- [x] Hoàn thành 600/600 thì hiện màn hoàn thành và cho chơi lại.
+- [x] Hoàn thành 504/504 thì hiện màn hoàn thành và cho chơi lại.
 - [x] Có phản hồi trực quan khi tay đầy, chọn sai giỏ, tăng tiến độ và hoàn thành.
 - [x] Thêm SFX nhặt, đặt đúng, đặt sai và hoàn thành bằng âm tổng hợp gốc; còn nghe/điều chỉnh trong Godot.
 - [ ] Mở project bằng Godot và kiểm tra trọn vòng chơi trên desktop/Android.
 
-**Kết quả cần đạt:** người mới phân biệt được 9 loại hoa, đi được cả hai tầng và hoàn thành lượt 600 bông mà không cần debug hoặc giải thích miệng.
+**Kết quả cần đạt:** người mới phân biệt được 9 loại hoa, đi được cả hai tầng và hoàn thành lượt 504 bông mà không cần debug hoặc giải thích miệng.
 
 ## Phần 3 — Lưu tiến độ
 
@@ -73,7 +73,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Chốt bảng màu, tỷ lệ và quy tắc phong cách trong tài liệu sản phẩm.
 - [x] Chọn hướng dùng model tự dựng trong Godot cho prototype; chưa thêm asset bên thứ ba.
 - [x] Tạo silhouette hoa hồng, tulip, cúc, hướng dương, oải hương, mẫu đơn, lan, ly, sao nhái và giỏ có nhãn/hoa hiển thị.
-- [x] Mở rộng tiệm thành hai tầng, thêm đường dốc nối tầng và tủ áp tường; phân phối 600 hoa cùng 9 giỏ ở cả hai tầng.
+- [x] Mở rộng tiệm thành hai tầng, thêm đường dốc nối tầng và tủ áp tường; phân phối 504 hoa cùng 9 giỏ ở cả hai tầng.
 - [x] Thêm cửa sổ, cây chậu và thảm chào trong blockout tiệm.
 - [x] Ghi trạng thái không dùng asset bên thứ ba trong `ASSET_LEDGER.md`.
 - [x] Bổ sung đèn treo emissive, giấy gói/hộp quà trên quầy và bình hoa trưng bày trên kệ bằng mesh tự dựng.

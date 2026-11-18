@@ -12,7 +12,7 @@ Godot 4 / GDScript Android first-person flower-sorting prototype. The project is
 ## Current prototype
 
 - Small blockout flower shop, first-person movement and collision.
-- Nine flower types with 600 flowers total (66–67 of each), nine sorting baskets, wall cabinets, and a two-floor shop connected by a walkable ramp; five-item carry limit.
+- Nine flower types with 504 flowers total (56 of each), nine sorting baskets, wall cabinets, and a two-floor shop connected by a walkable ramp; five-item carry limit.
 - Context interaction, progress HUD, local save and resume.
 - The room, flower silhouettes, baskets and display props use original procedural meshes. Original synthesized SFX and shop ambience are included; no third-party assets are bundled.
 - Main menu includes a Godot Engine license entry under Credits & licenses.

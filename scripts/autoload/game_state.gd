@@ -12,7 +12,7 @@ const TEMP_SAVE_PATH := "user://little_bloom_save.tmp"
 const BACKUP_SAVE_PATH := "user://little_bloom_save.bak"
 const SCHEMA_VERSION := 1
 const MAX_CARRY := 5
-const TOTAL_FLOWERS := 600
+const TOTAL_FLOWERS := 504
 const FLOWER_TYPES := {
 	"rose": {"name": "Hoa hồng", "color": Color("#d96b78")},
 	"tulip": {"name": "Hoa tulip", "color": Color("#e6a34e")},
@@ -25,15 +25,15 @@ const FLOWER_TYPES := {
 	"cosmos": {"name": "Hoa sao nhái", "color": Color("#e785a3")},
 }
 const FLOWER_TARGETS := {
-	"rose": 67,
-	"tulip": 67,
-	"daisy": 67,
-	"sunflower": 67,
-	"lavender": 67,
-	"peony": 67,
-	"orchid": 66,
-	"lily": 66,
-	"cosmos": 66,
+	"rose": 56,
+	"tulip": 56,
+	"daisy": 56,
+	"sunflower": 56,
+	"lavender": 56,
+	"peony": 56,
+	"orchid": 56,
+	"lily": 56,
+	"cosmos": 56,
 }
 
 var inventory: Array[String] = []

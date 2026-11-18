@@ -79,11 +79,11 @@ Một game dọn dẹp cửa hàng hoa góc nhìn thứ nhất, chơi bằng c�
 | Góc nhìn | 3D góc nhìn thứ nhất, camera nhìn tự do có giới hạn dọc |
 | Tay người chơi | Hai bàn tay low-poly luôn hiện ở hai bên dưới màn hình, gắn theo camera và không che tâm ngắm |
 | Loại hoa | 9 loại khác nhau về màu và hình dáng: hồng, tulip, cúc, hướng dương, oải hương, mẫu đơn, lan, ly, sao nhái |
-| Số lượng | Tổng 600 bông, chia đều 66–67 bông mỗi loại |
+| Số lượng | Tổng 504 bông, chia đều 56 bông mỗi loại |
 | Giỏ | 9 giỏ đặt ở cả hai tầng; mỗi giỏ nhận một loại hoa |
 | Inventory | Mang tối đa 5 bông; cho phép mang nhiều loại cùng lúc |
 | Thao tác | Đi bộ, nhìn, nhặt và đặt; không có nhảy hoặc chiến đấu |
-| Điều kiện hoàn thành | Đặt đúng toàn bộ 600 bông |
+| Điều kiện hoàn thành | Đặt đúng toàn bộ 504 bông |
 | Save | Tiến độ và inventory lưu cục bộ, tiếp tục offline |
 | Giao diện | Menu tối thiểu, HUD, tạm dừng, cài đặt cơ bản, hoàn thành, credits/license |
 | Audio | Nhạc/SFX nhẹ, điều khiển âm lượng; asset có license hợp lệ |
@@ -138,7 +138,7 @@ Game dùng raycast từ tâm camera. Khi ngắm vật thể tương tác trong t
 
 ### FR-05 — Hoàn thành level
 
-- [ ] Level hoàn thành khi đủ 600/600 hoa được đặt đúng.
+- [ ] Level hoàn thành khi đủ 504/504 hoa được đặt đúng.
 - [ ] Hiện màn hoàn thành riêng, không chỉ thông báo tạm thời.
 - [ ] Màn hoàn thành có hành động rõ ràng để chơi lại.
 - [ ] Trạng thái hoàn thành được lưu trước khi hiển thị kết quả.
@@ -221,7 +221,7 @@ Các số này là ngưỡng nội bộ ban đầu, cần điều chỉnh sau kh
 - Ít nhất 4/5 người thử độc lập hiểu mục tiêu mà không được giải thích trực tiếp.
 - Ít nhất 4/5 người thử có thể nhặt và đặt hoa đúng sau phần hướng dẫn trong game.
 - Không ai mất tiến độ đã lưu trong các tình huống thoát/mở lại đã kiểm tra.
-- Không có blocker khiến không thể hoàn thành 600/600.
+- Không có blocker khiến không thể hoàn thành 504/504.
 - Người thử đánh giá điều khiển là “dùng được” hoặc tốt hơn; mọi vấn đề khó chịu được ghi và xử lý.
 
 ### Sau phát hành — quan sát nếu có dữ liệu hợp lệ
@@ -246,7 +246,7 @@ Kế hoạch sprint, checklist asset, lệnh khởi tạo và phần việc tu�
 |---|---|---|
 | Điều khiển FPS trên cảm ứng không thoải mái | Người chơi bỏ trước khi hiểu loop | Prototype trên máy thật tuần đầu; tune joystick/sensitivity trước khi art pass |
 | Không nhìn thấy tiến bộ | Sắp xếp hoa cảm giác lặp | Tiến độ từng giỏ, hoa hiện trong giỏ, phản hồi ngay sau thao tác |
-| Scope vượt sức solo developer | Trễ phát hành | Khóa MVP một tiệm hai tầng/chín loại/600 hoa; dùng batching và đo hiệu năng Android sớm |
+| Scope vượt sức solo developer | Trễ phát hành | Khóa MVP một tiệm hai tầng/chín loại/504 hoa; dùng batching và đo hiệu năng Android sớm |
 | Asset khác phong cách hoặc license không rõ | Giảm chất lượng hoặc rủi ro phát hành | Giới hạn nguồn, ưu tiên CC0/giấy phép rõ, lưu hồ sơ từng file |
 | Save lỗi | Mất tiến độ và đánh giá xấu | Schema version, kiểm tra dữ liệu, lưu sau hành động, test phục hồi |
 | Thiết bị Android yếu | FPS giảm, máy nóng, crash | Đo trên máy baseline sớm; giảm lights/texture và hiệu ứng theo số đo |
