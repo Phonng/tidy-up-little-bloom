@@ -8,13 +8,13 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 
 | Phần | Hạng mục | Trạng thái |
 |---|---|---|
-| 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Đã dựng; cần mở trong Godot để xác nhận trực quan |
-| 2 | Vòng chơi nhặt, mang và phân loại hoa | Đã bổ sung; còn SFX và kiểm tra trong Godot/Android |
-| 3 | Save/load an toàn, Continue và reset | Đã gia cố lưu/phục hồi; còn UI reset và xác minh trên máy |
-| 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Luồng và onboarding đã có; còn xác minh UI trên thiết bị |
-| 5 | Art pass và quản lý license asset | Hoa/giỏ/props đầu tiên đã tự dựng; còn credits và kiểm tra hình ảnh |
-| 6 | Tối ưu và đóng gói Android | Phiên bản/requirements đã ghi; build và đo máy còn chờ |
-| 7 | Kiểm thử người chơi, Google Play và phát hành | Chưa làm |
+| 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Godot 4.7.2 mở project và khởi động hai scene headless; còn thử input thực tế |
+| 2 | Vòng chơi nhặt, mang và phân loại hoa | Logic và SFX đã nối; còn chơi hết vòng trên thiết bị |
+| 3 | Save/load an toàn, Continue và reset | Lưu/phục hồi và hộp xác nhận đã có; còn thử phục hồi và thoát đột ngột |
+| 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Luồng, audio và onboarding đã có; còn cân chỉnh UI/âm thanh trên thiết bị |
+| 5 | Art pass và quản lý license asset | Props procedural và icon đã thêm; còn review trực quan trong game |
+| 6 | Tối ưu và đóng gói Android | Preset/icon/API đã chuẩn bị; Android SDK/JDK, AAB và đo máy còn chờ |
+| 7 | Kiểm thử người chơi, Google Play và phát hành | Nội dung listing đã soạn; Play Console, tester và phát hành còn chờ |
 
 ## Phần 1 — Nền project và điều khiển
 
@@ -24,12 +24,12 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Thêm joystick cảm ứng có hiển thị, vùng vuốt camera và nút tương tác.
 - [x] Sửa collision để người chơi va vào giỏ nhưng camera vẫn raycast trúng giỏ/hoa.
 - [x] Cập nhật README và checklist chơi thử.
-- [ ] Mở project bằng Godot 4 và xử lý mọi lỗi import/parser nếu có.
+- [x] Mở project bằng Godot 4.7.2 headless và sửa lỗi parser phát hiện ở save/load; import asset hoàn tất.
 - [ ] Chạy một vòng thử trên desktop và một điện thoại Android thật.
 
 **Kết quả cần đạt:** project mở được; người chơi đi/nhìn thoải mái; joystick không cản nút; có thể nhắm trúng hoa và giỏ.
 
-**Ghi chú môi trường:** chưa có executable Godot trong môi trường làm việc này, nên phần chạy thực tế còn chờ mở bằng Godot trên máy của bạn.
+**Ghi chú kiểm tra:** Godot headless xác nhận menu và level khởi động; chưa kiểm tra trực quan hoặc thao tác tay. Máy chưa có Android SDK/JDK/ADB.
 
 ## Phần 2 — Vòng chơi cốt lõi
 
@@ -51,7 +51,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Phục hồi inventory và hoa đã đặt sau khi thoát/mở lại.
 - [x] Chặn ID trùng, ID lạ, dữ liệu vượt số lượng mục tiêu và file save sai cấu trúc.
 - [x] Ghi save tạm, giữ bản dự phòng trong lúc thay file và phục hồi bản dự phòng nếu cần.
-- [ ] Thêm reset tiến độ có hộp xác nhận.
+- [x] Thêm reset tiến độ có hộp xác nhận.
 - [x] Đặt schema version và từ chối cấu trúc/schema không hợp lệ.
 - [ ] Xác minh thoát đột ngột và phục hồi save trên desktop/Android.
 
@@ -65,7 +65,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Có hộp xác nhận trước khi xóa tiến độ.
 - [x] Lưu độ nhạy nhìn, đảo trục Y, âm lượng nhạc và hiệu ứng vào cấu hình cục bộ.
 - [x] Hướng dẫn 3 bước lần đầu trong level, có nút bỏ qua và lưu lựa chọn.
-- [ ] Kết nối nhạc và xác minh mix audio; bus SFX đã nối với các hiệu ứng tổng hợp gốc.
+- [ ] Nghe và cân chỉnh mix audio trong Godot; nhạc ambient tổng hợp và bus SFX đã được nối.
 - [ ] Kiểm tra chữ, safe area và kích thước nút trên điện thoại nhỏ.
 
 ## Phần 5 — Art pass và giấy phép
@@ -75,7 +75,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Tạo silhouette hoa hồng, tulip, cúc và giỏ có nhãn/hoa hiển thị.
 - [x] Thêm cửa sổ, cây chậu và thảm chào trong blockout tiệm.
 - [x] Ghi trạng thái không dùng asset bên thứ ba trong `ASSET_LEDGER.md`.
-- [ ] Thay hoặc hoàn thiện các props blockout còn lại.
+- [x] Bổ sung đèn treo emissive, giấy gói/hộp quà trên quầy và bình hoa trưng bày trên kệ bằng mesh tự dựng.
 - [x] Thêm credits/license Godot trong menu game; asset ledger hiện không có asset bên thứ ba.
 - [ ] Kiểm tra art pass trực quan trong Godot trên màn hình ngang.
 
@@ -86,8 +86,10 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 - [x] Chọn baseline Godot 4.7.2 stable theo release archive ngày 17/11/2026; ghi trong `ANDROID_RELEASE_GUIDE.md`.
 - [ ] Cấu hình Android SDK/JDK; preset Android Play đã được thêm.
 - [x] Bật landscape; thêm icon project vector gốc.
-- [ ] Hoàn thiện launcher icon sizes, safe area, multi-touch và resume trên Android thật. Trạng thái input cảm ứng được xóa khi mở modal hoặc ứng dụng vào nền; còn xác minh hành vi trên thiết bị.
-- [x] Đặt target SDK 36 trong preset; xác nhận manifest sau khi export.
+- [ ] Hoàn thiện safe area, multi-touch và resume trên Android thật. Trạng thái input cảm ứng được xóa khi mở modal hoặc ứng dụng vào nền; còn xác minh hành vi trên thiết bị.
+- [x] Thêm launcher icon classic 512×512, adaptive foreground/background và monochrome 512×512 vào preset; Godot tạo các density variant thấp hơn.
+- [x] Đặt target SDK 36 trong preset.
+- [ ] Xuất AAB và xác nhận manifest thực tế có target SDK 36.
 - [ ] Đo FPS/tải/nhiệt trên máy yếu và máy tầm trung.
 - [ ] Tối ưu ánh sáng, texture, material, collision theo số đo.
 - [ ] Xuất AAB release và cất signing key an toàn ngoài repo.
@@ -96,7 +98,9 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 
 - [ ] Hoàn thành checklist manual trong `tests_manual/first_playable.md`.
 - [ ] Thu feedback từ người chơi chưa biết project.
-- [ ] Chuẩn bị icon, screenshots, mô tả, content rating và khai báo dữ liệu.
+- [x] Tạo icon Google Play 512×512, feature graphic 1024×500 và bản nháp mô tả tiếng Việt trong `PLAY_STORE_DRAFT.md`.
+- [x] Soạn chính sách quyền riêng tư và thêm mục đọc trong game; còn địa chỉ hỗ trợ và URL HTTPS công khai cho Play Console.
+- [ ] Chụp screenshots gameplay thật; hoàn tất content rating và Data safety trong Play Console sau khi xác minh build/dependencies.
 - [ ] Tạo internal test rồi closed test.
 - [ ] Hoàn tất yêu cầu tester/production access đang áp dụng cho tài khoản Play Console.
 - [ ] Phát hành staged rollout và theo dõi crash/feedback.

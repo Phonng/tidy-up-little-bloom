@@ -9,6 +9,7 @@ const ROOM_SIZE := 10.0
 func _ready() -> void:
 	_build_lighting()
 	_build_room()
+	_build_shop_props()
 	_build_level_objects()
 	_build_player()
 
@@ -41,6 +42,93 @@ func _build_room() -> void:
 	_add_potted_plant(Vector3(4.05, 0, -3.55), Color("#d96b78"))
 	_add_potted_plant(Vector3(-4.05, 0, -2.75), Color("#e6a34e"))
 	_add_box("WelcomeMat", Vector3(2.4, 0.035, 1.0), Vector3(0, 0.02, 4.2), Color("#9e7064"), false)
+
+func _build_shop_props() -> void:
+	_add_pendant_lamp()
+	_add_counter_gifts()
+	_add_shelf_vases()
+
+func _add_pendant_lamp() -> void:
+	var cord := MeshInstance3D.new()
+	var cord_mesh := CylinderMesh.new()
+	cord_mesh.top_radius = 0.018
+	cord_mesh.bottom_radius = 0.018
+	cord_mesh.height = 0.52
+	cord.mesh = cord_mesh
+	cord.position = Vector3(0, 2.91, -0.2)
+	cord.material_override = _material(Color("#775b48"))
+	add_child(cord)
+	var shade := MeshInstance3D.new()
+	var shade_mesh := CylinderMesh.new()
+	shade_mesh.top_radius = 0.16
+	shade_mesh.bottom_radius = 0.34
+	shade_mesh.height = 0.22
+	shade.mesh = shade_mesh
+	shade.position = Vector3(0, 2.54, -0.2)
+	shade.material_override = _material(Color("#e6b76b"))
+	add_child(shade)
+	var bulb := MeshInstance3D.new()
+	var bulb_mesh := SphereMesh.new()
+	bulb_mesh.radius = 0.095
+	bulb_mesh.height = 0.19
+	bulb.mesh = bulb_mesh
+	bulb.position = Vector3(0, 2.39, -0.2)
+	var bulb_material := _material(Color("#ffe5a8"))
+	bulb_material.emission_enabled = true
+	bulb_material.emission = Color("#f8d99a")
+	bulb_material.emission_energy_multiplier = 0.35
+	bulb.material_override = bulb_material
+	add_child(bulb)
+
+func _add_counter_gifts() -> void:
+	_add_box("GiftBoxSage", Vector3(0.42, 0.3, 0.36), Vector3(-0.88, 1.04, -2.48), Color("#8da78a"), false)
+	_add_box("GiftRibbonSage", Vector3(0.09, 0.31, 0.37), Vector3(-0.88, 1.04, -2.48), Color("#f0ddbd"), false)
+	_add_box("GiftBoxRose", Vector3(0.34, 0.24, 0.32), Vector3(0.92, 1.01, -2.5), Color("#d9868b"), false)
+	_add_box("GiftRibbonRose", Vector3(0.07, 0.25, 0.33), Vector3(0.92, 1.01, -2.5), Color("#f4e5ca"), false)
+	_add_box("TissuePaper", Vector3(0.6, 0.025, 0.38), Vector3(0.0, 0.92, -2.48), Color("#e7cfae"), false)
+
+func _add_shelf_vases() -> void:
+	_add_decorative_vase(Vector3(-4.05, 1.42, -3.82), Color("#d96b78"), Color("#719b73"))
+	_add_decorative_vase(Vector3(-2.75, 1.42, -3.82), Color("#e6a34e"), Color("#84a87d"))
+	_add_decorative_vase(Vector3(-1.45, 1.42, -3.82), Color("#f2d976"), Color("#739b70"))
+
+func _add_decorative_vase(at: Vector3, bloom_color: Color, leaf_color: Color) -> void:
+	var vase := MeshInstance3D.new()
+	var vase_mesh := CylinderMesh.new()
+	vase_mesh.top_radius = 0.17
+	vase_mesh.bottom_radius = 0.12
+	vase_mesh.height = 0.34
+	vase.mesh = vase_mesh
+	vase.position = at + Vector3(0, 0.17, 0)
+	vase.material_override = _material(Color("#d9c1a4"))
+	add_child(vase)
+	var stem := MeshInstance3D.new()
+	var stem_mesh := CylinderMesh.new()
+	stem_mesh.top_radius = 0.012
+	stem_mesh.bottom_radius = 0.018
+	stem_mesh.height = 0.46
+	stem.mesh = stem_mesh
+	stem.position = at + Vector3(0, 0.55, 0)
+	stem.material_override = _material(Color("#5f8b68"))
+	add_child(stem)
+	var leaf := MeshInstance3D.new()
+	var leaf_mesh := SphereMesh.new()
+	leaf_mesh.radial_segments = 8
+	leaf_mesh.rings = 4
+	leaf.mesh = leaf_mesh
+	leaf.scale = Vector3(0.16, 0.045, 0.075)
+	leaf.position = at + Vector3(0.09, 0.54, 0)
+	leaf.material_override = _material(leaf_color)
+	add_child(leaf)
+	var bloom := MeshInstance3D.new()
+	var bloom_mesh := SphereMesh.new()
+	bloom_mesh.radial_segments = 8
+	bloom_mesh.rings = 4
+	bloom.mesh = bloom_mesh
+	bloom.scale = Vector3(0.12, 0.13, 0.12)
+	bloom.position = at + Vector3(0, 0.84, 0)
+	bloom.material_override = _material(bloom_color)
+	add_child(bloom)
 
 func _build_level_objects() -> void:
 	var types: Array[String] = ["rose", "tulip", "daisy"]

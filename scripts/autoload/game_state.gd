@@ -157,10 +157,10 @@ func _is_save_valid(parsed: Variant) -> bool:
 	return parsed.get("inventory", []) is Array and parsed.get("placed_ids", []) is Array
 
 func load_game() -> void:
-	var parsed := _read_save(SAVE_PATH)
+	var parsed: Variant = _read_save(SAVE_PATH)
 	var recovered_from_backup := false
 	if not _is_save_valid(parsed):
-		var backup := _read_save(BACKUP_SAVE_PATH)
+		var backup: Variant = _read_save(BACKUP_SAVE_PATH)
 		if _is_save_valid(backup):
 			parsed = backup
 			recovered_from_backup = true

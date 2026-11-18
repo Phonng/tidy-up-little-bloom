@@ -7,6 +7,7 @@ var settings_panel: SettingsPanel
 var reset_dialog: ConfirmationDialog
 var new_game_dialog: ConfirmationDialog
 var credits_dialog: AcceptDialog
+var privacy_dialog: AcceptDialog
 
 func _ready() -> void:
 	_build_menu()
@@ -21,7 +22,7 @@ func _build_menu() -> void:
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(center)
 	var card := PanelContainer.new()
-	card.custom_minimum_size = Vector2(440, 500)
+	card.custom_minimum_size = Vector2(440, 560)
 	center.add_child(card)
 	var column := VBoxContainer.new()
 	column.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -66,6 +67,12 @@ func _build_menu() -> void:
 	credits.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	credits.pressed.connect(_open_credits)
 	column.add_child(credits)
+	var privacy := Button.new()
+	privacy.text = "Quyền riêng tư"
+	privacy.custom_minimum_size = Vector2(270, 50)
+	privacy.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	privacy.pressed.connect(_open_privacy_policy)
+	column.add_child(privacy)
 	settings_panel = SettingsPanel.new()
 	settings_panel.set_anchors_preset(Control.PRESET_CENTER)
 	settings_panel.position = Vector2(-225, -235)
@@ -84,6 +91,10 @@ func _build_menu() -> void:
 	credits_dialog.title = "Credits & giấy phép"
 	credits_dialog.dialog_text = _load_credits()
 	add_child(credits_dialog)
+	privacy_dialog = AcceptDialog.new()
+	privacy_dialog.title = "Chính sách quyền riêng tư"
+	privacy_dialog.dialog_text = _load_privacy_policy()
+	add_child(privacy_dialog)
 
 func _update_continue_button() -> void:
 	continue_button.visible = GameState.has_progress()
@@ -120,6 +131,15 @@ func _reset_progress() -> void:
 
 func _open_credits() -> void:
 	credits_dialog.popup_centered(Vector2i(760, 580))
+
+func _open_privacy_policy() -> void:
+	privacy_dialog.popup_centered(Vector2i(760, 580))
+
+func _load_privacy_policy() -> String:
+	var policy := FileAccess.open("res://PRIVACY_POLICY.md", FileAccess.READ)
+	if policy == null:
+		return "Chưa tải được chính sách quyền riêng tư."
+	return policy.get_as_text()
 
 func _load_credits() -> String:
 	var credits := "Little Bloom\n\n"

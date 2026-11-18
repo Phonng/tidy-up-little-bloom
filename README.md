@@ -14,7 +14,7 @@ Godot 4 / GDScript Android first-person flower-sorting prototype. The project is
 - Small blockout flower shop, first-person movement and collision.
 - Three flower types, three baskets, 30 flowers, five-item carry limit.
 - Context interaction, progress HUD, local save and resume.
-- The room, flower silhouettes and baskets use original procedural low-poly meshes; no third-party assets are included yet.
+- The room, flower silhouettes, baskets and display props use original procedural meshes. Original synthesized SFX and shop ambience are included; no third-party assets are bundled.
 - Main menu includes a Godot Engine license entry under Credits & licenses.
 
 ## Next steps
@@ -25,6 +25,8 @@ Start with `PRODUCT_SPEC.md` for the product scope and requirements. Use `ROADMA
 
 See `ANDROID_RELEASE_GUIDE.md` for the Android setup. The tracked Play export preset uses application ID `com.phonng.littlebloom`; keep release credentials in Godot's local `.godot/export_credentials.cfg`, never in Git.
 
+Store listing copy and graphic files are in `PLAY_STORE_DRAFT.md` and `store/`. `PRIVACY_POLICY.md` is shown from the game menu; add a monitored support email and host the final policy at a public HTTPS URL before publishing.
+
 ## License notes
 
-The Godot Engine is MIT-licensed. Add the required engine notice to an in-game credits/licenses screen before distributing a build. No third-party art or audio is currently bundled.
+The Godot Engine is MIT-licensed; its notice is included in the in-game Credits & licenses screen. See `ASSET_LEDGER.md` for project-created artwork and synthesized audio.

@@ -1,5 +1,6 @@
 extends Node
 
+const SHOP_MUSIC: AudioStreamWAV = preload("res://assets/audio/shop_ambience.wav")
 const SETTINGS_PATH := "user://settings.cfg"
 
 var look_sensitivity := 1.0
@@ -7,12 +8,25 @@ var invert_y := false
 var music_volume := 0.7
 var sfx_volume := 0.8
 var tutorial_seen := false
+var music_player: AudioStreamPlayer
 
 func _ready() -> void:
 	_ensure_audio_bus("Music")
 	_ensure_audio_bus("SFX")
 	load_settings()
+	var music_stream := SHOP_MUSIC.duplicate() as AudioStreamWAV
+	music_stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	music_player = AudioStreamPlayer.new()
+	music_player.name = "ShopAmbience"
+	music_player.bus = "Music"
+	music_player.stream = music_stream
+	add_child(music_player)
 	_apply_audio()
+	music_player.play()
+
+func _exit_tree() -> void:
+	if is_instance_valid(music_player):
+		music_player.stop()
 
 func _ensure_audio_bus(bus_name: String) -> void:
 	var index := AudioServer.get_bus_index(bus_name)
