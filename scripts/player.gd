@@ -10,6 +10,7 @@ var touch_move := Vector2.ZERO
 var touch_look := Vector2.ZERO
 var interact_pressed := false
 var controls: TouchControls
+var flower_field: FlowerField
 var head: Node3D
 var camera: Camera3D
 var ray: RayCast3D
@@ -46,6 +47,7 @@ func _ready() -> void:
 	controls.move_changed.connect(_on_move_changed)
 	controls.look_changed.connect(_on_look_changed)
 	controls.interact_requested.connect(_on_interact)
+	flower_field = get_tree().get_first_node_in_group("flower_field") as FlowerField
 	GameState.changed.connect(_update_held_visual)
 	_update_held_visual()
 
@@ -149,10 +151,21 @@ func _physics_process(delta: float) -> void:
 	touch_look = Vector2.ZERO
 	ray.force_raycast_update()
 	var focused: Object = ray.get_collider() if ray.is_colliding() else null
+	var focused_flower_id := ""
+	if (focused == null or not focused.is_in_group("interactables")) and is_instance_valid(flower_field):
+		focused_flower_id = flower_field.focused_flower(
+			camera.global_position,
+			-camera.global_transform.basis.z,
+			3.0
+		)
 	if focused != null and focused.is_in_group("interactables"):
 		controls.set_prompt(focused.focus_text())
 		if interact_pressed:
 			focused.interact(self)
+	elif not focused_flower_id.is_empty():
+		controls.set_prompt(flower_field.focus_text(focused_flower_id))
+		if interact_pressed:
+			flower_field.interact(focused_flower_id)
 	else:
 		controls.set_prompt("")
 	interact_pressed = false

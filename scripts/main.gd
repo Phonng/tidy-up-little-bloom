@@ -1,7 +1,7 @@
 extends Node3D
 
-const FlowerScript = preload("res://scripts/flower.gd")
 const BasketScript = preload("res://scripts/basket.gd")
+const FlowerFieldScript = preload("res://scripts/flower_field.gd")
 const PlayerScript = preload("res://scripts/player.gd")
 
 const ROOM_WIDTH := 24.0
@@ -258,9 +258,10 @@ func _build_level_objects() -> void:
 				continue
 			upper_positions.append(Vector3(x, UPPER_FLOOR_Y, z))
 	var type_counts: Dictionary = {}
-	var pickup_nodes_by_type: Dictionary = {}
+	var flowers_by_type: Dictionary = {}
 	for flower_type in types:
 		type_counts[flower_type] = 0
+		flowers_by_type[flower_type] = []
 	var total_flowers: int = GameState.TOTAL_FLOWERS
 	var flowers_per_floor := floori(float(total_flowers) / 2.0)
 	for flower_index in total_flowers:
@@ -278,52 +279,14 @@ func _build_level_objects() -> void:
 			return
 		var slot := floori(float(floor_flowers_before) * float(candidates.size()) / float(flowers_per_floor))
 		var flower_position: Vector3 = candidates[slot]
-		var flower := FlowerScript.new()
-		var tint: Color = GameState.FLOWER_TYPES[flower_type].color
-		flower.setup(flower_id, flower_type, tint)
 		var jitter_strength := 0.14 if floor_index == 0 else 0.08
 		var jitter_phase := float(flower_index) * 1.618
-		flower.position = flower_position + Vector3(cos(jitter_phase) * jitter_strength, 0, sin(jitter_phase) * jitter_strength)
-		add_child(flower)
-		if not pickup_nodes_by_type.has(flower_type):
-			pickup_nodes_by_type[flower_type] = []
-		pickup_nodes_by_type[flower_type].append(flower)
-	var stem_positions: Array[Vector3] = []
-	for flower_type in types:
-		for flower in pickup_nodes_by_type[flower_type]:
-			stem_positions.append(flower.position)
-	var stem_batch := _create_flower_batch(
-		FlowerScript.build_stem_mesh(), stem_positions, _material(Color("#5c9567")), "SharedFlowerStems"
-	)
-	var stem_index := 0
-	for flower_type in types:
-		var flower_nodes: Array = pickup_nodes_by_type[flower_type]
-		var bloom_positions: Array[Vector3] = []
-		for flower in flower_nodes:
-			bloom_positions.append(flower.position)
-		var bloom_batch := _create_flower_batch(
-			FlowerScript.build_bloom_mesh(flower_type),
-			bloom_positions,
-			_material(GameState.FLOWER_TYPES[flower_type].color),
-			"BloomBatch_" + flower_type
-		)
-		for index in flower_nodes.size():
-			flower_nodes[index].set_visual_batches(stem_batch, stem_index, bloom_batch, index)
-			stem_index += 1
-
-func _create_flower_batch(mesh: Mesh, positions: Array[Vector3], material: Material, batch_name: String) -> MultiMeshInstance3D:
-	var batch := MultiMeshInstance3D.new()
-	batch.name = batch_name
-	var multimesh := MultiMesh.new()
-	multimesh.transform_format = MultiMesh.TRANSFORM_3D
-	multimesh.mesh = mesh
-	multimesh.instance_count = positions.size()
-	for index in positions.size():
-		multimesh.set_instance_transform(index, Transform3D(Basis.IDENTITY, positions[index]))
-	batch.multimesh = multimesh
-	batch.material_override = material
-	add_child(batch)
-	return batch
+		var position := flower_position + Vector3(cos(jitter_phase) * jitter_strength, 0, sin(jitter_phase) * jitter_strength)
+		flowers_by_type[flower_type].append({"id": flower_id, "position": position})
+	var flower_field := FlowerFieldScript.new()
+	flower_field.name = "FlowerField"
+	flower_field.initialize(flowers_by_type)
+	add_child(flower_field)
 
 func _build_player() -> void:
 	var player := PlayerScript.new()

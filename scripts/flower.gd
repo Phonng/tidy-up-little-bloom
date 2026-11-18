@@ -1,13 +1,5 @@
-extends StaticBody3D
-class_name FlowerPickup
-
-var flower_id := "rose_001"
-var flower_type := "rose"
-var tint := Color("#d96b78")
-var _stem_batch: MultiMeshInstance3D
-var _stem_index := -1
-var _bloom_batch: MultiMeshInstance3D
-var _bloom_index := -1
+extends RefCounted
+class_name FlowerVisualFactory
 
 static func build_stem_mesh() -> ArrayMesh:
 	var surface := SurfaceTool.new()
@@ -72,38 +64,3 @@ static func build_bloom_mesh(flower_type: String) -> ArrayMesh:
 static func _append_part(surface: SurfaceTool, mesh: Mesh, at: Vector3, scale: Vector3, rotation: Vector3 = Vector3.ZERO) -> void:
 	var basis := Basis.from_euler(rotation) * Basis.from_scale(scale)
 	surface.append_from(mesh, 0, Transform3D(basis, at))
-
-func setup(id: String, type: String, color: Color) -> void:
-	flower_id = id
-	flower_type = type
-	tint = color
-
-func set_visual_batches(stem_batch: MultiMeshInstance3D, stem_index: int, bloom_batch: MultiMeshInstance3D, bloom_index: int) -> void:
-	_stem_batch = stem_batch
-	_stem_index = stem_index
-	_bloom_batch = bloom_batch
-	_bloom_index = bloom_index
-
-func _ready() -> void:
-	add_to_group("interactables")
-	collision_layer = 2
-	var shape := SphereShape3D.new()
-	shape.radius = 0.24
-	var collision := CollisionShape3D.new()
-	collision.shape = shape
-	collision.position.y = 0.32
-	add_child(collision)
-
-func interact(_actor: Node) -> void:
-	if GameState.pickup(flower_id):
-		_hide_batch_instance(_stem_batch, _stem_index)
-		_hide_batch_instance(_bloom_batch, _bloom_index)
-		queue_free()
-
-func focus_text() -> String:
-	return "Nhặt " + GameState.type_name(flower_type)
-
-func _hide_batch_instance(batch: MultiMeshInstance3D, index: int) -> void:
-	if is_instance_valid(batch) and batch.multimesh != null and index >= 0:
-		var hidden := Transform3D(Basis.from_scale(Vector3.ZERO), Vector3(0, -1000, 0))
-		batch.multimesh.set_instance_transform(index, hidden)
