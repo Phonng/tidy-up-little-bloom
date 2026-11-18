@@ -15,6 +15,7 @@ The checks below were run before the current expansion to nine types, 600 flower
 - [ ] Main scene opens; player walks around without passing through walls, counter, shelf, or baskets.
 - [ ] WASD/arrows move, captured mouse looks, E interacts, Esc releases the mouse.
 - [ ] Camera pitch stays clamped; mouse clicks on menu/modal UI do not rotate the camera.
+- [ ] Both hands remain anchored at the lower sides while looking around and do not cover the reticle, flowers, or touch buttons.
 - [ ] Look at a flower within range; prompt names its type; interact picks it up and plays the pickup SFX.
 - [ ] Inventory stops at five and shows the full-hands notice without removing the sixth flower.
 - [ ] Correct basket accepts one matching flower; a wrong basket keeps the flower and plays the reject SFX.

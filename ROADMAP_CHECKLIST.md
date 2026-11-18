@@ -8,7 +8,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 
 | Phần | Hạng mục | Trạng thái |
 |---|---|---|
-| 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Bản nền đã mở headless; cần chạy lại sau cập nhật hai tầng, còn thử input thực tế |
+| 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Đã thêm hai bàn tay gắn camera; cần chạy lại sau cập nhật hai tầng và còn thử input thực tế |
 | 2 | Vòng chơi nhặt, mang và phân loại hoa | Đã cập nhật 9 loại/600 bông; cần kiểm tra scene và chơi hết vòng trên thiết bị |
 | 3 | Save/load an toàn, Continue và reset | Lưu/phục hồi và hộp xác nhận đã có; còn thử phục hồi và thoát đột ngột |
 | 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Luồng, audio và onboarding đã có; còn cân chỉnh UI/âm thanh trên thiết bị |

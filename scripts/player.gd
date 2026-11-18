@@ -31,13 +31,14 @@ func _ready() -> void:
 	camera = Camera3D.new()
 	camera.current = true
 	head.add_child(camera)
+	_build_first_person_hands()
 	ray = RayCast3D.new()
 	ray.target_position = Vector3(0, 0, -3.0)
 	ray.collision_mask = 2
 	ray.enabled = true
 	camera.add_child(ray)
 	held_root = Node3D.new()
-	held_root.position = Vector3(0.36, -0.3, -0.58)
+	held_root.position = Vector3(0.0, -0.34, -0.76)
 	camera.add_child(held_root)
 	controls = TouchControls.new()
 	controls.name = "TouchControls"
@@ -47,6 +48,76 @@ func _ready() -> void:
 	controls.interact_requested.connect(_on_interact)
 	GameState.changed.connect(_update_held_visual)
 	_update_held_visual()
+
+func _build_first_person_hands() -> void:
+	var hands := Node3D.new()
+	hands.name = "FirstPersonHands"
+	camera.add_child(hands)
+	var sleeve_material := _hand_material(Color("#8da78a"))
+	var cuff_material := _hand_material(Color("#e8d8c1"))
+	var skin_material := _hand_material(Color("#dba987"))
+	var nail_material := _hand_material(Color("#f0c9ad"))
+	for side in [-1.0, 1.0]:
+		var sleeve := _hand_capsule("Sleeve", 0.074, 0.36, sleeve_material)
+		sleeve.position = Vector3(side * 0.49, -0.50, -0.62)
+		sleeve.rotation.z = side * 0.55
+		hands.add_child(sleeve)
+		var cuff := MeshInstance3D.new()
+		var cuff_mesh := CylinderMesh.new()
+		cuff_mesh.top_radius = 0.082
+		cuff_mesh.bottom_radius = 0.082
+		cuff_mesh.height = 0.055
+		cuff.mesh = cuff_mesh
+		cuff.position = Vector3(side * 0.405, -0.36, -0.665)
+		cuff.rotation.z = side * 0.55
+		cuff.material_override = cuff_material
+		hands.add_child(cuff)
+		var palm := MeshInstance3D.new()
+		var palm_mesh := SphereMesh.new()
+		palm_mesh.radial_segments = 12
+		palm_mesh.rings = 6
+		palm.mesh = palm_mesh
+		palm.scale = Vector3(0.12, 0.085, 0.065)
+		palm.position = Vector3(side * 0.34, -0.325, -0.68)
+		palm.material_override = skin_material
+		hands.add_child(palm)
+		for finger_index in 4:
+			var finger := _hand_capsule("Finger", 0.022, 0.12, skin_material)
+			var finger_offset := float(finger_index) - 1.5
+			finger.position = Vector3(side * (0.27 + float(finger_index) * 0.052), -0.235 + absf(finger_offset) * 0.012, -0.69)
+			finger.rotation.z = side * finger_offset * 0.12
+			hands.add_child(finger)
+			var nail := MeshInstance3D.new()
+			var nail_mesh := SphereMesh.new()
+			nail_mesh.radial_segments = 8
+			nail_mesh.rings = 4
+			nail.mesh = nail_mesh
+			nail.scale = Vector3(0.018, 0.027, 0.009)
+			nail.position = finger.position + Vector3(0, 0.065, 0.018)
+			nail.material_override = nail_material
+			hands.add_child(nail)
+		var thumb := _hand_capsule("Thumb", 0.024, 0.115, skin_material)
+		thumb.position = Vector3(side * 0.245, -0.325, -0.68)
+		thumb.rotation.z = -side * 0.75
+		hands.add_child(thumb)
+
+func _hand_capsule(node_name: String, radius: float, height: float, material: Material) -> MeshInstance3D:
+	var visual := MeshInstance3D.new()
+	visual.name = node_name
+	var mesh := CapsuleMesh.new()
+	mesh.radius = radius
+	mesh.height = height
+	mesh.radial_segments = 8
+	mesh.rings = 3
+	visual.mesh = mesh
+	visual.material_override = material
+	return visual
+
+func _hand_material(color: Color) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = 0.9
+	return material
 
 func _physics_process(delta: float) -> void:
 	var input_vector := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")

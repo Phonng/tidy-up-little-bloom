@@ -77,6 +77,7 @@ Một game dọn dẹp cửa hàng hoa góc nhìn thứ nhất, chơi bằng c�
 |---|---|
 | Không gian | Một tiệm hoa hai tầng: tầng trệt 24 m × 22 m, tầng lửng 24 m × 10.4 m, có đường dốc nối tầng |
 | Góc nhìn | 3D góc nhìn thứ nhất, camera nhìn tự do có giới hạn dọc |
+| Tay người chơi | Hai bàn tay low-poly luôn hiện ở hai bên dưới màn hình, gắn theo camera và không che tâm ngắm |
 | Loại hoa | 9 loại khác nhau về màu và hình dáng: hồng, tulip, cúc, hướng dương, oải hương, mẫu đơn, lan, ly, sao nhái |
 | Số lượng | Tổng 600 bông, chia đều 66–67 bông mỗi loại |
 | Giỏ | 9 giỏ đặt ở cả hai tầng; mỗi giỏ nhận một loại hoa |
