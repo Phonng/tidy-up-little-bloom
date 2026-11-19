@@ -7,9 +7,12 @@ const PlayerScript = preload("res://scripts/player.gd")
 const ROOM_WIDTH := 24.0
 const ROOM_DEPTH := 22.0
 const UPPER_FLOOR_Y := 4.2
-const RAMP_RUN := 11.6
+const RAMP_BOTTOM_Z := 9.0
+const RAMP_TOP_Z := -0.8
+const RAMP_RUN := RAMP_BOTTOM_Z - RAMP_TOP_Z
 const RAMP_WIDTH := 4.0
 const RAMP_THICKNESS := 0.08
+const STAIR_STEP_COUNT := 20
 
 func _ready() -> void:
 	_build_lighting()
@@ -74,7 +77,7 @@ func _add_ramp() -> void:
 	ramp.name = "StairRamp"
 	var ramp_angle := atan(UPPER_FLOOR_Y / RAMP_RUN)
 	var ramp_length := sqrt(RAMP_RUN * RAMP_RUN + UPPER_FLOOR_Y * UPPER_FLOOR_Y)
-	var ramp_center_z := (10.8 - 0.8) / 2.0
+	var ramp_center_z := (RAMP_BOTTOM_Z + RAMP_TOP_Z) / 2.0
 	var ramp_center_y := UPPER_FLOOR_Y / 2.0 - cos(ramp_angle) * RAMP_THICKNESS / 2.0
 	ramp.position = Vector3(0, ramp_center_y, ramp_center_z)
 	ramp.rotation.x = ramp_angle
@@ -83,12 +86,6 @@ func _add_ramp() -> void:
 	var collision := CollisionShape3D.new()
 	collision.shape = shape
 	ramp.add_child(collision)
-	var visual := MeshInstance3D.new()
-	var mesh := BoxMesh.new()
-	mesh.size = shape.size
-	visual.mesh = mesh
-	visual.material_override = _material(Color("#bc8b62"))
-	ramp.add_child(visual)
 	for side in [-1.0, 1.0]:
 		var rail_shape := BoxShape3D.new()
 		rail_shape.size = Vector3(0.14, 0.84, ramp_length)
@@ -104,6 +101,39 @@ func _add_ramp() -> void:
 		rail_visual.material_override = _material(Color("#9a694a"))
 		ramp.add_child(rail_visual)
 	add_child(ramp)
+	_add_stair_steps()
+
+func _add_stair_steps() -> void:
+	var step_run := RAMP_RUN / float(STAIR_STEP_COUNT)
+	var tread_depth := step_run + 0.08
+	var tread_thickness := 0.14
+	var tread_material := _material(Color("#bc8b62"))
+	var riser_material := _material(Color("#9a694a"))
+	var previous_top := 0.0
+	for step_index in STAIR_STEP_COUNT:
+		var step_center_z := RAMP_BOTTOM_Z - (float(step_index) + 0.5) * step_run
+		var step_top_y := UPPER_FLOOR_Y * (RAMP_BOTTOM_Z - step_center_z) / RAMP_RUN
+		var tread := MeshInstance3D.new()
+		tread.name = "StairTread_%02d" % step_index
+		var tread_mesh := BoxMesh.new()
+		tread_mesh.size = Vector3(RAMP_WIDTH - 0.28, tread_thickness, tread_depth)
+		tread.mesh = tread_mesh
+		tread.position = Vector3(0, step_top_y - tread_thickness / 2.0, step_center_z)
+		tread.material_override = tread_material
+		add_child(tread)
+
+		var boundary_z := RAMP_BOTTOM_Z - float(step_index + 1) * step_run
+		var riser_top_y := UPPER_FLOOR_Y * (RAMP_BOTTOM_Z - boundary_z) / RAMP_RUN
+		var riser_height := riser_top_y - previous_top
+		var riser := MeshInstance3D.new()
+		riser.name = "StairRiser_%02d" % step_index
+		var riser_mesh := BoxMesh.new()
+		riser_mesh.size = Vector3(RAMP_WIDTH - 0.30, riser_height, 0.07)
+		riser.mesh = riser_mesh
+		riser.position = Vector3(0, previous_top + riser_height / 2.0, boundary_z)
+		riser.material_override = riser_material
+		add_child(riser)
+		previous_top = riser_top_y
 
 func _add_wall_cabinets(floor_y: float) -> void:
 	var base_y := floor_y + 2.15
