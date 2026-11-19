@@ -80,10 +80,17 @@ func _sync_contents() -> void:
 		var column := index % 5
 		var row := floori(float(index) / 5.0) % 5
 		var layer := floori(float(index) / 25.0)
-		var position := Vector3(-0.27 + float(column) * 0.135, 0.54 + float(layer) * 0.12, -0.18 + float(row) * 0.09)
-		var transform := Transform3D(Basis.IDENTITY.scaled(Vector3(0.4, 0.4, 0.4)), position)
-		_placed_stems.set_instance_transform(index, transform)
-		_placed_blooms.set_instance_transform(index, transform)
+		var flower_position := Vector3(
+			-0.27 + float(column) * 0.135,
+			0.54 + float(layer) * 0.12,
+			-0.18 + float(row) * 0.09
+		)
+		var flower_transform := Transform3D(
+			Basis.IDENTITY.scaled(Vector3(0.4, 0.4, 0.4)),
+			flower_position
+		)
+		_placed_stems.set_instance_transform(index, flower_transform)
+		_placed_blooms.set_instance_transform(index, flower_transform)
 
 func _material(color: Color) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()

@@ -18,6 +18,10 @@ var held_root: Node3D
 var gravity := float(ProjectSettings.get_setting("physics/3d/default_gravity"))
 
 func _ready() -> void:
+	floor_snap_length = 0.5
+	floor_constant_speed = true
+	floor_max_angle = deg_to_rad(40.0)
+	safe_margin = 0.02
 	var capsule := CollisionShape3D.new()
 	var capsule_shape := CapsuleShape3D.new()
 	capsule_shape.radius = 0.32
@@ -58,49 +62,45 @@ func _build_first_person_hands() -> void:
 	var sleeve_material := _hand_material(Color("#8da78a"))
 	var cuff_material := _hand_material(Color("#e8d8c1"))
 	var skin_material := _hand_material(Color("#dba987"))
-	var nail_material := _hand_material(Color("#f0c9ad"))
 	for side in [-1.0, 1.0]:
-		var sleeve := _hand_capsule("Sleeve", 0.074, 0.36, sleeve_material)
-		sleeve.position = Vector3(side * 0.49, -0.50, -0.62)
-		sleeve.rotation.z = side * 0.55
+		var sleeve := _hand_capsule("Sleeve", 0.085, 0.38, sleeve_material)
+		sleeve.position = Vector3(side * 0.51, -0.56, -0.62)
+		sleeve.rotation.z = side * 0.58
 		hands.add_child(sleeve)
 		var cuff := MeshInstance3D.new()
 		var cuff_mesh := CylinderMesh.new()
-		cuff_mesh.top_radius = 0.082
-		cuff_mesh.bottom_radius = 0.082
-		cuff_mesh.height = 0.055
+		cuff_mesh.top_radius = 0.092
+		cuff_mesh.bottom_radius = 0.092
+		cuff_mesh.height = 0.045
 		cuff.mesh = cuff_mesh
-		cuff.position = Vector3(side * 0.405, -0.36, -0.665)
-		cuff.rotation.z = side * 0.55
+		cuff.position = Vector3(side * 0.39, -0.39, -0.70)
+		cuff.rotation.z = side * 0.58
 		cuff.material_override = cuff_material
 		hands.add_child(cuff)
 		var palm := MeshInstance3D.new()
 		var palm_mesh := SphereMesh.new()
-		palm_mesh.radial_segments = 12
-		palm_mesh.rings = 6
+		palm_mesh.radial_segments = 16
+		palm_mesh.rings = 8
 		palm.mesh = palm_mesh
-		palm.scale = Vector3(0.12, 0.085, 0.065)
-		palm.position = Vector3(side * 0.34, -0.325, -0.68)
+		palm.scale = Vector3(0.135, 0.09, 0.075)
+		palm.position = Vector3(side * 0.30, -0.34, -0.76)
 		palm.material_override = skin_material
 		hands.add_child(palm)
+		var finger_heights: Array[float] = [0.085, 0.10, 0.09, 0.075]
 		for finger_index in 4:
-			var finger := _hand_capsule("Finger", 0.022, 0.12, skin_material)
+			var finger_height: float = finger_heights[finger_index]
+			var finger := _hand_capsule("Finger", 0.025, finger_height, skin_material)
 			var finger_offset := float(finger_index) - 1.5
-			finger.position = Vector3(side * (0.27 + float(finger_index) * 0.052), -0.235 + absf(finger_offset) * 0.012, -0.69)
-			finger.rotation.z = side * finger_offset * 0.12
+			finger.position = Vector3(
+				side * (0.22 + float(finger_index) * 0.052),
+				-0.30 + finger_height * 0.68,
+				-0.78
+			)
+			finger.rotation.z = side * finger_offset * 0.07
 			hands.add_child(finger)
-			var nail := MeshInstance3D.new()
-			var nail_mesh := SphereMesh.new()
-			nail_mesh.radial_segments = 8
-			nail_mesh.rings = 4
-			nail.mesh = nail_mesh
-			nail.scale = Vector3(0.018, 0.027, 0.009)
-			nail.position = finger.position + Vector3(0, 0.065, 0.018)
-			nail.material_override = nail_material
-			hands.add_child(nail)
-		var thumb := _hand_capsule("Thumb", 0.024, 0.115, skin_material)
-		thumb.position = Vector3(side * 0.245, -0.325, -0.68)
-		thumb.rotation.z = -side * 0.75
+		var thumb := _hand_capsule("Thumb", 0.03, 0.12, skin_material)
+		thumb.position = Vector3(side * 0.205, -0.36, -0.79)
+		thumb.rotation.z = side * 0.68
 		hands.add_child(thumb)
 
 func _hand_capsule(node_name: String, radius: float, height: float, material: Material) -> MeshInstance3D:
@@ -197,7 +197,12 @@ func _update_held_visual() -> void:
 		var flower_id: String = GameState.inventory[index]
 		var type := GameState.flower_type_from_id(flower_id)
 		var flower := Node3D.new()
-		flower.position = Vector3(float(index % 3) * 0.11, float(index / 3) * 0.12, -float(index / 3) * 0.04)
+		var row: int = floori(float(index) / 3.0)
+		flower.position = Vector3(
+			float(index % 3) * 0.11,
+			float(row) * 0.12,
+			-float(row) * 0.04
+		)
 		var stem := MeshInstance3D.new()
 		var stem_mesh := CylinderMesh.new()
 		stem_mesh.top_radius = 0.012

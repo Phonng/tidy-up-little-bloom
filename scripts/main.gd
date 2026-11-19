@@ -281,8 +281,12 @@ func _build_level_objects() -> void:
 		var flower_position: Vector3 = candidates[slot]
 		var jitter_strength := 0.14 if floor_index == 0 else 0.08
 		var jitter_phase := float(flower_index) * 1.618
-		var position := flower_position + Vector3(cos(jitter_phase) * jitter_strength, 0, sin(jitter_phase) * jitter_strength)
-		flowers_by_type[flower_type].append({"id": flower_id, "position": position})
+		var flower_spawn_position := flower_position + Vector3(
+			cos(jitter_phase) * jitter_strength,
+			0,
+			sin(jitter_phase) * jitter_strength
+		)
+		flowers_by_type[flower_type].append({"id": flower_id, "position": flower_spawn_position})
 	var flower_field := FlowerFieldScript.new()
 	flower_field.name = "FlowerField"
 	flower_field.initialize(flowers_by_type)
