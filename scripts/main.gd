@@ -107,7 +107,7 @@ func _add_wall_cabinets(floor_y: float) -> void:
 		_add_box("WallCabinetBackDoor", Vector3(1.02, 0.78, 0.06), Vector3(x, base_y, back_z + 0.39), Color("#e4d5bd"), false)
 		_add_box("WallCabinetBackKnob", Vector3(0.055, 0.055, 0.055), Vector3(x + 0.34, base_y, back_z + 0.44), Color("#d4a65e"), false)
 	for side in [-1.0, 1.0]:
-		var side_x := side * (ROOM_WIDTH / 2.0 - 0.48)
+		var side_x: float = float(side) * (ROOM_WIDTH / 2.0 - 0.48)
 		_add_box("WallCabinetSideBody", Vector3(0.72, 0.92, 4.2), Vector3(side_x, base_y, -6.0), Color("#9a694a"), false)
 		for index in 3:
 			var z := -7.4 + float(index) * 1.4
