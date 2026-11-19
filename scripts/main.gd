@@ -340,7 +340,9 @@ func _cabinet_flower_positions(floor_y: float) -> Array[Vector3]:
 func _shuffle_positions(positions: Array[Vector3], rng: RandomNumberGenerator) -> void:
 	for index in range(positions.size() - 1, 0, -1):
 		var swap_index := rng.randi_range(0, index)
-		positions.swap_at(index, swap_index)
+		var held_position: Vector3 = positions[index]
+		positions[index] = positions[swap_index]
+		positions[swap_index] = held_position
 
 func _build_player() -> void:
 	var player := PlayerScript.new()
