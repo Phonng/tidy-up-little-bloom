@@ -18,7 +18,7 @@ var held_root: Node3D
 var gravity := float(ProjectSettings.get_setting("physics/3d/default_gravity"))
 
 func _ready() -> void:
-	floor_snap_length = 0.5
+	floor_snap_length = 0.8
 	floor_constant_speed = true
 	floor_max_angle = deg_to_rad(40.0)
 	safe_margin = 0.02
@@ -36,7 +36,6 @@ func _ready() -> void:
 	camera = Camera3D.new()
 	camera.current = true
 	head.add_child(camera)
-	_build_first_person_hands()
 	ray = RayCast3D.new()
 	ray.target_position = Vector3(0, 0, -3.0)
 	ray.collision_mask = 2
@@ -55,72 +54,6 @@ func _ready() -> void:
 	GameState.changed.connect(_update_held_visual)
 	_update_held_visual()
 
-func _build_first_person_hands() -> void:
-	var hands := Node3D.new()
-	hands.name = "FirstPersonHands"
-	camera.add_child(hands)
-	var sleeve_material := _hand_material(Color("#8da78a"))
-	var cuff_material := _hand_material(Color("#e8d8c1"))
-	var skin_material := _hand_material(Color("#dba987"))
-	for side in [-1.0, 1.0]:
-		var sleeve := _hand_capsule("Sleeve", 0.085, 0.38, sleeve_material)
-		sleeve.position = Vector3(side * 0.51, -0.56, -0.62)
-		sleeve.rotation.z = side * 0.58
-		hands.add_child(sleeve)
-		var cuff := MeshInstance3D.new()
-		var cuff_mesh := CylinderMesh.new()
-		cuff_mesh.top_radius = 0.092
-		cuff_mesh.bottom_radius = 0.092
-		cuff_mesh.height = 0.045
-		cuff.mesh = cuff_mesh
-		cuff.position = Vector3(side * 0.39, -0.39, -0.70)
-		cuff.rotation.z = side * 0.58
-		cuff.material_override = cuff_material
-		hands.add_child(cuff)
-		var palm := MeshInstance3D.new()
-		var palm_mesh := SphereMesh.new()
-		palm_mesh.radial_segments = 16
-		palm_mesh.rings = 8
-		palm.mesh = palm_mesh
-		palm.scale = Vector3(0.135, 0.09, 0.075)
-		palm.position = Vector3(side * 0.30, -0.34, -0.76)
-		palm.material_override = skin_material
-		hands.add_child(palm)
-		var finger_heights: Array[float] = [0.085, 0.10, 0.09, 0.075]
-		for finger_index in 4:
-			var finger_height: float = finger_heights[finger_index]
-			var finger := _hand_capsule("Finger", 0.025, finger_height, skin_material)
-			var finger_offset := float(finger_index) - 1.5
-			finger.position = Vector3(
-				side * (0.22 + float(finger_index) * 0.052),
-				-0.30 + finger_height * 0.68,
-				-0.78
-			)
-			finger.rotation.z = side * finger_offset * 0.07
-			hands.add_child(finger)
-		var thumb := _hand_capsule("Thumb", 0.03, 0.12, skin_material)
-		thumb.position = Vector3(side * 0.205, -0.36, -0.79)
-		thumb.rotation.z = side * 0.68
-		hands.add_child(thumb)
-
-func _hand_capsule(node_name: String, radius: float, height: float, material: Material) -> MeshInstance3D:
-	var visual := MeshInstance3D.new()
-	visual.name = node_name
-	var mesh := CapsuleMesh.new()
-	mesh.radius = radius
-	mesh.height = height
-	mesh.radial_segments = 8
-	mesh.rings = 3
-	visual.mesh = mesh
-	visual.material_override = material
-	return visual
-
-func _hand_material(color: Color) -> StandardMaterial3D:
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	material.roughness = 0.9
-	return material
-
 func _physics_process(delta: float) -> void:
 	var input_vector := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if Input.is_key_pressed(KEY_A):
@@ -134,12 +67,18 @@ func _physics_process(delta: float) -> void:
 	if input_vector.length() < 0.01:
 		input_vector = touch_move
 	var direction := (transform.basis * Vector3(input_vector.x, 0, input_vector.y)).normalized()
-	velocity.x = direction.x * WALK_SPEED
-	velocity.z = direction.z * WALK_SPEED
-	if not is_on_floor():
-		velocity.y -= gravity * delta
+	var movement_velocity := direction * WALK_SPEED
+	if is_on_floor():
+		movement_velocity = movement_velocity.slide(get_floor_normal())
+		if not movement_velocity.is_zero_approx():
+			movement_velocity = movement_velocity.normalized() * WALK_SPEED
+		velocity.x = movement_velocity.x
+		velocity.y = movement_velocity.y
+		velocity.z = movement_velocity.z
 	else:
-		velocity.y = 0
+		velocity.x = movement_velocity.x
+		velocity.z = movement_velocity.z
+		velocity.y -= gravity * delta
 	move_and_slide()
 	var delta_look := look_delta + touch_look
 	var sensitivity := LOOK_SENSITIVITY * SettingsManager.look_sensitivity

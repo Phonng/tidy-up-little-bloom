@@ -7,6 +7,9 @@ const PlayerScript = preload("res://scripts/player.gd")
 const ROOM_WIDTH := 24.0
 const ROOM_DEPTH := 22.0
 const UPPER_FLOOR_Y := 4.2
+const RAMP_RUN := 11.6
+const RAMP_WIDTH := 4.0
+const RAMP_THICKNESS := 0.08
 
 func _ready() -> void:
 	_build_lighting()
@@ -69,10 +72,14 @@ func _build_room() -> void:
 func _add_ramp() -> void:
 	var ramp := StaticBody3D.new()
 	ramp.name = "StairRamp"
-	ramp.position = Vector3(0, 2.0, 4.05)
-	ramp.rotation.x = atan(UPPER_FLOOR_Y / 10.2)
+	var ramp_angle := atan(UPPER_FLOOR_Y / RAMP_RUN)
+	var ramp_length := sqrt(RAMP_RUN * RAMP_RUN + UPPER_FLOOR_Y * UPPER_FLOOR_Y)
+	var ramp_center_z := (10.8 - 0.8) / 2.0
+	var ramp_center_y := UPPER_FLOOR_Y / 2.0 - cos(ramp_angle) * RAMP_THICKNESS / 2.0
+	ramp.position = Vector3(0, ramp_center_y, ramp_center_z)
+	ramp.rotation.x = ramp_angle
 	var shape := BoxShape3D.new()
-	shape.size = Vector3(3.0, 0.24, 10.8)
+	shape.size = Vector3(RAMP_WIDTH, RAMP_THICKNESS, ramp_length)
 	var collision := CollisionShape3D.new()
 	collision.shape = shape
 	ramp.add_child(collision)
@@ -84,10 +91,10 @@ func _add_ramp() -> void:
 	ramp.add_child(visual)
 	for side in [-1.0, 1.0]:
 		var rail_shape := BoxShape3D.new()
-		rail_shape.size = Vector3(0.14, 0.84, 10.8)
+		rail_shape.size = Vector3(0.14, 0.84, ramp_length)
 		var rail_collision := CollisionShape3D.new()
 		rail_collision.shape = rail_shape
-		rail_collision.position = Vector3(side * 1.42, 0.52, 0)
+		rail_collision.position = Vector3(side * (RAMP_WIDTH / 2.0 - 0.12), 0.48, 0)
 		ramp.add_child(rail_collision)
 		var rail_visual := MeshInstance3D.new()
 		var rail_mesh := BoxMesh.new()
@@ -304,7 +311,7 @@ func _is_flower_position_blocked(candidate_position: Vector3, basket_spots: Dict
 	var x := candidate_position.x
 	var z := candidate_position.z
 	if is_zero_approx(candidate_position.y):
-		if absf(x) < 1.85 and z > -1.2:
+		if absf(x) < 2.25 and z > -1.2:
 			return true
 		if absf(x) < 2.25 and z > -8.9 and z < -7.25:
 			return true
