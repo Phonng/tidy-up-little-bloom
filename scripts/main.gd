@@ -202,6 +202,8 @@ func _add_decorative_vase(at: Vector3, bloom_color: Color, leaf_color: Color) ->
 
 func _build_level_objects() -> void:
 	var types: Array[String] = ["rose", "tulip", "daisy", "sunflower", "lavender", "peony", "orchid", "lily", "cosmos"]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 20261119
 	var basket_spots := {
 		"rose": Vector3(-9.5, 0, -7.6),
 		"tulip": Vector3(9.5, 0, -7.6),
@@ -219,51 +221,31 @@ func _build_level_objects() -> void:
 		basket.setup(flower_type, tint)
 		basket.position = basket_spots[flower_type]
 		add_child(basket)
-	var lower_positions: Array[Vector3] = []
-	for row in 24:
-		for column in 27:
-			var x := -9.5 + float(column) * (19.0 / 26.0)
-			var z := -9.5 + float(row) * (19.0 / 23.0)
-			if x > -1.75 and x < 1.75 and z > -1.4:
-				continue
-			if absf(x) < 2.2 and z < -7.0:
-				continue
-			if absf(absf(x) - 8.5) < 0.7 and absf(z + 1.35) < 0.7:
-				continue
-			if absf(absf(x) - 3.8) < 1.5 and absf(z + 1.0) < 1.0:
-				continue
-			var blocked_by_basket := false
-			for basket_value in basket_spots.values():
-				var basket_position: Vector3 = basket_value
-				if is_zero_approx(basket_position.y) and Vector2(x, z).distance_to(Vector2(basket_position.x, basket_position.z)) < 1.05:
-					blocked_by_basket = true
-					break
-			if blocked_by_basket:
-				continue
-			lower_positions.append(Vector3(x, 0, z))
-	var upper_positions: Array[Vector3] = []
-	for row in 20:
-		for column in 30:
-			var x := -9.0 + float(column) * (18.0 / 29.0)
-			var z := -10.0 + float(row) * (8.4 / 19.0)
-			if absf(x) < 1.75 and z > -3.0:
-				continue
-			var blocked_by_basket := false
-			for basket_value in basket_spots.values():
-				var basket_position: Vector3 = basket_value
-				if is_equal_approx(basket_position.y, UPPER_FLOOR_Y) and Vector2(x, z).distance_to(Vector2(basket_position.x, basket_position.z)) < 1.1:
-					blocked_by_basket = true
-					break
-			if blocked_by_basket:
-				continue
-			upper_positions.append(Vector3(x, UPPER_FLOOR_Y, z))
+	var flowers_per_floor := floori(float(GameState.TOTAL_FLOWERS) / 2.0)
+	var cabinet_flowers_per_floor := 12
+	var floor_flowers_per_floor := flowers_per_floor - cabinet_flowers_per_floor
+	var lower_positions := _generate_random_floor_positions(
+		0.0,
+		floor_flowers_per_floor,
+		rng,
+		basket_spots
+	)
+	var upper_positions := _generate_random_floor_positions(
+		UPPER_FLOOR_Y,
+		floor_flowers_per_floor,
+		rng,
+		basket_spots
+	)
+	lower_positions.append_array(_cabinet_flower_positions(0.0))
+	upper_positions.append_array(_cabinet_flower_positions(UPPER_FLOOR_Y))
+	_shuffle_positions(lower_positions, rng)
+	_shuffle_positions(upper_positions, rng)
 	var type_counts: Dictionary = {}
 	var flowers_by_type: Dictionary = {}
 	for flower_type in types:
 		type_counts[flower_type] = 0
 		flowers_by_type[flower_type] = []
 	var total_flowers: int = GameState.TOTAL_FLOWERS
-	var flowers_per_floor := floori(float(total_flowers) / 2.0)
 	for flower_index in total_flowers:
 		var flower_type: String = types[flower_index % types.size()]
 		var type_number: int = type_counts[flower_type] + 1
@@ -277,20 +259,88 @@ func _build_level_objects() -> void:
 		if candidates.size() < flowers_per_floor:
 			push_error("Not enough flower positions on floor %d" % floor_index)
 			return
-		var slot := floori(float(floor_flowers_before) * float(candidates.size()) / float(flowers_per_floor))
-		var flower_position: Vector3 = candidates[slot]
-		var jitter_strength := 0.14 if floor_index == 0 else 0.08
-		var jitter_phase := float(flower_index) * 1.618
-		var flower_spawn_position := flower_position + Vector3(
-			cos(jitter_phase) * jitter_strength,
-			0,
-			sin(jitter_phase) * jitter_strength
-		)
+		var flower_spawn_position: Vector3 = candidates[floor_flowers_before]
 		flowers_by_type[flower_type].append({"id": flower_id, "position": flower_spawn_position})
 	var flower_field := FlowerFieldScript.new()
 	flower_field.name = "FlowerField"
 	flower_field.initialize(flowers_by_type)
 	add_child(flower_field)
+
+func _generate_random_floor_positions(
+	floor_y: float,
+	requested_count: int,
+	rng: RandomNumberGenerator,
+	basket_spots: Dictionary
+) -> Array[Vector3]:
+	var positions: Array[Vector3] = []
+	var attempts := 0
+	var max_attempts := requested_count * 80
+	var minimum_spacing := 0.58 if is_zero_approx(floor_y) else 0.52
+	while positions.size() < requested_count and attempts < max_attempts:
+		attempts += 1
+		var candidate := Vector3(
+			rng.randf_range(-10.2, 10.2),
+			floor_y,
+			rng.randf_range(-9.7, 9.3) if is_zero_approx(floor_y)
+			else rng.randf_range(-10.1, -1.0)
+		)
+		if _is_flower_position_blocked(candidate, basket_spots):
+			continue
+		var overlaps_existing := false
+		for existing_value in positions:
+			var existing_position: Vector3 = existing_value
+			if Vector2(candidate.x, candidate.z).distance_squared_to(
+				Vector2(existing_position.x, existing_position.z)
+			) < minimum_spacing * minimum_spacing:
+				overlaps_existing = true
+				break
+		if not overlaps_existing:
+			positions.append(candidate)
+	if positions.size() < requested_count:
+		push_error("Could not create enough random flower positions on floor %.1f" % floor_y)
+	return positions
+
+func _is_flower_position_blocked(candidate_position: Vector3, basket_spots: Dictionary) -> bool:
+	var x := candidate_position.x
+	var z := candidate_position.z
+	if is_zero_approx(candidate_position.y):
+		if absf(x) < 1.85 and z > -1.2:
+			return true
+		if absf(x) < 2.25 and z > -8.9 and z < -7.25:
+			return true
+		if absf(x + 7.0) < 2.35 and z < -8.5:
+			return true
+		if absf(absf(x) - 3.8) < 1.55 and absf(z + 1.0) < 0.85:
+			return true
+		if Vector2(x, z).distance_to(Vector2(0, 9.0)) < 1.25:
+			return true
+		for plant_position in [Vector2(-9.8, -9.0), Vector2(9.8, -9.0), Vector2(-9.8, 9.0), Vector2(9.8, 9.0)]:
+			if Vector2(x, z).distance_to(plant_position) < 0.62:
+				return true
+	else:
+		if absf(x) < 1.85 and z > -3.0:
+			return true
+	for basket_value in basket_spots.values():
+		var basket_position: Vector3 = basket_value
+		if is_equal_approx(candidate_position.y, basket_position.y):
+			if Vector2(x, z).distance_to(Vector2(basket_position.x, basket_position.z)) < 1.1:
+				return true
+	return false
+
+func _cabinet_flower_positions(floor_y: float) -> Array[Vector3]:
+	var positions: Array[Vector3] = []
+	var flower_y := floor_y + 2.63
+	for x in [-1.8, -1.1, -0.4, 0.4, 1.1, 1.8]:
+		positions.append(Vector3(x, flower_y, -10.42))
+	for side in [-1.0, 1.0]:
+		for z in [-7.35, -6.0, -4.65]:
+			positions.append(Vector3(float(side) * 11.35, flower_y, z))
+	return positions
+
+func _shuffle_positions(positions: Array[Vector3], rng: RandomNumberGenerator) -> void:
+	for index in range(positions.size() - 1, 0, -1):
+		var swap_index := rng.randi_range(0, index)
+		positions.swap_at(index, swap_index)
 
 func _build_player() -> void:
 	var player := PlayerScript.new()

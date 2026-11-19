@@ -158,6 +158,11 @@ func _physics_process(delta: float) -> void:
 			-camera.global_transform.basis.z,
 			3.0
 		)
+	if is_instance_valid(flower_field):
+		var hovered_flower_id := focused_flower_id
+		if focused != null and focused.is_in_group("interactables"):
+			hovered_flower_id = ""
+		flower_field.set_focused_flower(hovered_flower_id)
 	if focused != null and focused.is_in_group("interactables"):
 		controls.set_prompt(focused.focus_text())
 		if interact_pressed:
