@@ -6,11 +6,13 @@
 
 > Tên **Little Bloom** là tên làm việc. Kiểm tra tên ứng dụng, nhãn hiệu và khả năng dùng tên trên Google Play trước khi chốt.
 
+> **Cập nhật phạm vi 19/11/2026:** Làm một cửa hàng demo trước theo [PRODUCT_SPEC.md](PRODUCT_SPEC.md) và [DEMO_PLAN.md](DEMO_PLAN.md). Mốc demo đề xuất: 90 bông/9 loại, giỏ đầu 10 bông trong 2–3 phút. Các số 504 phía dưới mô tả cấu hình prototype/thử tải; lịch phát hành 16–20 tuần và công việc Play Store là tham khảo dài hạn, không phải lịch demo đã cam kết. Các tính năng mở rộng trong bản Claude để sau demo.
+
 ## 1. Tóm tắt quyết định
 
 - Làm một game 3D góc nhìn thứ nhất, người chơi đi trong tiệm hoa, nhặt hoa và phân loại vào giỏ đúng loại.
 - Giữ tinh thần thư giãn của *Tidy Up the Flower Shop*: không đồng hồ đếm ngược, không thua cuộc, không ép người chơi phải tối ưu tốc độ. Tạo bản sắc riêng bằng bố cục, màu sắc, tên, nhân vật/bối cảnh, giao diện, âm thanh và nội dung tự làm.
-- Bản MVP hiện hành có **một tiệm hai tầng**, **chín loại hoa**, **chín giỏ**, **600 bông tổng (66–67 mỗi loại)**, tủ áp tường, lưu cục bộ và chạy Android.
+- Bản MVP hiện hành có **một tiệm hai tầng**, **chín loại hoa**, **chín giỏ**, **504 bông tổng (56 mỗi loại)**, tủ áp tường, lưu cục bộ và chạy Android.
 - Dùng asset CC0 hoặc giấy phép cho phép sử dụng thương mại rõ ràng; lưu lại nguồn, giấy phép và bản gốc theo từng asset.
 - Làm bản thử trên điện thoại ngay tuần 2. Không đợi hoàn thiện đồ họa mới kiểm tra cảm giác điều khiển.
 - Dự kiến phát hành sau tuần 16 nếu đạt tiêu chí; tuần 17–20 là dự phòng cho tối ưu, sửa lỗi, closed test và review.
@@ -52,10 +54,10 @@ Người thích game cozy, dọn dẹp và sắp xếp; có thể chơi bằng c
 | Camera | FPS, nhìn lên/xuống có giới hạn, xoay ngang tự do |
 | Di chuyển | Joystick trái, đi bộ, va chạm tường/nội thất; không có nhảy/chạy |
 | Tương tác | Raycast giữa màn hình, một nút dùng cho nhặt/đặt |
-| Hoa | 9 loại, 600 bông tổng; chia 66–67 bông mỗi loại, dùng MultiMesh để giảm draw call |
+| Hoa | 9 loại, 504 bông tổng; chia 56 bông mỗi loại, dùng MultiMesh để giảm draw call |
 | Giỏ | 9 giỏ phân bố ở hai tầng, mỗi giỏ chấp nhận đúng một loại hoa; phản hồi màu/nhãn và âm thanh |
 | Mang đồ | Tối đa 5 bông; loại hoa đang cầm hiển thị trước camera; nút “Đặt vào giỏ” đặt một bông mỗi lần |
-| Mục tiêu | Đặt đủ 600 bông vào đúng giỏ; progress `0/600` và trạng thái theo loại |
+| Mục tiêu | Đặt đủ 504 bông vào đúng giỏ; progress `0/504` và trạng thái theo loại |
 | Màn hình | Menu, cài đặt cơ bản, tạm dừng, HUD trong game, hoàn thành, credits/license |
 | Lưu | Tự lưu tiến độ sau hành động; tiếp tục sau khi thoát; reset có xác nhận |
 | Âm thanh | Nhạc nền tùy chọn, âm thanh nhặt/đặt/hoàn thành, volume music/SFX |
@@ -65,19 +67,19 @@ Người thích game cozy, dọn dẹp và sắp xếp; có thể chơi bằng c
 ### Không đưa vào MVP (đưa vào backlog sau phát hành)
 
 - Tầng thứ ba/phòng thứ hai, nhiệm vụ hằng ngày, cửa hàng trong game, tiền ảo, quảng cáo, tài khoản cloud, leaderboard.
-- Tô màu giỏ, chế độ sandbox, hơn 600 vật thể, cốt truyện có hội thoại, NPC, vật lý nhặt tự do.
+- Tô màu giỏ, chế độ sandbox, hơn 504 vật thể, cốt truyện có hội thoại, NPC, vật lý nhặt tự do.
 - Hệ thống kéo-thả vật thể, điều khiển tay, animation phức tạp, hiệu ứng hạt dày đặc.
 
 **Quy tắc scope:** nếu một tính năng không giúp người chơi hiểu mục tiêu, di chuyển, nhặt/đặt hoa, thấy tiến độ hoặc lưu được cuộc chơi, hãy để sau MVP.
 
 ### Quy tắc gameplay cụ thể
 
-- Tổng vật thể cần phân loại: 600 (gấp 10 lần bản 60 bông trước đó). Hoa rải trên hai tầng; không gom tất cả gần cửa hoặc đặt hoa ở vị trí người chơi không thể tới.
+- Tổng vật thể cần phân loại: 504 (cấu hình prototype/thử tải hiện tại). Hoa rải trên hai tầng; không gom tất cả gần cửa hoặc đặt hoa ở vị trí người chơi không thể tới.
 - Người chơi có thể mang tối đa 5 bông. Nếu đầy, nhấn nhặt sẽ hiện thông báo “Tay đang đầy”.
 - Mỗi giỏ chỉ nhận loại hoa quy định. Đúng loại: đặt một bông và tăng số đã xếp. Sai loại: không tiêu thụ hoa, báo ngắn “Giỏ này dành cho …”.
 - Khi nhìn vào đối tượng tương tác trong tầm 2.5–3.0 m, hiện tên hành động. Ngoài tầm hoặc bị che thì không tương tác.
 - Giỏ hoàn thành đổi trạng thái rõ nhưng vẫn giữ mesh để thể hiện kết quả. Hoa đã đặt không thể bị nhặt lại trong MVP.
-- Điều kiện hoàn thành: 600/600. Tự lưu trạng thái trước khi bật màn hoàn thành.
+- Điều kiện hoàn thành: 504/504. Tự lưu trạng thái trước khi bật màn hoàn thành.
 
 ## 4. Art direction dành cho người chưa có designer
 
@@ -219,7 +221,7 @@ Tạo Input Map: `move_forward`, `move_back`, `move_left`, `move_right`, `intera
 - Game landscape. Bên trái: joystick 15–20% chiều rộng, thấp hơn giữa màn hình một chút.
 - Bên phải: vuốt để xoay camera, trừ vùng nút UI.
 - Phải-dưới: nút “Nhặt/Đặt” khoảng 64–76 dp, có nhãn hành động khi focus.
-- Trên trái: `Đã xếp 120/600`; cạnh dưới/giữa: tối đa 5 ô inventory; trên phải: Pause.
+- Trên trái: `Đã xếp 120/504`; cạnh dưới/giữa: tối đa 5 ô inventory; trên phải: Pause.
 - Thêm tùy chọn `Độ nhạy nhìn`, `Đảo trục dọc`, `Độ mờ HUD` nếu còn thời gian sau khi hoàn tất loop.
 
 ### Cảm giác camera
@@ -280,7 +282,7 @@ Trong thực tế nên cân nhắc tách `settings.cfg` (Godot `ConfigFile`) kh�
 2. Giảm số đèn realtime/bóng đổ, độ phân giải texture và số material.
 3. Dùng culling/occlusion theo cấu trúc phòng; tránh post-processing nặng.
 4. Giảm tỷ lệ render/3D scale nếu máy yếu; kiểm tra chữ/UI còn đọc được.
-5. Dùng MultiMesh cho hoa nhìn thấy và hoa đã xếp; đo 600 vật thể tương tác trên Android thật trước khi chốt hiệu năng.
+5. Dùng MultiMesh cho hoa nhìn thấy và hoa đã xếp; đo 504 vật thể tương tác trên Android thật trước khi chốt hiệu năng.
 
 ### Thiết lập nền tảng
 
@@ -297,7 +299,7 @@ Không cần viết test framework trong giai đoạn đầu. Duy trì checklist
 - [ ] Người mới có thể hiểu mục tiêu trong 30 giây mà không cần đọc tài liệu ngoài game.
 - [ ] Di chuyển, xoay camera và tương tác cùng lúc hoạt động trên ít nhất 2 điện thoại Android thật khác phân khúc.
 - [ ] Mỗi loại hoa chỉ được nhận vào giỏ đúng; sai loại không mất hoa.
-- [ ] Có thể lên xuống hai tầng và nhặt/đặt đủ 600/600 bông, xem tiến độ cập nhật chính xác.
+- [ ] Có thể lên xuống hai tầng và nhặt/đặt đủ 504/504 bông, xem tiến độ cập nhật chính xác.
 - [ ] Tối đa 5 bông trong inventory; không thể vượt giới hạn; UI không mất đồng bộ với game state.
 - [ ] Thoát ứng dụng giữa chừng, mở lại và Continue cho trạng thái đã lưu chính xác.
 - [ ] Pause/resume, âm thanh, menu, reset save và màn hoàn thành hoạt động không crash.
@@ -367,8 +369,8 @@ Giả định 15–20 giờ/tuần. Cuối mỗi tuần phải có build hoặc 
 
 ### Tuần 6 — Nội dung MVP và hoàn thành màn
 
-- [ ] Tạo 9 loại hoa, 9 giỏ, 600 ID duy nhất.
-- [ ] Hoàn thành điều kiện 600/600; màn complete; nút chơi lại.
+- [ ] Tạo 9 loại hoa, 9 giỏ, 504 ID duy nhất.
+- [ ] Hoàn thành điều kiện 504/504; màn complete; nút chơi lại.
 - [ ] Thêm pause/resume và thiết lập âm lượng.
 - [ ] Tạo save reset có xác nhận.
 - **Kết quả:** gameplay MVP đủ từ menu tới kết thúc.
@@ -482,7 +484,7 @@ Google Play yêu cầu tài khoản cá nhân tạo sau 13/11/2023 chạy closed
 - [ ] Raycast interact + prompt.
 - [ ] Hoa/giỏ với luật đúng/sai.
 - [ ] Inventory giới hạn và HUD tiến độ.
-- [ ] Một level 600 hoa trên hai tầng, điều kiện hoàn thành.
+- [ ] Một level 504 hoa trên hai tầng, điều kiện hoàn thành.
 - [ ] Save/load, Continue, reset confirm.
 - [ ] Menu/pause/settings/credits.
 - [ ] Asset/license ledger và Godot MIT notice.
@@ -585,7 +587,7 @@ Lưu ý: nếu lệnh `mkdir` shell của bạn không hỗ trợ brace expansio
 
 ## 17. Định nghĩa “xong”
 
-Game MVP được xem là xong khi người chơi tải từ closed test/Google Play, mở game offline, hiểu mục tiêu, di chuyển FPS bằng cảm ứng, đi được cả hai tầng, nhặt và phân loại đủ 600 bông, thoát rồi tiếp tục không mất tiến độ, hoàn thành màn chơi, và app chạy ổn trên các thiết bị Android đã chọn. Mọi asset có hồ sơ license, credits có thông báo cần thiết, còn các tính năng ngoài phạm vi được ghi vào backlog sau phát hành.
+Game MVP được xem là xong khi người chơi tải từ closed test/Google Play, mở game offline, hiểu mục tiêu, di chuyển FPS bằng cảm ứng, đi được cả hai tầng, nhặt và phân loại đủ 504 bông, thoát rồi tiếp tục không mất tiến độ, hoàn thành màn chơi, và app chạy ổn trên các thiết bị Android đã chọn. Mọi asset có hồ sơ license, credits có thông báo cần thiết, còn các tính năng ngoài phạm vi được ghi vào backlog sau phát hành.
 
 ---
 

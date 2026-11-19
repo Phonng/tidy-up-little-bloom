@@ -4,11 +4,22 @@ Checklist này là bảng theo dõi công việc của project. Mỗi phần s�
 
 Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các quyết định scope và acceptance criteria cần theo tài liệu này trước khi mở rộng prototype.
 
+## Ưu tiên demo từ 19/11/2026
+
+Các dấu hoàn thành dưới đây ghi nhận code prototype hiện có, không chứng nhận bản demo đã đạt. Code đang dùng 504 bông; thiết kế đích là 90 bông và giỏ đầu 10 bông. Xem [DEMO_PLAN.md](DEMO_PLAN.md).
+
+- [ ] D0: Xác minh và sửa cầu thang lên/xuống, điểm xuất phát, điểm kẹt.
+- [ ] D1: Tách cấu hình demo 90 bông và cấu hình thử tải 504 bông; tách save theo level.
+- [ ] D2: Bố trí giỏ mở đầu 10 bông, hai chuyến mang; đo với 5 người mới.
+- [ ] D3: Hoàn thiện 9 loại hoa, 9 giỏ, hoa rải tự nhiên và trên mặt tủ; nhãn tên/hiệu ứng focus.
+- [ ] D4: Chạy demo Android thật, kiểm tra cảm ứng, lưu/phục hồi và hiệu năng.
+- [ ] Chỉ mở backlog sau demo khi các tiêu chí demo đã đạt.
+
 ## Trạng thái nhanh
 
 | Phần | Hạng mục | Trạng thái |
 |---|---|---|
-| 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Đã thêm hai bàn tay gắn camera; cần chạy lại sau cập nhật hai tầng và còn thử input thực tế |
+| 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Đã bỏ tay, đổi cầu thang 20 bậc; còn xác minh lên/xuống bằng thao tác trong game |
 | 2 | Vòng chơi nhặt, mang và phân loại hoa | Đã cập nhật 9 loại/504 bông; cần kiểm tra scene và chơi hết vòng trên thiết bị |
 | 3 | Save/load an toàn, Continue và reset | Lưu/phục hồi và hộp xác nhận đã có; còn thử phục hồi và thoát đột ngột |
 | 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Luồng, audio và onboarding đã có; còn cân chỉnh UI/âm thanh trên thiết bị |

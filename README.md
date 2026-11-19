@@ -17,9 +17,15 @@ Godot 4 / GDScript Android first-person flower-sorting prototype. The project is
 - The room, flower silhouettes, baskets and display props use original procedural meshes. Original synthesized SFX and shop ambience are included; no third-party assets are bundled.
 - Main menu includes a Godot Engine license entry under Credits & licenses.
 
+## Demo scope agreed on 19 November 2026
+
+The next milestone is one playable shop demo. The proposed tuning baseline is 90 flowers (10 per type), with the first basket completed within 2–3 minutes. The current code still uses 504 flowers; splitting demo and load-testing configurations is pending. The user confirmed keeping the existing nine flower types in the demo; species changes are deferred. Ads, purchases, story notes, photo mode and seasonal content are deferred.
+
+See `DEMO_PLAN.md` for the opening layout, save compatibility and acceptance criteria. First-person hands have been removed; the staircase has 20 visible steps with a smooth collision surface, and traversal still needs gameplay verification.
+
 ## Next steps
 
-Start with `PRODUCT_SPEC.md` for the product scope and requirements. Use `ROADMAP_CHECKLIST.md` to track work part by part, and `ke-hoach-little-bloom-android.md` for the 16–20 week implementation plan. Replace placeholder art only after the Android touch loop feels comfortable.
+Start with `PRODUCT_SPEC.md` for the product scope and requirements. Use `ROADMAP_CHECKLIST.md` to track work part by part, and `ke-hoach-little-bloom-android.md` for the older 16–20 week reference plan; the current demo priorities are in `DEMO_PLAN.md`. Replace placeholder art only after the Android touch loop feels comfortable.
 
 ## Android release
 

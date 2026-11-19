@@ -1,10 +1,10 @@
 # Little Bloom — Product Requirements Document
 
-**Phiên bản:** 1.1 · **Trạng thái:** Bản nền để phát triển MVP · **Cập nhật:** 18/11/2026
+**Phiên bản:** 1.2 · **Trạng thái:** Chốt hướng demo một cửa hàng; các thay đổi demo còn cần triển khai · **Cập nhật:** 19/11/2026
 
 **Tên sản phẩm:** Little Bloom *(tên làm việc; chưa xác nhận khả năng đăng ký/phát hành)*  
 **Nền tảng đầu tiên:** Android · **Thể loại:** Cozy, dọn dẹp và sắp xếp, góc nhìn thứ nhất  
-**Đội ngũ:** Solo developer · **Engine:** Godot 4 / GDScript · **Mục tiêu phát triển:** 16 tuần + tối đa 4 tuần dự phòng
+**Đội ngũ:** Solo developer · **Engine:** Godot 4 / GDScript · **Mục tiêu trước mắt:** Một cửa hàng demo chơi được trọn vòng; lịch phát hành đầy đủ lập sau khi demo đạt tiêu chí
 
 ## 1. Tóm tắt sản phẩm
 
@@ -69,27 +69,30 @@ Một game dọn dẹp cửa hàng hoa góc nhìn thứ nhất, chơi bằng c�
 | Hết chỗ mang | Biết cần đặt bớt trước | Thông báo “Tay đang đầy”; không nhặt thêm |
 | Hoàn thành | Cảm thấy kết quả và được quyền dừng | Tổng kết hoàn thành, chơi lại hoặc thoát level |
 
-## 5. Phạm vi MVP
+## 5. Phạm vi demo trước mắt
 
 ### Nội dung bắt buộc
 
-| Nội dung | Cam kết MVP |
+Phạm vi dưới đây là thiết kế demo đích. Code hiện vẫn có 504 bông và chưa có luồng giỏ mở đầu riêng. Chi tiết triển khai, thứ tự công việc và cách bảo toàn save nằm trong [DEMO_PLAN.md](DEMO_PLAN.md).
+
+| Nội dung | Cam kết demo |
 |---|---|
-| Không gian | Một tiệm hoa hai tầng: tầng trệt 24 m × 22 m, tầng lửng 24 m × 10.4 m, có đường dốc nối tầng |
+| Không gian | Một tiệm hoa hai tầng: tầng trệt 24 m × 22 m, tầng lửng 24 m × 10.4 m, có cầu thang nối tầng; phải kiểm chứng đi lên và xuống |
 | Góc nhìn | 3D góc nhìn thứ nhất, camera nhìn tự do có giới hạn dọc |
-| Tay người chơi | Hai bàn tay low-poly luôn hiện ở hai bên dưới màn hình, gắn theo camera và không che tâm ngắm |
-| Loại hoa | 9 loại khác nhau về màu và hình dáng: hồng, tulip, cúc, hướng dương, oải hương, mẫu đơn, lan, ly, sao nhái |
-| Số lượng | Tổng 504 bông, chia đều 56 bông mỗi loại |
+| Tay người chơi | Đã bỏ mô hình hai bàn tay theo quyết định của người dùng |
+| Loại hoa | Giữ 9 loại hiện tại: hồng, tulip, cúc, hướng dương, oải hương, mẫu đơn, lan, ly, sao nhái; đổi loài sau demo |
+| Số lượng | Mốc cân chỉnh demo: 90 bông, 10 bông mỗi loại. Giữ 504 bông như cấu hình thử tải riêng khi triển khai tách level |
 | Giỏ | 9 giỏ đặt ở cả hai tầng; mỗi giỏ nhận một loại hoa |
 | Inventory | Mang tối đa 5 bông; cho phép mang nhiều loại cùng lúc |
 | Thao tác | Đi bộ, nhìn, nhặt và đặt; không có nhảy hoặc chiến đấu |
-| Điều kiện hoàn thành | Đặt đúng toàn bộ 504 bông |
+| Điều kiện hoàn thành | Đặt đúng toàn bộ 90 bông của cấu hình demo |
+| Giỏ đầu tiên | 10 bông hồng gần cửa vào, giỏ trong tầm nhìn; mục tiêu hoàn thành sau 2–3 phút |
 | Save | Tiến độ và inventory lưu cục bộ, tiếp tục offline |
 | Giao diện | Menu tối thiểu, HUD, tạm dừng, cài đặt cơ bản, hoàn thành, credits/license |
 | Audio | Nhạc/SFX nhẹ, điều khiển âm lượng; asset có license hợp lệ |
 | Nền tảng | Android landscape; desktop hỗ trợ phát triển/debug |
 
-### Ngoài MVP
+### Sau demo — chưa xếp vào sprint hiện tại
 
 - Tầng thứ ba, phòng thứ hai, nhiệm vụ hằng ngày hoặc campaign.
 - Tô màu giỏ, sandbox, tiền ảo, cửa hàng trong game, quảng cáo, IAP.
@@ -97,7 +100,7 @@ Một game dọn dẹp cửa hàng hoa góc nhìn thứ nhất, chơi bằng c�
 - NPC, hội thoại dài, cốt truyện nhiều chương, vật lý nâng/hất vật thể.
 - Thêm loại hoa vượt scope chín loại, hàng trăm props hoặc công cụ tùy biến level.
 
-Ý tưởng ngoài MVP được ghi vào backlog; không đưa vào sprint hiện tại nếu chưa hoàn tất vòng chơi cơ bản.
+Các đề xuất mở rộng từ bản Claude ngày 19/11/2026 được để sau demo: quảng cáo/AdMob/UMP, mua gỡ quảng cáo, analytics, nâng sức chứa 8–10, bản đồ giỏ, tùy chỉnh giỏ, ghi chú song ngữ, màn kết biển Open, chụp ảnh, nội dung lễ và trang trí nâng cao. Chưa chốt mô hình kiếm tiền hay lịch phát hành 18 tuần của bản đó.
 
 ## 6. Yêu cầu sản phẩm và tiêu chí chấp nhận
 
@@ -110,12 +113,14 @@ Người chơi điều khiển nhân vật bằng joystick trái và xoay camera
 - [ ] Camera không lật ngược; góc nhìn dọc có giới hạn.
 - [ ] Thao tác UI không làm camera xoay ngoài ý muốn.
 - [ ] Có thể điều chỉnh độ nhạy nhìn trong cài đặt.
+- [ ] Đi lên và xuống cầu thang 5 lượt liên tiếp, không mắc ở chân/đầu thang hoặc xuất hiện dưới mặt thang.
 
 ### FR-02 — Ngắm và tương tác
 
-Game dùng raycast từ tâm camera. Khi ngắm vật thể tương tác trong tầm, HUD hiển thị hành động có thể thực hiện.
+Game chọn mục tiêu từ tâm camera trong tầm tương tác. Khi ngắm vật thể tương tác trong tầm, HUD hiển thị hành động có thể thực hiện.
 
 - [ ] Hoa trong tầm và không bị vật khác che có prompt “Nhặt …”.
+- [ ] Hoa đang ngắm có viền/sáng nhẹ có animation và tên loại phía trên; mất focus hoặc nhặt xong thì ẩn.
 - [ ] Giỏ có prompt “Đặt …” kèm loại giỏ.
 - [ ] Một nút tương tác thực hiện đúng hành động của target đang ngắm.
 - [ ] Không tương tác xuyên tường hoặc ngoài tầm.
@@ -138,7 +143,7 @@ Game dùng raycast từ tâm camera. Khi ngắm vật thể tương tác trong t
 
 ### FR-05 — Hoàn thành level
 
-- [ ] Level hoàn thành khi đủ 504/504 hoa được đặt đúng.
+- [ ] Level demo hoàn thành khi đủ 90/90 hoa được đặt đúng.
 - [ ] Hiện màn hoàn thành riêng, không chỉ thông báo tạm thời.
 - [ ] Màn hoàn thành có hành động rõ ràng để chơi lại.
 - [ ] Trạng thái hoàn thành được lưu trước khi hiển thị kết quả.
@@ -221,7 +226,7 @@ Các số này là ngưỡng nội bộ ban đầu, cần điều chỉnh sau kh
 - Ít nhất 4/5 người thử độc lập hiểu mục tiêu mà không được giải thích trực tiếp.
 - Ít nhất 4/5 người thử có thể nhặt và đặt hoa đúng sau phần hướng dẫn trong game.
 - Không ai mất tiến độ đã lưu trong các tình huống thoát/mở lại đã kiểm tra.
-- Không có blocker khiến không thể hoàn thành 504/504.
+- Không có blocker khiến không thể hoàn thành 90/90 của cấu hình demo.
 - Người thử đánh giá điều khiển là “dùng được” hoặc tốt hơn; mọi vấn đề khó chịu được ghi và xử lý.
 
 ### Sau phát hành — quan sát nếu có dữ liệu hợp lệ
@@ -229,7 +234,9 @@ Các số này là ngưỡng nội bộ ban đầu, cần điều chỉnh sau kh
 - Crash-free sessions, tỉ lệ hoàn thành level, số lần Continue thành công, feedback về touch controls.
 - Không thêm analytics chỉ để đo các chỉ số này trong MVP; ưu tiên feedback test thủ công và báo cáo crash do Play Console cung cấp.
 
-## 12. Chiến lược phát hành MVP
+## 12. Thứ tự demo và phát hành đầy đủ
+
+Ưu tiên hiện tại là demo nội bộ theo DEMO_PLAN.md. Các bước Play Console, store listing và production bên dưới thuộc giai đoạn sau khi demo đạt tiêu chí.
 
 1. Desktop prototype để sửa gameplay nhanh.
 2. Android debug build chạy trên điện thoại thật càng sớm càng tốt.
@@ -246,7 +253,7 @@ Kế hoạch sprint, checklist asset, lệnh khởi tạo và phần việc tu�
 |---|---|---|
 | Điều khiển FPS trên cảm ứng không thoải mái | Người chơi bỏ trước khi hiểu loop | Prototype trên máy thật tuần đầu; tune joystick/sensitivity trước khi art pass |
 | Không nhìn thấy tiến bộ | Sắp xếp hoa cảm giác lặp | Tiến độ từng giỏ, hoa hiện trong giỏ, phản hồi ngay sau thao tác |
-| Scope vượt sức solo developer | Trễ phát hành | Khóa MVP một tiệm hai tầng/chín loại/504 hoa; dùng batching và đo hiệu năng Android sớm |
+| Scope vượt sức solo developer | Trễ phát hành | Khóa demo một tiệm hai tầng/chín loại/90 hoa; giữ 504 làm cấu hình thử tải; đo Android thật |
 | Asset khác phong cách hoặc license không rõ | Giảm chất lượng hoặc rủi ro phát hành | Giới hạn nguồn, ưu tiên CC0/giấy phép rõ, lưu hồ sơ từng file |
 | Save lỗi | Mất tiến độ và đánh giá xấu | Schema version, kiểm tra dữ liệu, lưu sau hành động, test phục hồi |
 | Thiết bị Android yếu | FPS giảm, máy nóng, crash | Đo trên máy baseline sớm; giảm lights/texture và hiệu ứng theo số đo |
@@ -262,9 +269,9 @@ Các mục này không chặn việc hoàn thiện prototype, nhưng cần đư�
 - Số liệu hiệu năng cuối sau khi có điện thoại kiểm tra.
 - Nội dung privacy policy và store disclosures theo SDK/tính năng thực tế.
 
-## 15. Definition of Done cho MVP
+## 15. Definition of Done cho demo
 
-MVP được xem là hoàn thành khi:
+Demo được xem là hoàn thành khi:
 
 - [ ] Người chơi mới hiểu mục tiêu và hoàn tất một level mà không cần trợ giúp ngoài game.
 - [ ] Di chuyển, nhìn, nhặt và đặt hoạt động trên Android bằng cảm ứng.
@@ -273,8 +280,18 @@ MVP được xem là hoàn thành khi:
 - [ ] Save/load offline phục hồi trạng thái chính xác; reset yêu cầu xác nhận.
 - [ ] Hai thiết bị Android mục tiêu chạy ổn theo ngưỡng nội bộ.
 - [ ] Không còn blocker hoặc mất save trong kiểm tra release candidate.
-- [ ] Asset/license, credits, listing và AAB release đã sẵn sàng.
+- [ ] Asset/license và credits đúng với nội dung được đóng gói; có bản Android demo cài được. Listing và AAB production thuộc giai đoạn sau.
+- [ ] Ít nhất 4/5 người chơi mới hoàn thành giỏ đầu trong tối đa 3 phút, không được nhắc ngoài game; mục tiêu thiết kế là 2–3 phút, không cố tình kéo dài người chơi nhanh.
+- [ ] Không yêu cầu leo tầng hai trước khi hoàn thành giỏ mở đầu.
 
 ## 16. Quy tắc thay đổi phạm vi
 
 Mỗi tính năng mới cần trả lời được ba câu hỏi: nhu cầu người chơi nào được giải quyết, có bắt buộc cho MVP không, và nó làm tăng thời gian/độ phức tạp bao nhiêu. Nếu không làm vòng chơi cơ bản rõ hơn hoặc ổn định hơn, đưa vào backlog sau phát hành.
+
+## 17. Quyết định demo ngày 19/11/2026
+
+- Người dùng chọn làm một cửa hàng demo trước; các hệ thống mở rộng từ bản Claude để sau.
+- Ưu tiên giỏ đầu hoàn thành trong 2–3 phút và sửa dứt điểm đường đi hai tầng.
+- 90 bông là mốc cân chỉnh thiết kế ban đầu do người triển khai đề xuất, chưa phải số lượng đã đổi trong code.
+- Người dùng đã xác nhận giữ 9 loại hiện có trong demo; đổi loài sau. Khi đổi phải có model, nhãn giỏ, tên hiển thị và kế hoạch chuyển save.
+- Thứ tự tài liệu: PRODUCT_SPEC.md → DEMO_PLAN.md → ROADMAP_CHECKLIST.md. Kế hoạch 16–20 tuần là tham khảo dài hạn.
