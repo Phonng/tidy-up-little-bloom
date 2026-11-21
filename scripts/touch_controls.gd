@@ -9,6 +9,7 @@ const SFX_COMPLETE: AudioStream = preload("res://assets/audio/complete.wav")
 signal move_changed(value: Vector2)
 signal look_changed(delta: Vector2)
 signal interact_requested
+signal input_cleared
 
 var prompt_label: Label
 var progress_label: Label
@@ -30,10 +31,16 @@ var _move_touch := -1
 var _look_touch := -1
 var _move_origin := Vector2.ZERO
 var _move_value := Vector2.ZERO
-var _interact_rect := Rect2()
-var _pause_rect := Rect2()
+var _interact_hud_button: Button
+var _pause_hud_button: Button
+var _interact_touch := -1
+var _pause_touch := -1
 var _completion_overlay: Control
 var _sfx_player: AudioStreamPlayer
+var _fps_label: Label
+var _fps_sample_elapsed := 0.0
+var _fps_sample_index := 0
+var _foreground := true
 var _starter_panel: PanelContainer
 var _starter_hint: Label
 var _starter_finished := false
@@ -42,6 +49,7 @@ func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build_ui()
+	set_process(is_instance_valid(_fps_label))
 	_sfx_player = AudioStreamPlayer.new()
 	_sfx_player.bus = "SFX"
 	add_child(_sfx_player)
@@ -58,8 +66,25 @@ func _ready() -> void:
 		_show_tutorial()
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
+	if what == NOTIFICATION_APPLICATION_RESUMED:
+		_foreground = true
+	elif what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_foreground = false
+		_fps_sample_elapsed = 0.0
 		_clear_touch_input()
+
+func _process(delta: float) -> void:
+	if not _foreground or get_tree().paused:
+		_fps_sample_elapsed = 0.0
+		return
+	_fps_sample_elapsed += delta
+	if _fps_sample_elapsed < 1.0:
+		return
+	_fps_sample_elapsed = 0.0
+	_fps_sample_index += 1
+	var fps := Engine.get_frames_per_second()
+	_fps_label.text = "FPS %d" % fps
+	print("LB_QA_FPS level=%s sample=%d fps=%d" % [GameState.level_id(), _fps_sample_index, fps])
 
 func _build_ui() -> void:
 	var root := Control.new()
@@ -92,6 +117,13 @@ func _build_ui() -> void:
 	inventory_label.add_theme_font_size_override("font_size", 18)
 	inventory_label.position = Vector2(28, 124)
 	root.add_child(inventory_label)
+	if OS.has_feature("android_qa"):
+		_fps_label = Label.new()
+		_fps_label.text = "FPS …"
+		_fps_label.position = Vector2(28, 151)
+		_fps_label.add_theme_constant_override("outline_size", 5)
+		_fps_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		root.add_child(_fps_label)
 	detail_label = Label.new()
 	detail_label.add_theme_font_size_override("font_size", 13)
 	detail_label.position = Vector2(28, 62)
@@ -114,6 +146,7 @@ func _build_ui() -> void:
 	interact_button.position = Vector2(-184, -112)
 	interact_button.pressed.connect(func(): interact_requested.emit())
 	root.add_child(interact_button)
+	_interact_hud_button = interact_button
 	var pause_button := Button.new()
 	pause_button.text = "Ⅱ"
 	pause_button.custom_minimum_size = Vector2(64, 58)
@@ -121,6 +154,11 @@ func _build_ui() -> void:
 	pause_button.position = Vector2(-82, 20)
 	pause_button.pressed.connect(_toggle_pause)
 	root.add_child(pause_button)
+	_pause_hud_button = pause_button
+	if OS.has_feature("mobile"):
+		# Gameplay taps are routed by finger ID, independently of mouse emulation.
+		_interact_hud_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_pause_hud_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if GameState.level_id() == LevelConfig.DEMO:
 		_build_starter_hint(root)
 	_build_pause_overlay(root)
@@ -130,12 +168,28 @@ func _build_ui() -> void:
 func _input(event: InputEvent) -> void:
 	if _has_modal_overlay():
 		return
-	var size := get_viewport().get_visible_rect().size
-	_interact_rect = Rect2(Vector2(size.x - 200, size.y - 140), Vector2(200, 140))
-	_pause_rect = Rect2(Vector2(size.x - 92, 12), Vector2(92, 78))
 	if event is InputEventScreenTouch:
-		if event.pressed:
-			if event.position.x < size.x * 0.42 and _move_touch == -1:
+		_handle_screen_touch(event)
+	elif event is InputEventScreenDrag:
+		if event.index == _move_touch:
+			_move_value = ((event.position - _move_origin) / 90.0).limit_length(1.0)
+			joystick_knob.position = _move_origin + _move_value * 40.0 - joystick_knob.size / 2.0
+			move_changed.emit(_move_value)
+		elif event.index == _look_touch:
+			look_changed.emit(event.relative)
+
+func _handle_screen_touch(event: InputEventScreenTouch) -> void:
+	var on_interact := _interact_hud_button.get_global_rect().has_point(event.position)
+	var on_pause := _pause_hud_button.get_global_rect().has_point(event.position)
+	if event.pressed and not event.canceled:
+		if on_interact:
+			if _interact_touch == -1:
+				_interact_touch = event.index
+		elif on_pause:
+			if _pause_touch == -1:
+				_pause_touch = event.index
+		elif event.position.x < get_viewport().get_visible_rect().size.x * 0.42:
+			if _move_touch == -1:
 				_move_touch = event.index
 				_move_origin = event.position
 				_move_value = Vector2.ZERO
@@ -144,24 +198,25 @@ func _input(event: InputEvent) -> void:
 				joystick_base.visible = true
 				joystick_knob.visible = true
 				move_changed.emit(_move_value)
-			elif event.position.x >= size.x * 0.42 and not _interact_rect.has_point(event.position) and not _pause_rect.has_point(event.position):
-				_look_touch = event.index
-		else:
-			if event.index == _move_touch:
-				_move_touch = -1
-				_move_value = Vector2.ZERO
-				joystick_base.visible = false
-				joystick_knob.visible = false
-				move_changed.emit(_move_value)
-			if event.index == _look_touch:
-				_look_touch = -1
-	elif event is InputEventScreenDrag:
-		if event.index == _move_touch:
-			_move_value = ((event.position - _move_origin) / 90.0).limit_length(1.0)
-			joystick_knob.position = _move_origin + _move_value * 40.0 - joystick_knob.size / 2.0
-			move_changed.emit(_move_value)
-		elif event.index == _look_touch:
-			look_changed.emit(event.relative)
+		elif _look_touch == -1:
+			_look_touch = event.index
+		return
+	if event.index == _interact_touch:
+		_interact_touch = -1
+		if on_interact and not event.canceled:
+			interact_requested.emit()
+	elif event.index == _pause_touch:
+		_pause_touch = -1
+		if on_pause and not event.canceled:
+			_open_pause()
+	elif event.index == _move_touch:
+		_move_touch = -1
+		_move_value = Vector2.ZERO
+		joystick_base.hide()
+		joystick_knob.hide()
+		move_changed.emit(_move_value)
+	elif event.index == _look_touch:
+		_look_touch = -1
 
 func set_prompt(value: String) -> void:
 	if is_instance_valid(prompt_label):
@@ -449,12 +504,15 @@ func _has_modal_overlay() -> bool:
 func _clear_touch_input() -> void:
 	_move_touch = -1
 	_look_touch = -1
+	_interact_touch = -1
+	_pause_touch = -1
 	_move_value = Vector2.ZERO
 	if is_instance_valid(joystick_base):
 		joystick_base.visible = false
 	if is_instance_valid(joystick_knob):
 		joystick_knob.visible = false
 	move_changed.emit(Vector2.ZERO)
+	input_cleared.emit()
 
 func _build_completion_overlay(root: Control) -> void:
 	_completion_overlay = Control.new()

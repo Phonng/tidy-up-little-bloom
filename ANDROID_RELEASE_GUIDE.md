@@ -21,7 +21,7 @@ For this project, install the Android 36 platform and a matching 36.x build-tool
 sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.1.0" "cmdline-tools;latest" "cmake;3.10.2.4988404" "ndk;28.1.13356709"
 ```
 
-The environment used for the current Godot checks has no Java runtime, Android SDK, or `adb`, so this setup and Android export remain unverified here.
+D4 verified a debug APK using isolated Java 17, Android Platform-Tools, Build-Tools 35.0.1 and the Godot 4.7.2 Android debug template. See [Android QA results](docs/ANDROID_QA.md). Gradle and the Play AAB are still separate setup and verification tasks.
 
 Official references:
 

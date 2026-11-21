@@ -56,6 +56,7 @@ func _ready() -> void:
 	controls.move_changed.connect(_on_move_changed)
 	controls.look_changed.connect(_on_look_changed)
 	controls.interact_requested.connect(_on_interact)
+	controls.input_cleared.connect(_on_input_cleared)
 	flower_field = get_tree().get_first_node_in_group("flower_field") as FlowerField
 	GameState.changed.connect(_update_held_visual)
 	_update_held_visual()
@@ -121,7 +122,7 @@ func _update_interaction() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		look_delta += event.relative
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed and not OS.has_feature("mobile"):
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -136,6 +137,11 @@ func _on_look_changed(value: Vector2) -> void:
 
 func _on_interact() -> void:
 	interact_pressed = true
+
+func _on_input_cleared() -> void:
+	look_delta = Vector2.ZERO
+	touch_look = Vector2.ZERO
+	interact_pressed = false
 
 func _update_held_visual() -> void:
 	for child in held_root.get_children():

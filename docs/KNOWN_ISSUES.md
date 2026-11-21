@@ -21,10 +21,10 @@ Mức độ là mức ảnh hưởng nếu lỗi xảy ra, không phải mức c
 |---|---|---|---|---|
 | LB-001 | P0 | Mắc khi lên hoặc xuống cầu thang | Chưa tái hiện kẹt trong probe, đã sửa mất bám sàn, thử tay và Android còn chờ | D0 / T1.1, ưu tiên đầu |
 | LB-002 | P1 | Chọn hoa/giỏ qua vật cản | D3 đã sửa và qua kịch bản che khuất trên Mac | D3 |
-| LB-003 | P1 | Ngón chạm mới giành quyền xoay camera | Có căn cứ từ code; chưa kiểm thử multitouch trên máy | D4 |
+| LB-003 | P1 | Ngón chạm mới giành quyền xoay camera | D4 giữ quyền ngón nhìn. Qua thử mô phỏng trên Mac, còn thử multitouch Android | D4 |
 | LB-004 | P2 | Tổng hoa trên màn hoàn thành dùng số cũ | D1 dùng tổng của chế độ. Bài thử 89 → 90 cùng phiên và chơi lại đã qua trên bản sao | D1/D4 |
 | LB-005 | P0 | Vào màn chơi chỉ thấy nền trống/trắng | Không tái hiện với Chơi mới và Tiếp tục trên bản QA Mac | Kiểm tra đầu D0 nếu còn xảy ra |
-| ENV-001 | P0 với kiểm thử Android | Không mở được thư mục Android build-tools | Log cũ của người dùng; chưa kiểm tra môi trường hiện tại | D4 / T0.3 |
+| ENV-001 | P0 với kiểm thử Android | Không mở được thư mục Android build-tools | Đã xuất APK debug trong bộ công cụ QA riêng. Môi trường xuất AAB Play còn chờ | D4 / T0.3 |
 | DOC-001 | P2 | Checklist còn ghi 600 bông và hai bàn tay | Đã sửa tài liệu trong T0.6; chưa chạy lại checklist | T0.6 |
 
 ## LB-001 — Cầu thang lên/xuống bị kẹt
@@ -62,6 +62,8 @@ Bản QA trên Mac đã thử hoa và giỏ bị tường che, tâm ngắm lư�
 **Mong đợi:** ngón nhìn ban đầu giữ quyền cho tới khi nhả hoặc có quy tắc chuyển ngón rõ ràng; không phải nhấc lại B để camera hoạt động. **Thực tế suy ra:** index bị thay thế, sau khi nhả C thì B không còn điều khiển nhìn. Chưa đo trên điện thoại.
 
 **Điều kiện đóng:** các chuỗi touch trên chạy đúng trên ít nhất 2 điện thoại; thao tác hai ngón thông thường, nút tương tác và pause không hồi quy. Lưu model máy/Android/build và thứ tự sự kiện dùng thử.
+
+**Cập nhật D4:** input gameplay dùng ngón giữ nút riêng, bỏ qua ngón nhìn mới khi đã có ngón nhìn. App vào nền và mở tạm dừng đều xóa trạng thái touch và thao tác chờ. Đã qua thử mô phỏng ngón thứ ba, thả hủy, thả ngoài nút và pause/resume trên Mac. [Kịch bản Android](ANDROID_QA.md)
 
 ## LB-004 — Màn hoàn thành hiển thị số hoa lúc vào level
 

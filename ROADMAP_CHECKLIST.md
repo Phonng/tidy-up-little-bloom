@@ -13,7 +13,7 @@ Các dấu hoàn thành dưới đây ghi nhận code prototype hiện có, khô
 - [x] D2 triển khai: Giỏ hồng gần cửa, 10 bông ở tầng trệt, chỉ dẫn trong lúc chơi và phản hồi 10/10. Bản QA qua hai chuyến, nạp được save demo 1 và giữ nguyên save 504.
 - [ ] D2 đo với người mới: Ghi thời gian của 5 người chưa biết game, mục tiêu ít nhất 4/5 xong giỏ trong tối đa 3 phút.
 - [x] D3: Chặn nhặt/đặt qua vật cản. Bản QA chơi tới 90/90, nhặt đủ 8 bông trên mặt tủ, nạp lại và chơi lại. Save 504 mẫu giữ nguyên. Xem [kết quả D3](DEMO_PLAN.md#kết-quả-d3).
-- [ ] D4: Chạy demo Android thật, kiểm tra cảm ứng, lưu/phục hồi và hiệu năng.
+- [ ] D4: Đã xuất và xác minh chữ ký APK QA ARM64, dùng mã ứng dụng riêng và có bộ đếm FPS. Kiểm tra cảm ứng, save/relaunch và 90/90 đã qua trên Mac với input mô phỏng. Còn cài, chơi và đo FPS trên điện thoại. Xem [kịch bản D4](docs/ANDROID_QA.md).
 - [ ] Chỉ mở backlog sau demo khi các tiêu chí demo đã đạt.
 
 ## Bổ sung từ bản Claude v2 — 21/11/2026

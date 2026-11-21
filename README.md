@@ -31,7 +31,7 @@ Start with `PRODUCT_SPEC.md` for the product scope and requirements. Use `ROADMA
 
 ## Android release
 
-See `ANDROID_RELEASE_GUIDE.md` for the Android setup. The tracked Play export preset uses application ID `com.phonng.littlebloom`; keep release credentials in Godot's local `.godot/export_credentials.cfg`, never in Git.
+Use the **Android QA** preset for a debug APK with separate app data and an FPS counter. See [the device test checklist](docs/ANDROID_QA.md). See `ANDROID_RELEASE_GUIDE.md` for the Android setup. The tracked Play export preset uses application ID `com.phonng.littlebloom`; keep release credentials in Godot's local `.godot/export_credentials.cfg`, never in Git.
 
 Store listing copy and graphic files are in `PLAY_STORE_DRAFT.md` and `store/`. `PRIVACY_POLICY.md` is shown from the game menu; add a monitored support email and host the final policy at a public HTTPS URL before publishing.
 
