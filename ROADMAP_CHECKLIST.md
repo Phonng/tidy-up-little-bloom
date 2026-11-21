@@ -12,7 +12,7 @@ Các dấu hoàn thành dưới đây ghi nhận code prototype hiện có, khô
 - [x] D1: Tách demo 90 bông và thử tải 504 bông trong menu. Đã kiểm tra cả hai tổng, resume, khôi phục save demo và bảo toàn save 504 cũ trên bản sao.
 - [x] D2 triển khai: Giỏ hồng gần cửa, 10 bông ở tầng trệt, chỉ dẫn trong lúc chơi và phản hồi 10/10. Bản QA qua hai chuyến, nạp được save demo 1 và giữ nguyên save 504.
 - [ ] D2 đo với người mới: Ghi thời gian của 5 người chưa biết game, mục tiêu ít nhất 4/5 xong giỏ trong tối đa 3 phút.
-- [ ] D3: Hoàn thiện 9 loại hoa, 9 giỏ, hoa rải tự nhiên và trên mặt tủ; nhãn tên/hiệu ứng focus.
+- [x] D3: Chặn nhặt/đặt qua vật cản. Bản QA chơi tới 90/90, nhặt đủ 8 bông trên mặt tủ, nạp lại và chơi lại. Save 504 mẫu giữ nguyên. Xem [kết quả D3](DEMO_PLAN.md#kết-quả-d3).
 - [ ] D4: Chạy demo Android thật, kiểm tra cảm ứng, lưu/phục hồi và hiệu năng.
 - [ ] Chỉ mở backlog sau demo khi các tiêu chí demo đã đạt.
 

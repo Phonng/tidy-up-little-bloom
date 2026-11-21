@@ -6,6 +6,7 @@ const LOOK_SENSITIVITY := 0.003
 const FLOOR_SNAP_DISTANCE := 0.8
 const MAX_FLOOR_ANGLE_DEGREES := 40.0
 const COLLISION_MARGIN := 0.02
+const INTERACTION_DISTANCE := 3.0
 
 var move_input := Vector2.ZERO
 var look_delta := Vector2.ZERO
@@ -40,8 +41,10 @@ func _ready() -> void:
 	camera.current = true
 	head.add_child(camera)
 	ray = RayCast3D.new()
-	ray.target_position = Vector3(0, 0, -3.0)
-	ray.collision_mask = 2
+	ray.target_position = Vector3(0, 0, -INTERACTION_DISTANCE)
+	ray.collision_mask = LevelConfig.INTERACTION_MASK
+	ray.hit_from_inside = true
+	ray.add_exception(self)
 	ray.enabled = true
 	camera.add_child(ray)
 	held_root = Node3D.new()
@@ -86,28 +89,31 @@ func _physics_process(delta: float) -> void:
 	head.rotation.x = clampf(head.rotation.x, deg_to_rad(-75), deg_to_rad(75))
 	look_delta = Vector2.ZERO
 	touch_look = Vector2.ZERO
+	_update_interaction()
+
+func _update_interaction() -> void:
 	ray.force_raycast_update()
-	var focused: Object = ray.get_collider() if ray.is_colliding() else null
+	var origin := camera.global_position
+	var hit := ray.is_colliding()
+	var basket := ray.get_collider() as FlowerBasket if hit else null
+	var clear_distance := origin.distance_to(ray.get_collision_point()) if hit else INTERACTION_DISTANCE
 	var focused_flower_id := ""
-	if (focused == null or not focused.is_in_group("interactables")) and is_instance_valid(flower_field):
-		focused_flower_id = flower_field.focused_flower(
-			camera.global_position,
-			-camera.global_transform.basis.z,
-			3.0
-		)
 	if is_instance_valid(flower_field):
-		var hovered_flower_id := focused_flower_id
-		if focused != null and focused.is_in_group("interactables"):
-			hovered_flower_id = ""
-		flower_field.set_focused_flower(hovered_flower_id)
-	if focused != null and focused.is_in_group("interactables"):
-		controls.set_prompt(focused.focus_text())
-		if interact_pressed:
-			focused.interact(self)
-	elif not focused_flower_id.is_empty():
+		focused_flower_id = flower_field.focused_flower(
+			origin,
+			-camera.global_transform.basis.z,
+			clear_distance,
+			get_rid()
+		)
+		flower_field.set_focused_flower(focused_flower_id)
+	if not focused_flower_id.is_empty():
 		controls.set_prompt(flower_field.focus_text(focused_flower_id))
+		if interact_pressed and flower_field.interact(focused_flower_id):
+			controls.set_prompt("")
+	elif basket != null:
+		controls.set_prompt(basket.focus_text())
 		if interact_pressed:
-			flower_field.interact(focused_flower_id)
+			basket.interact(self)
 	else:
 		controls.set_prompt("")
 	interact_pressed = false

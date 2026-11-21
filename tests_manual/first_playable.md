@@ -31,7 +31,7 @@ Run `python3 tools/check_stairs.py` for the isolated physics check; see [results
 - [ ] Progress increments once per successful placement; placed flowers appear in the basket.
 - [ ] LB-001: Complete five consecutive up/down staircase round trips, including empty/full inventory and approaches near both rails. Reach all nine baskets. Record the extended 50-round-trip keyboard and 50-round-trip joystick checks separately; do not mark Android verified from desktop results.
 - [ ] Check wall cabinets are attached to the walls and do not block the ramp, baskets, or flower pickups.
-- [ ] Complete the 90-flower demo. Completion appears once, plays the cue and Replay resets only the selected mode. Repeat the 504-flower run when validating the stress mode.
+- [ ] Complete the 90-flower demo, including all four cabinet flowers on each floor. Completion appears once, plays the cue and Replay resets only the selected mode. The automated D3 run covered 90/90 on Mac. Repeat this checklist with manual controls.
 - [ ] LB-004: Complete from a valid QA save at 503 placed + the last flower carried; the completion label updates to 504 without reloading.
 - [ ] Music and SFX sliders independently control their audio; zero volume mutes the corresponding bus.
 - [ ] Pause, settings, reset confirmation, return to menu, Continue, New Game confirmation, and Credits work.

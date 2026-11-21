@@ -133,9 +133,9 @@ Nguồn: `FPSPlayer._ready()`, `_physics_process()`, `_input()`; `TouchControls.
 - Nếu keyboard vector có độ lớn, nó được ưu tiên hơn touch. Hướng đi được normalize nên chưa có tốc độ đi chậm theo độ lệch joystick.
 - Tốc độ 3.5 m/s, độ nhạy gốc 0.003 nhân cài đặt; pitch giới hạn ±75°. Capsule bán kính 0.32 m, cao 1.7 m; camera ở y = 1.52 m.
 - Thông số bám sàn: snap 0.8 m, max angle 40°, safe margin 0.02; sau sửa D0, input chỉ cấp velocity ngang, khi chạm sàn đặt velocity.y = 0, khi trên không áp gravity; `move_and_slide()` xử lý dốc.
-- Ray từ camera dài 3 m, mask = 2; giỏ có layer = 3 (bit 1 và 2), vừa chặn người vừa nhận ray. Tường/sàn tạo bằng `_add_box(..., true)` không đặt layer riêng.
-- Nếu ray không trúng `interactables`, hỏi `FlowerField.focused_flower()` trong tầm 3 m. Field lấy ứng viên từ lưới XZ ô 2 m, rồi chọn tâm bông gần hướng nhìn nhất theo khoảng cách dọc ray và bán kính 0.22 m.
-- **Chưa có bước kiểm tra vật cản thế giới cho chọn hoa**, ray giỏ cũng chỉ xét layer tương tác. Không coi tiêu chí “không nhặt xuyên tường” đã đạt chỉ vì có raycast.
+- Ray chính dài 3 m, xét tường/sàn (lớp 1), giỏ (lớp 2) và vật cản tương tác (lớp 4). Thân/cánh tủ thuộc lớp 4 để chặn tầm nhìn mà không thay đổi va chạm khi đi bộ.
+- Vật cản đầu tiên giới hạn khoảng chọn mục tiêu. FlowerField tìm hoa trong lưới XZ ô 2 m trước điểm va chạm, giữ bán kính ngắm 0.22 m, rồi kiểm tra riêng đoạn từ camera tới tâm bông để chặn tương tác qua mép vật cản. Nếu có bông nhìn thấy ở trước giỏ, tương tác với bông. Nếu không có bông và ray gặp giỏ, tương tác với giỏ.
+- Nhặt thành công xóa focus, highlight, nhãn tên và lời nhắc ngay. Lần cập nhật kế tiếp có thể chọn bông còn lại dưới tâm ngắm.
 
 Pause/tutorial/hoàn thành đặt `SceneTree.paused`; TouchControls dùng `PROCESS_MODE_ALWAYS` và chặn xử lý touch khi có overlay. Vào nền/đóng cửa sổ có nhánh xóa trạng thái touch; code này chưa chứng minh đầy đủ hành vi âm thanh và resume trên Android.
 
@@ -158,7 +158,7 @@ FlowerField giữ `_records_by_id`, `_hidden_ids`, `_ids_by_cell` và nhóm `_ch
 
 Khi nhặt, instance được scale về 0 và chuyển xuống y = -1000. Cần đo ảnh hưởng lên bounds/culling khi tối ưu; chưa có phép đo trong repo. Hoa đã xếp dùng hai MultiMesh mỗi giỏ; giỏ chỉ dựng lại transform khi số lượng thay đổi. Hoa đang mang dùng model nhỏ hình cầu/thân riêng, chưa dùng đầy đủ silhouette của factory.
 
-Chỉ có một mesh glow và một Label3D dùng chung cho bông đang ngắm, pulse/bob trong `_process()`. Glow là lớp mesh trong suốt phóng lớn, không phải shader viền thật. Mất mục tiêu được xử lý qua vòng cập nhật focus; `interact()` chưa tự xóa highlight ngay trong cùng lời gọi.
+Chỉ có một mesh glow và một Label3D dùng chung cho bông đang ngắm, pulse/bob trong `_process()`. Glow là lớp mesh trong suốt phóng lớn, không phải shader viền thật. Mất mục tiêu được xử lý qua vòng cập nhật focus. Khi nhặt thành công, `interact()` xóa highlight và nhãn nếu đang hiển thị cho bông đó.
 
 Toàn bộ phòng và batch hoa còn lại được dựng khi vào scene. Chưa có streaming theo khoảng cách, mức chi tiết LOD tự định nghĩa hoặc hiệu ứng làm mờ xa trong code. Đã có chia batch theo vùng nhưng không thể suy ra FPS hoặc tốc độ tải từ đó. Đèn chính tắt shadow; WorldEnvironment chọn nền sky nhưng hàm dựng chưa gán resource Sky.
 
@@ -208,7 +208,7 @@ Tổng số ID trên sàn, đang mang và đã đặt phải bằng tổng của
 | D0: cầu thang/spawn | `main.gd`, `player.gd` | Lên/xuống, lan can, tiếp giáp sàn; cần thử thao tác, không chỉ parse |
 | D1: Demo 90 và thử tải 504 | `level_config.gd`, `game_state.gd`, `main.gd`, `main_menu.gd` | Đã xác minh ID, vị trí 504 và save riêng trên bản sao |
 | D2: giỏ đầu | `main.gd`, `touch_controls.gd` | Đã bố trí 10 hồng và giỏ gần cửa, thử được hai chuyến. Còn đo người mới |
-| D3: tương tác | `player.gd`, `flower_field.gd`, `basket.gd` | Che khuất/tầm với, hoa trên tủ, highlight; không làm mất/trùng ID |
+| D3: tương tác | `player.gd`, `flower_field.gd`, `main.gd` | Đã kiểm tra che khuất, 90 ID và 8 bông trên tủ trong lượt đầy đủ |
 | D4: Android | `touch_controls.gd`, autoloads, export preset | Multitouch, vòng đời, file đóng gói, save và FPS trên máy thật |
 
 ## 12. Kiểm tra T0.1

@@ -139,17 +139,17 @@ func _add_stair_steps() -> void:
 func _add_wall_cabinets(floor_y: float) -> void:
 	var base_y := floor_y + 2.15
 	var back_z := -ROOM_DEPTH / 2.0 + 0.48
-	_add_box("WallCabinetBackBody", Vector3(4.6, 0.92, 0.72), Vector3(0, base_y, back_z), Color("#9a694a"), false)
+	_add_box("WallCabinetBackBody", Vector3(4.6, 0.92, 0.72), Vector3(0, base_y, back_z), Color("#9a694a"), false, true)
 	for index in 4:
 		var x := -1.68 + float(index) * 1.12
-		_add_box("WallCabinetBackDoor", Vector3(1.02, 0.78, 0.06), Vector3(x, base_y, back_z + 0.39), Color("#e4d5bd"), false)
+		_add_box("WallCabinetBackDoor", Vector3(1.02, 0.78, 0.06), Vector3(x, base_y, back_z + 0.39), Color("#e4d5bd"), false, true)
 		_add_box("WallCabinetBackKnob", Vector3(0.055, 0.055, 0.055), Vector3(x + 0.34, base_y, back_z + 0.44), Color("#d4a65e"), false)
 	for side in [-1.0, 1.0]:
 		var side_x: float = float(side) * (ROOM_WIDTH / 2.0 - 0.48)
-		_add_box("WallCabinetSideBody", Vector3(0.72, 0.92, 4.2), Vector3(side_x, base_y, -6.0), Color("#9a694a"), false)
+		_add_box("WallCabinetSideBody", Vector3(0.72, 0.92, 4.2), Vector3(side_x, base_y, -6.0), Color("#9a694a"), false, true)
 		for index in 3:
 			var z := -7.4 + float(index) * 1.4
-			_add_box("WallCabinetSideDoor", Vector3(0.06, 0.78, 1.28), Vector3(side_x - side * 0.39, base_y, z), Color("#e4d5bd"), false)
+			_add_box("WallCabinetSideDoor", Vector3(0.06, 0.78, 1.28), Vector3(side_x - side * 0.39, base_y, z), Color("#e4d5bd"), false, true)
 
 func _build_shop_props() -> void:
 	_add_pendant_lamp()
@@ -459,10 +459,16 @@ func _add_potted_plant(at: Vector3, flower_color: Color) -> void:
 	bloom.material_override = _material(flower_color)
 	add_child(bloom)
 
-func _add_box(object_name: String, size: Vector3, at: Vector3, color: Color, solid: bool) -> void:
+func _add_box(
+		object_name: String, size: Vector3, at: Vector3, color: Color, solid: bool,
+		blocks_interaction: bool = false
+) -> void:
 	var node: Node3D
-	if solid:
+	if solid or blocks_interaction:
 		var body := StaticBody3D.new()
+		if not solid:
+			body.collision_layer = LevelConfig.INTERACTION_ONLY_LAYER
+			body.collision_mask = 0
 		var shape := BoxShape3D.new()
 		shape.size = size
 		var collision := CollisionShape3D.new()

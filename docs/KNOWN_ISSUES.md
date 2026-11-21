@@ -20,7 +20,7 @@ Mức độ là mức ảnh hưởng nếu lỗi xảy ra, không phải mức c
 | ID | Mức | Vấn đề | Bằng chứng / trạng thái | Mốc xử lý |
 |---|---|---|---|---|
 | LB-001 | P0 | Mắc khi lên hoặc xuống cầu thang | Chưa tái hiện kẹt trong probe, đã sửa mất bám sàn, thử tay và Android còn chờ | D0 / T1.1, ưu tiên đầu |
-| LB-002 | P1 | Chọn hoa/giỏ chưa xét vật cản thế giới | Có căn cứ từ code; chưa chạy tình huống che khuất | D3 |
+| LB-002 | P1 | Chọn hoa/giỏ qua vật cản | D3 đã sửa và qua kịch bản che khuất trên Mac | D3 |
 | LB-003 | P1 | Ngón chạm mới giành quyền xoay camera | Có căn cứ từ code; chưa kiểm thử multitouch trên máy | D4 |
 | LB-004 | P2 | Tổng hoa trên màn hoàn thành dùng số cũ | D1 dùng tổng của chế độ. Bài thử 89 → 90 cùng phiên và chơi lại đã qua trên bản sao | D1/D4 |
 | LB-005 | P0 | Vào màn chơi chỉ thấy nền trống/trắng | Không tái hiện với Chơi mới và Tiếp tục trên bản QA Mac | Kiểm tra đầu D0 nếu còn xảy ra |
@@ -49,13 +49,9 @@ Mức độ là mức ảnh hưởng nếu lỗi xảy ra, không phải mức c
 
 ## LB-002 — Tương tác qua vật cản
 
-**Bằng chứng code:** [player.gd](../scripts/player.gd) đặt ray mask `2`, còn tường/sàn không thuộc layer tương tác này. [flower_field.gd](../scripts/flower_field.gd), `focused_flower()` kiểm tra khoảng cách tới đường ngắm nhưng không truy vấn vật cản trước mục tiêu. Giỏ được ưu tiên nếu ray trúng, kể cả khi một hoa nằm gần camera hơn.
+Trước D3, ray nhắm giỏ chỉ xét lớp tương tác của giỏ, còn hoa được chọn theo vị trí và không có kiểm tra che khuất. D3 giới hạn lựa chọn theo điểm va chạm đầu tiên và kiểm tra đoạn nhìn tới tâm bông. Thân và cánh tủ tham gia chặn ray.
 
-**Kịch bản:** trong bản QA, chọn hoa trong tầm 3 m có quầy/kệ/sàn nằm giữa camera và hoa, ngắm đúng tâm rồi tương tác. Thử tương tự với giỏ bị vật cản che; nếu layout hiện tại không tạo được trường hợp rõ, dựng cảnh kiểm tra nhỏ khi mở task D3. Thử lại cùng mục tiêu từ phía không bị che để có mẫu đối chứng.
-
-**Mong đợi:** mục tiêu bị vật cản đặc che không được chọn/nhặt/đặt; mục tiêu nhìn thấy trong tầm vẫn thao tác được. **Thực tế từ code:** thiếu bước chặn theo vật cản; chưa có video tái hiện trên build hiện tại.
-
-**Điều kiện đóng:** có kết quả cả hoa và giỏ, vật cản giữa hai tầng, mục tiêu không bị che và ngoài tầm. Inventory/placed IDs không đổi khi thao tác bị chặn. Kiểm tra lại khả năng nhặt hoa trên tủ sau khi thêm che khuất; không đánh dấu đạt bằng cách loại bỏ vật cản của đồ nội thất.
+Bản QA trên Mac đã thử hoa và giỏ bị tường che, tâm ngắm lướt cạnh tường, hoa dưới sàn tầng hai và hoa bị thân tủ che từ dưới. Tiến độ giữ nguyên khi thao tác bị chặn. Cùng bông hoa nhìn thấy thì nhặt được và nhãn ẩn ngay. Lượt demo hoàn chỉnh nhặt đủ hoa trên cả hai tầng và trên tủ. [Kết quả D3](../DEMO_PLAN.md#kết-quả-d3).
 
 ## LB-003 — Ngón chạm thứ ba làm mất điều khiển nhìn
 
@@ -120,6 +116,6 @@ Mỗi lần thử ghi: ID lỗi · ngày · commit/build · profile/số hoa · 
 1. D0: vào được level; nếu LB-005 tái hiện thì lấy lỗi đầu tiên trước.
 2. Tái hiện LB-001 và xác định collider/điểm kẹt, sửa phạm vi nhỏ rồi kiểm tra lại hai chiều.
 3. D1: tách cấu hình/save và kiểm chứng bảo toàn ID, trước khi giảm số hoa.
-4. D3/D4: xử lý LB-002, LB-004, LB-003, môi trường Android và số đo thực tế theo mốc.
+4. D4: kiểm tra LB-003, môi trường Android và số đo thực tế. Chạy lại các ca D3 trên thiết bị.
 
 **Kết quả T0.6:** đã lập danh sách và đồng bộ checklist. **Bổ sung D0:** đã sửa hiện tượng mất bám sàn ở cầu thang, kiểm chứng tự động trước/sau; LB-001 vẫn mở để xác minh điều khiển bằng tay trên desktop và Android.

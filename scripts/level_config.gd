@@ -4,6 +4,8 @@ class_name LevelConfig
 const DEMO := "demo"
 const STRESS := "stress"
 const UPPER_FLOOR_Y := 4.2
+const INTERACTION_ONLY_LAYER := 4
+const INTERACTION_MASK := 1 | 2 | INTERACTION_ONLY_LAYER
 
 const PROFILES := {
 	DEMO: {

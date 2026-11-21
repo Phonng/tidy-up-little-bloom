@@ -52,7 +52,9 @@ func _process(delta: float) -> void:
 	_focus_label.position.y = _focus_label_base_y + sin(_focus_elapsed * 2.6) * 0.035
 
 
-func focused_flower(origin: Vector3, direction: Vector3, max_distance: float) -> String:
+func focused_flower(origin: Vector3, direction: Vector3, max_distance: float, viewer: RID) -> String:
+	if max_distance <= 0.0:
+		return ""
 	var ray_direction := direction.normalized()
 	var local_origin := global_transform.affine_inverse() * origin
 	var local_direction := (global_transform.basis.inverse() * ray_direction).normalized()
@@ -74,6 +76,7 @@ func focused_flower(origin: Vector3, direction: Vector3, max_distance: float) ->
 
 	var best_id := ""
 	var best_distance := max_distance
+	var sight_query: PhysicsRayQueryParameters3D
 	for flower_id_value in candidate_ids:
 		var flower_id: String = str(flower_id_value)
 		if _hidden_ids.has(flower_id):
@@ -85,7 +88,15 @@ func focused_flower(origin: Vector3, direction: Vector3, max_distance: float) ->
 		if along_ray <= 0.0 or along_ray >= best_distance:
 			continue
 		var perpendicular := to_flower - ray_direction * along_ray
-		if perpendicular.length_squared() <= 0.22 * 0.22:
+		if perpendicular.length_squared() > 0.22 * 0.22 or to_flower.length_squared() > max_distance * max_distance:
+			continue
+		# The reticle can pass beside a wall while the nearby bloom is still behind it.
+		if sight_query == null:
+			sight_query = PhysicsRayQueryParameters3D.create(origin, flower_position, LevelConfig.INTERACTION_MASK, [viewer])
+			sight_query.hit_from_inside = true
+		else:
+			sight_query.to = flower_position
+		if get_world_3d().direct_space_state.intersect_ray(sight_query).is_empty():
 			best_distance = along_ray
 			best_id = flower_id
 	return best_id
@@ -117,17 +128,20 @@ func set_focused_flower(flower_id: String) -> void:
 	_focus_label.visible = true
 
 
-func interact(flower_id: String) -> void:
+func interact(flower_id: String) -> bool:
 	if not _records_by_id.has(flower_id) or _hidden_ids.has(flower_id):
-		return
+		return false
 	if not GameState.pickup(flower_id):
-		return
+		return false
 	_hidden_ids[flower_id] = true
 	var record: Dictionary = _records_by_id[flower_id]
 	var chunk_key: String = record["chunk_key"]
 	_hide_instance(_stem_batches[chunk_key], int(record["stem_index"]))
 	var bloom_key := _bloom_key(chunk_key, str(record["type"]))
 	_hide_instance(_bloom_batches[bloom_key], int(record["bloom_index"]))
+	if _focused_flower_id == flower_id:
+		set_focused_flower("")
+	return true
 
 
 func _build_chunk_batches() -> void:

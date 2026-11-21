@@ -61,7 +61,14 @@ Bản QA riêng trên Mac đã ngắm, nhặt và đặt 10 bông qua luồng t�
 | D3 — Cửa hàng hoàn chỉnh | 80 bông còn lại, tương tác/nhãn focus, tủ và hai tầng, kết thúc 90/90 | Nhặt được mọi bông, không xuyên tường; mất focus/nhặt xong thì ẩn nhãn; hoàn thành và chơi lại được |
 | D4 — Android demo | Cấu hình SDK, build cài máy thật, kiểm tra cảm ứng, pause/resume, save/load, đo tải/FPS | Chơi được cả vòng trên Android, không mất save; hướng tới ≥30 FPS ổn định trên thiết bị baseline đã ghi nhận |
 
-D1 và phần triển khai D2 đã qua kiểm tra Godot trên bản sao. D0 còn thử bằng tay, D2 còn đo với người mới, D3–D4 theo tiêu chí trong bảng.
+D1, phần triển khai D2 và D3 đã qua kiểm tra Godot trên bản sao. D0 còn thử bằng tay, D2 còn đo với người mới, D4 còn kiểm tra trên Android.
+
+### Kết quả D3
+
+- Một lượt tự động dùng nhân vật, tâm ngắm, nút tương tác và giỏ của game thật đã nhặt 90 ID riêng biệt rồi xếp đủ 9 giỏ. Tầng trệt có 50 bông, gồm 10 bông hồng mở đầu. Tầng hai có 40 bông. Mỗi tầng có 4 bông trên mặt tủ, cả 8 bông đều được nhặt.
+- Đã kiểm tra tường trực diện, tâm ngắm lướt cạnh tường, sàn ngăn hai tầng, mặt tủ và giỏ sau vật cản. Tương tác bị chặn giữ nguyên tiến độ. Nhặt thành công ẩn nhãn và highlight ngay trong lần tương tác đó.
+- Mở lại lượt 90/90 hiện màn hoàn thành. Chơi lại dựng đủ 90 bông với tiến độ demo bằng 0. Save demo bố cục 1 nạp đủ ID đang mang và đã đặt. Save 504 mẫu giữ nguyên từng byte qua lượt demo và vẫn nạp được ID trên 10.
+- Kiểm tra hình học trên chế độ thử tải tìm được điểm đứng có tầm nhìn trong phạm vi cho 504/504 hoa. Lượt chơi hoàn chỉnh được thực hiện trên demo 90.
 
 ## Save và kiến trúc khi tách demo
 
