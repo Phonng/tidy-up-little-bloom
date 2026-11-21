@@ -20,7 +20,8 @@ Các dấu hoàn thành dưới đây ghi nhận code prototype hiện có, khô
 Xem [bảng đối chiếu và tiêu chí](DEMO_PLAN.md#đối-chiếu-bản-claude-v2--21112026). Các mục dưới đây chưa thực hiện; T là mã nguồn tham khảo, D là mốc demo đang áp dụng.
 
 - [x] Lưu bản nguồn v2 và đối chiếu với phạm vi demo; giữ riêng các đề xuất sau demo.
-- [ ] T0.1: Viết `docs/ARCHITECTURE.md` dựa trên code hiện tại, trước khi sửa D0/D1.
+- [x] T0.1 — soạn tài liệu: Đã viết [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) từ 10 script và 2 scene tại mốc code `6fc071c`; kiểm tra tĩnh, không sửa hoặc chạy game.
+- [ ] T0.1 — duyệt hiện trạng: Chủ dự án đọc tài liệu kiến trúc và xác nhận; chưa có xác nhận, chưa coi toàn bộ cổng T0.1 đã được duyệt.
 - [ ] T0.6: Tạo `docs/KNOWN_ISSUES.md`, ghi bước tái hiện lỗi cầu thang và mức độ.
 - [ ] T0.3–T0.4: Ghi `docs/DEVICES.md` và `docs/BASELINE.md`; đo FPS, thời gian giỏ và số chuyến trên build/profile xác định.
 - [ ] T1.1: Sau kiểm tra nhanh D0, thử mở rộng 50 vòng lên/xuống bằng mỗi kiểu điều khiển, gồm cả khi mang đủ hoa.

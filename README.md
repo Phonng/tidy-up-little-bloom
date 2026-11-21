@@ -25,6 +25,8 @@ See `DEMO_PLAN.md` for the opening layout, save compatibility and acceptance cri
 
 ## Next steps
 
+Read [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the current scene structure, all ten scripts, input, flower data and save flow. It documents source inspection, not runtime or Android test results.
+
 Start with `PRODUCT_SPEC.md` for the product scope and requirements. Use `ROADMAP_CHECKLIST.md` to track work part by part, and `ke-hoach-little-bloom-android.md` for the older 16–20 week reference plan; the current demo priorities are in `DEMO_PLAN.md`. Replace placeholder art only after the Android touch loop feels comfortable.
 
 ## Android release
