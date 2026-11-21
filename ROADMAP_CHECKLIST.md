@@ -8,7 +8,7 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 
 Các dấu hoàn thành dưới đây ghi nhận code prototype hiện có, không chứng nhận bản demo đã đạt. Code đang dùng 504 bông; thiết kế đích là 90 bông và giỏ đầu 10 bông. Xem [DEMO_PLAN.md](DEMO_PLAN.md).
 
-- [ ] D0: Xác minh và sửa cầu thang lên/xuống, điểm xuất phát, điểm kẹt.
+- [ ] D0: Đã sửa mất bám sàn và chuyển spawn ra sàn phẳng; [probe trước/sau](docs/STAIRCASE_CHECK.md) đạt 140 vòng, 0 tick mất bám sau sửa. Bản có cửa sổ trên Mac hiển thị hai đầu thang và đi tới 9/9 giỏ bằng điều khiển mô phỏng. Còn thử bằng tay và trên Android.
 - [ ] D1: Tách cấu hình demo 90 bông và cấu hình thử tải 504 bông; tách save theo level.
 - [ ] D2: Bố trí giỏ mở đầu 10 bông, hai chuyến mang; đo với 5 người mới.
 - [ ] D3: Hoàn thiện 9 loại hoa, 9 giỏ, hoa rải tự nhiên và trên mặt tủ; nhãn tên/hiệu ứng focus.
@@ -32,7 +32,7 @@ Xem [bảng đối chiếu và tiêu chí](DEMO_PLAN.md#đối-chiếu-bản-cla
 
 | Phần | Hạng mục | Trạng thái |
 |---|---|---|
-| 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Đã bỏ tay, đổi cầu thang 20 bậc; còn xác minh lên/xuống bằng thao tác trong game |
+| 1 | Nền project, phòng blockout, điều khiển FPS và cảm ứng | Đã bỏ tay, cầu thang 20 bậc; D0 sửa bám sàn/spawn, probe đạt, còn thử bằng tay và trên Android |
 | 2 | Vòng chơi nhặt, mang và phân loại hoa | Đã cập nhật 9 loại/504 bông; cần kiểm tra scene và chơi hết vòng trên thiết bị |
 | 3 | Save/load an toàn, Continue và reset | Lưu/phục hồi và hộp xác nhận đã có; còn thử phục hồi và thoát đột ngột |
 | 4 | Menu, pause, cài đặt và hướng dẫn người chơi | Luồng, audio và onboarding đã có; còn cân chỉnh UI/âm thanh trên thiết bị |

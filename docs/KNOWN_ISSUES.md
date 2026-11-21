@@ -1,8 +1,8 @@
 # Little Bloom — lỗi đã biết và việc cần xác minh
 
-Cập nhật: 21/11/2026 · Task T0.6 · Đối chiếu code tại `3f16d2a`.
+Cập nhật: 21/11/2026 · T0.6 lập tại `3f16d2a`; bổ sung kết quả D0 so với `7deb072`.
 
-Nguồn: báo cáo người dùng trong cuộc trò chuyện, [kiến trúc hiện tại](ARCHITECTURE.md), code và [checklist chơi thử](../tests_manual/first_playable.md). Lần lập danh sách này chỉ đọc code và tài liệu, chưa chạy game, chưa lấy log mới hoặc đo trên điện thoại. Các bước dưới đây là kịch bản cần thực hiện, không phải kết quả đã chạy.
+Nguồn: báo cáo người dùng trong cuộc trò chuyện, [kiến trúc hiện tại](ARCHITECTURE.md), code và [checklist chơi thử](../tests_manual/first_playable.md). Khi lập T0.6 chỉ đọc code và tài liệu. D0 đã chạy kiểm thử vật lý riêng cho cầu thang; xem [báo cáo D0](STAIRCASE_CHECK.md). Các kịch bản khác chưa được chạy lại; chưa đo trên điện thoại.
 
 ## Cách đọc và đóng lỗi
 
@@ -19,11 +19,11 @@ Mức độ là mức ảnh hưởng nếu lỗi xảy ra, không phải mức c
 
 | ID | Mức | Vấn đề | Bằng chứng / trạng thái | Mốc xử lý |
 |---|---|---|---|---|
-| LB-001 | P0 | Mắc khi lên hoặc xuống cầu thang | Người dùng đã báo nhiều lần; chờ tái hiện bản cầu thang hiện tại | D0 / T1.1, ưu tiên đầu |
+| LB-001 | P0 | Mắc khi lên hoặc xuống cầu thang | Chưa tái hiện kẹt trong probe, đã sửa mất bám sàn, thử tay và Android còn chờ | D0 / T1.1, ưu tiên đầu |
 | LB-002 | P1 | Chọn hoa/giỏ chưa xét vật cản thế giới | Có căn cứ từ code; chưa chạy tình huống che khuất | D3 |
 | LB-003 | P1 | Ngón chạm mới giành quyền xoay camera | Có căn cứ từ code; chưa kiểm thử multitouch trên máy | D4 |
 | LB-004 | P2 | Tổng hoa trên màn hoàn thành dùng số cũ | Có căn cứ từ code; chưa thử hoàn thành trong cùng phiên | D3 |
-| LB-005 | P0 | Vào màn chơi chỉ thấy nền trống/trắng | Báo cáo và log cũ; chờ xác minh sau các sửa parser | Kiểm tra đầu D0 nếu còn xảy ra |
+| LB-005 | P0 | Vào màn chơi chỉ thấy nền trống/trắng | Không tái hiện với Chơi mới và Tiếp tục trên bản QA Mac | Kiểm tra đầu D0 nếu còn xảy ra |
 | ENV-001 | P0 với kiểm thử Android | Không mở được thư mục Android build-tools | Log cũ của người dùng; chưa kiểm tra môi trường hiện tại | D4 / T0.3 |
 | DOC-001 | P2 | Checklist còn ghi 600 bông và hai bàn tay | Đã sửa tài liệu trong T0.6; chưa chạy lại checklist | T0.6 |
 
@@ -36,12 +36,12 @@ Mức độ là mức ảnh hưởng nếu lỗi xảy ra, không phải mức c
 **Kịch bản tái hiện:**
 
 1. Dùng bản QA với dữ liệu lưu riêng; ghi commit, phiên bản Godot, máy và kiểu điều khiển. Vào lượt mới, đóng tutorial.
-2. Từ spawn `(0, 0, 9)`, đi giữa thang lên tầng hai; dừng, quay lại và đi xuống. Một vòng = lên hoàn toàn rồi xuống sàn trệt.
+2. Từ spawn hiện tại `(0, 0.05, 9.8)` (bản trước là `(0, 0, 9)`), đi giữa thang lên tầng hai; dừng, quay lại và đi xuống. Một vòng = lên hoàn toàn rồi xuống sàn trệt.
 3. Thử đi sát trái/phải nhưng trong lan can, tiếp cận đầu thang từ tầng hai, dừng/đổi hướng ở chân và đầu thang.
 4. Lặp với tay trống và đang mang 5 bông; dùng WASD trước, joystick trên Android sau.
 5. Khi kẹt, ghi vị trí, hướng di chuyển, đoạn thang, có rơi/xuyên sàn không, ảnh/video và Output. Khi làm task sửa, xem collision thực tế và ghi `is_on_floor()`, velocity, normal/collider va chạm nếu cần.
 
-**Mong đợi:** đi hai chiều không kẹt, không cần nhảy, không rơi hoặc bật lên; tiếp cận được 9 giỏ. **Thực tế hiện tại:** chưa chạy lại; triệu chứng lịch sử là không lên hoặc không xuống được.
+**Mong đợi:** đi hai chiều không kẹt, không cần nhảy, không rơi hoặc bật lên; tiếp cận được 9 giỏ. **Kết quả D0:** trước và sau sửa đều hoàn thành 140 vòng tự động, chưa tái hiện kẹt. Trước sửa có 19 tick liên tiếp mất tiếp xúc sàn; sau sửa còn 0. Đã sửa vận tốc dọc, chuyển spawn ra sàn phẳng và xác nhận tiếp cận đủ 9 giỏ trong cửa sổ Godot bằng input mô phỏng. Xem [ma trận và kết quả](STAIRCASE_CHECK.md).
 
 **Giả thuyết cần kiểm chứng, chưa chốt nguyên nhân:** spawn nằm ngay chân dốc; mặt dốc/đầu nối sàn trên hoặc lan can có thể cản capsule; xử lý velocity theo normal và floor snap có thể ảnh hưởng khi chuyển mặt tiếp xúc. Bậc nhìn thấy không có collision riêng, nên đổi hình bậc chưa chứng minh đã sửa đường đi.
 
@@ -85,7 +85,7 @@ Mức độ là mức ảnh hưởng nếu lỗi xảy ra, không phải mức c
 
 **Kịch bản:** mở đúng project trong Editor, vào menu rồi Chơi mới trên dữ liệu QA; nếu trống, ghi thời gian chờ và lấy lỗi đầu tiên ở Output/Debugger kèm các dòng tiếp theo. Kiểm tra scene Remote có player/camera/FlowerField không. Ghi renderer và commit, không đổi số hoa ngay để che triệu chứng.
 
-**Mong đợi:** thấy phòng, HUD, camera hoạt động và thao tác được. **Thực tế hiện tại:** chưa tái hiện. Chưa có số đo chứng minh do lag, 504 bông, ánh sáng hoặc driver.
+**Mong đợi:** thấy phòng, HUD, camera hoạt động và thao tác được. **Thực tế hiện tại:** bản QA có cửa sổ hiển thị cảnh và HUD ở hai tầng. Chơi mới và Tiếp tục từ menu đều mở được màn chơi trên bản QA Mac. Chưa có số đo chứng minh do lag, 504 bông, ánh sáng hoặc driver.
 
 **Điều kiện đóng:** menu → level và Continue mở được, không có lỗi script mới trên máy từng gặp; nếu không tái hiện thì ghi build/máy và trạng thái “không tái hiện trên build đã thử”, không tự kết luận mọi máy đã hết.
 
@@ -122,4 +122,4 @@ Mỗi lần thử ghi: ID lỗi · ngày · commit/build · profile/số hoa · 
 3. D1: tách cấu hình/save và kiểm chứng bảo toàn ID, trước khi giảm số hoa.
 4. D3/D4: xử lý LB-002, LB-004, LB-003, môi trường Android và số đo thực tế theo mốc.
 
-**Kết quả T0.6:** đã lập danh sách có mức độ, bằng chứng, kịch bản và tiêu chí đóng; đã đồng bộ checklist. Chưa có lỗi gameplay nào được sửa hoặc đóng trong task này.
+**Kết quả T0.6:** đã lập danh sách và đồng bộ checklist. **Bổ sung D0:** đã sửa hiện tượng mất bám sàn ở cầu thang, kiểm chứng tự động trước/sau; LB-001 vẫn mở để xác minh điều khiển bằng tay trên desktop và Android.

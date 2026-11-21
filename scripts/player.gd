@@ -3,6 +3,9 @@ class_name FPSPlayer
 
 const WALK_SPEED := 3.5
 const LOOK_SENSITIVITY := 0.003
+const FLOOR_SNAP_DISTANCE := 0.8
+const MAX_FLOOR_ANGLE_DEGREES := 40.0
+const COLLISION_MARGIN := 0.02
 
 var move_input := Vector2.ZERO
 var look_delta := Vector2.ZERO
@@ -18,10 +21,10 @@ var held_root: Node3D
 var gravity := float(ProjectSettings.get_setting("physics/3d/default_gravity"))
 
 func _ready() -> void:
-	floor_snap_length = 0.8
+	floor_snap_length = FLOOR_SNAP_DISTANCE
 	floor_constant_speed = true
-	floor_max_angle = deg_to_rad(40.0)
-	safe_margin = 0.02
+	floor_max_angle = deg_to_rad(MAX_FLOOR_ANGLE_DEGREES)
+	safe_margin = COLLISION_MARGIN
 	var capsule := CollisionShape3D.new()
 	var capsule_shape := CapsuleShape3D.new()
 	capsule_shape.radius = 0.32
@@ -67,17 +70,12 @@ func _physics_process(delta: float) -> void:
 	if input_vector.length() < 0.01:
 		input_vector = touch_move
 	var direction := (transform.basis * Vector3(input_vector.x, 0, input_vector.y)).normalized()
-	var movement_velocity := direction * WALK_SPEED
+	velocity.x = direction.x * WALK_SPEED
+	velocity.z = direction.z * WALK_SPEED
 	if is_on_floor():
-		movement_velocity = movement_velocity.slide(get_floor_normal())
-		if not movement_velocity.is_zero_approx():
-			movement_velocity = movement_velocity.normalized() * WALK_SPEED
-		velocity.x = movement_velocity.x
-		velocity.y = movement_velocity.y
-		velocity.z = movement_velocity.z
+		# move_and_slide handles slopes; upward input velocity disables floor snap.
+		velocity.y = 0.0
 	else:
-		velocity.x = movement_velocity.x
-		velocity.z = movement_velocity.z
 		velocity.y -= gravity * delta
 	move_and_slide()
 	var delta_look := look_delta + touch_look

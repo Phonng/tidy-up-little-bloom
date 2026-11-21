@@ -14,6 +14,10 @@ The checks below were run before the current expansion to nine types and two flo
 - [ ] Re-run import, menu/gameplay startup, and save-state checks for the expanded build.
 - [ ] Open in the Godot GUI and inspect both floors, ramp, wall cabinets, flower batches, and HUD; headless startup does not check layout or feel.
 
+## Automated staircase probe (D0, 21 Nov 2026)
+
+Run `python3 tools/check_stairs.py` for the isolated physics check; see [results and limitations](../docs/STAIRCASE_CHECK.md). The patched build passed 140 round trips plus 12 stop/reversal legs with zero airborne ticks. Input is injected, so this does not check physical keyboard/touch behavior, rendering or Android devices. Keep the manual items below unchecked until actually performed.
+
 ## Desktop playthrough
 
 - [ ] Main scene opens; player walks around without passing through walls, counter, shelf, or baskets.

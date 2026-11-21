@@ -2,6 +2,8 @@
 
 Cập nhật: 21/11/2026 · Task T0.1 · Mốc code được đọc: `6fc071c`.
 
+Bổ sung D0 ngày 21/11/2026: cập nhật chuyển động và spawn; [báo cáo kiểm thử](STAIRCASE_CHECK.md). Phần kiểm tra T0.1 cuối tài liệu vẫn là lịch sử của task tài liệu.
+
 Tài liệu mô tả hiện trạng bằng cách đọc toàn bộ 10 script, 2 scene, cấu hình project/export và đối chiếu [PRODUCT_SPEC](../PRODUCT_SPEC.md). Không sửa gameplay, không chạy Godot hoặc đo trên Android trong task này. Các sơ đồ dưới đây được suy ra từ code, không phải ảnh chụp cây Remote khi chạy.
 
 ## 1. Tổng quan và ranh giới
@@ -129,7 +131,7 @@ Nguồn: `FPSPlayer._ready()`, `_physics_process()`, `_input()`; `TouchControls.
 - Touch: vùng trái 42% bắt ngón di chuyển, phần phải vuốt nhìn trừ vùng nút tương tác/pause. Theo dõi index ngón riêng cho move và look. Nút `NHẶT / ĐẶT` phát yêu cầu thao tác theo tâm ngắm; chưa chạm trực tiếp bông để chọn.
 - Nếu keyboard vector có độ lớn, nó được ưu tiên hơn touch. Hướng đi được normalize nên chưa có tốc độ đi chậm theo độ lệch joystick.
 - Tốc độ 3.5 m/s, độ nhạy gốc 0.003 nhân cài đặt; pitch giới hạn ±75°. Capsule bán kính 0.32 m, cao 1.7 m; camera ở y = 1.52 m.
-- Thông số bám sàn: snap 0.8 m, max angle 40°, safe margin 0.02; velocity khi chạm sàn chiếu lên mặt phẳng normal sàn, khi trên không áp gravity và gọi `move_and_slide()`.
+- Thông số bám sàn: snap 0.8 m, max angle 40°, safe margin 0.02; sau sửa D0, input chỉ cấp velocity ngang, khi chạm sàn đặt velocity.y = 0, khi trên không áp gravity; `move_and_slide()` xử lý dốc.
 - Ray từ camera dài 3 m, mask = 2; giỏ có layer = 3 (bit 1 và 2), vừa chặn người vừa nhận ray. Tường/sàn tạo bằng `_add_box(..., true)` không đặt layer riêng.
 - Nếu ray không trúng `interactables`, hỏi `FlowerField.focused_flower()` trong tầm 3 m. Field lấy ứng viên từ lưới XZ ô 2 m, rồi chọn tâm bông gần hướng nhìn nhất theo khoảng cách dọc ray và bán kính 0.22 m.
 - **Chưa có bước kiểm tra vật cản thế giới cho chọn hoa**, ray giỏ cũng chỉ xét layer tương tác. Không coi tiêu chí “không nhặt xuyên tường” đã đạt chỉ vì có raycast.
@@ -142,10 +144,10 @@ Nguồn: `main._build_room()`, `_add_ramp()`, `_add_stair_steps()`, `_build_play
 
 - Tầng trệt 24 × 22 m; tầng trên 24 × 10.4 m, mặt sàn y = 4.2 m.
 - Cầu thang gồm 20 mesh bậc và mặt đứng **không collision riêng**. Người chơi thực tế đi trên BoxShape dốc phẳng ẩn, rộng 4 m, dày 0.08 m, nối z = 9.0 đến z = -0.8; lan can có collision.
-- Điểm spawn `(0, 0, 9.0)` ngay đầu thấp của dốc. Đường nối với sàn trên và lan can là vùng phải kiểm tra khi xử lý lỗi mắc kẹt.
+- Điểm spawn sau D0 là `(0, 0.05, 9.8)` trên sàn phẳng phía trước dốc (trước đó là `(0, 0, 9.0)`). Đường nối với sàn trên và lan can là vùng phải kiểm tra khi xử lý lỗi mắc kẹt.
 - Tủ áp tường, nhiều props và chậu trang trí chỉ là hình, không phải mọi vật trông đặc đều chặn người chơi.
 
-Lỗi lên/xuống đã được người dùng báo trước đây. Chưa có bằng chứng thử tay xác nhận bản cầu thang hiện tại đã hết lỗi; cấu trúc trên là điểm bắt đầu điều tra, không phải kết luận nguyên nhân.
+Lỗi lên/xuống đã được người dùng báo trước đây. D0 chưa tái hiện kẹt trong 140 vòng tự động, nhưng đã sửa mất bám sàn (19 → 0 tick liên tiếp). Một lượt chạy có cửa sổ trên Mac xác nhận hình ảnh và đường tới 9 giỏ bằng điều khiển mô phỏng. Thử bằng tay và trên Android vẫn còn chờ.
 
 ## 8. Mesh, hiển thị và hiệu năng
 

@@ -13,6 +13,7 @@ const RAMP_RUN := RAMP_BOTTOM_Z - RAMP_TOP_Z
 const RAMP_WIDTH := 4.0
 const RAMP_THICKNESS := 0.08
 const STAIR_STEP_COUNT := 20
+const PLAYER_SPAWN := Vector3(0.0, 0.05, 9.8)
 
 func _ready() -> void:
 	_build_lighting()
@@ -383,7 +384,7 @@ func _shuffle_positions(positions: Array[Vector3], rng: RandomNumberGenerator) -
 
 func _build_player() -> void:
 	var player := PlayerScript.new()
-	player.position = Vector3(0, 0, 9.0)
+	player.position = PLAYER_SPAWN
 	add_child(player)
 
 func _add_window_at(center_y: float) -> void:

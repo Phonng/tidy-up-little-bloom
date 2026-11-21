@@ -1,0 +1,119 @@
+extends Node
+
+var player: FPSPlayer
+var failures: Array[String] = []
+var max_air_ticks := 0
+var air_ticks := 0
+var mode := "keyboard"
+var legs := 0
+
+func _ready() -> void:
+	call_deferred("run")
+
+func run() -> void:
+	SettingsManager.tutorial_seen = true
+	var level: Node = load("res://scenes/main.tscn").instantiate()
+	add_child(level)
+	for child in level.get_children():
+		if child is FPSPlayer:
+			player = child
+	print("QA spawn=", player.position, " isolated_save=", GameState.SAVE_PATH)
+	await idle(30)
+	for control_mode in ["keyboard", "touch"]:
+		mode = control_mode
+		for lane in [0.0, -1.45, 1.45]:
+			player.position = Vector3(lane, 0.05, 9.8)
+			player.velocity = Vector3.ZERO
+			player.rotation.y = 0.0
+			await idle(30)
+			var rounds := 50 if lane == 0.0 else 10
+			for cycle in rounds:
+				GameState.inventory.clear()
+				if cycle * 2 >= rounds:
+					GameState.inventory.assign(["rose_01", "tulip_01", "daisy_01", "lily_01", "orchid_01"])
+				GameState.changed.emit()
+				if not await walk_to(-1.35):
+					finish()
+					return
+				await idle(10)
+				if not await walk_to(9.8):
+					finish()
+					return
+			print("PASS rounds=",rounds," mode=",mode," lane=",lane," end=",player.position)
+		# Stop/reverse mid-ramp without teleporting or jumping.
+		player.position = Vector3(0, 0.05, 9.8)
+		player.velocity = Vector3.ZERO
+		await idle(30)
+		for target in [4.0, 6.0, 0.0, 4.0, -1.35, 9.8]:
+			if not await walk_to(target):
+				finish()
+				return
+			await idle(30)
+	finish()
+
+func idle(ticks: int) -> void:
+	set_move(0.0)
+	for tick in ticks:
+		await get_tree().physics_frame
+
+func set_move(axis: float) -> void:
+	Input.action_release("ui_up")
+	Input.action_release("ui_down")
+	var touch := InputEventScreenTouch.new()
+	touch.index = 0
+	touch.position = Vector2(100, 300)
+	touch.pressed = false
+	player.controls._input(touch)
+	if axis == 0.0:
+		return
+	# Face the direction of travel, using forward input for both legs.
+	player.rotation.y = 0.0 if axis < 0.0 else PI
+	if mode == "keyboard":
+		Input.action_press("ui_up")
+	else:
+		touch.pressed = true
+		player.controls._input(touch)
+		var drag := InputEventScreenDrag.new()
+		drag.index = 0
+		drag.position = Vector2(100, 210)
+		drag.relative = Vector2(0, -90)
+		player.controls._input(drag)
+
+func walk_to(target: float) -> bool:
+	var axis := signf(target - player.position.z)
+	set_move(axis)
+	var previous := player.position
+	var stuck := 0
+	air_ticks = 0
+	for tick in 600:
+		await get_tree().physics_frame
+		if not player.is_on_floor():
+			air_ticks += 1
+			max_air_ticks = maxi(max_air_ticks, air_ticks)
+		else:
+			air_ticks = 0
+		if player.position.y < -0.1 or player.position.y > 4.4:
+			break
+		if (axis < 0 and player.position.z <= target) or (axis > 0 and player.position.z >= target):
+			legs += 1
+			set_move(0.0)
+			return true
+		stuck = stuck + 1 if player.position.distance_to(previous) < 0.002 else 0
+		previous = player.position
+		if stuck >= 60:
+			break
+	var contacts: Array[String] = []
+	for i in player.get_slide_collision_count():
+		var hit := player.get_slide_collision(i)
+		contacts.append("%s:%s" % [hit.get_collider().name,hit.get_normal()])
+	failures.append("mode=%s target=%.2f position=%s floor=%s contacts=%s" % [mode,target,player.position,player.is_on_floor(),contacts])
+	set_move(0.0)
+	return false
+
+func finish() -> void:
+	if max_air_ticks > 2:
+		failures.append("Unexpected loss of floor contact: %d consecutive ticks" % max_air_ticks)
+	if legs != 292:
+		failures.append("Incomplete traversal matrix: %d/292 legs" % legs)
+	print("RESULT legs=",legs," max_air_ticks=",max_air_ticks," failures=",failures)
+	get_tree().quit(0 if failures.is_empty() else 1)
