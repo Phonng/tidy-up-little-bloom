@@ -2,17 +2,17 @@
 
 Cập nhật: 21/11/2026 · Task T0.1 · Mốc code được đọc: `6fc071c`.
 
-Bổ sung D0 ngày 21/11/2026: cập nhật chuyển động và spawn; [báo cáo kiểm thử](STAIRCASE_CHECK.md). Phần kiểm tra T0.1 cuối tài liệu vẫn là lịch sử của task tài liệu.
+Bổ sung D0 và D1 ngày 21/11/2026. D0 cập nhật chuyển động và spawn, D1 tách hai chế độ và đường dẫn save. Phần kiểm tra T0.1 cuối tài liệu ghi lại lần kiểm kê ban đầu.
 
 Tài liệu mô tả hiện trạng bằng cách đọc toàn bộ 10 script, 2 scene, cấu hình project/export và đối chiếu [PRODUCT_SPEC](../PRODUCT_SPEC.md). Không sửa gameplay, không chạy Godot hoặc đo trên Android trong task này. Các sơ đồ dưới đây được suy ra từ code, không phải ảnh chụp cây Remote khi chạy.
 
 ## 1. Tổng quan và ranh giới
 
-Game hiện là prototype một cửa hàng hai tầng, **504 bông (56 mỗi loại), 9 giỏ, mang tối đa 5 bông**. Menu, phòng, UI và hình hoa được dựng chủ yếu bằng GDScript khi chạy. Hai file `.tscn` chỉ chứa node gốc và script; vì vậy cây scene trong Editor không chứa sẵn toàn bộ cửa hàng.
+Game hiện là prototype một cửa hàng hai tầng, **demo 90 bông (10 mỗi loại) hoặc thử tải 504 bông (56 mỗi loại), 9 giỏ, mang tối đa 5 bông**. Menu, phòng, UI và hình hoa được dựng chủ yếu bằng GDScript khi chạy. Hai file `.tscn` chỉ chứa node gốc và script; vì vậy cây scene trong Editor không chứa sẵn toàn bộ cửa hàng.
 
 `GameState` giữ tiến độ bằng ID hoa. `main.gd` dựng thế giới, `FPSPlayer` điều khiển và chọn mục tiêu, `FlowerField` quản lý hoa ngoài giỏ, `FlowerBasket` gọi thao tác đặt. Hình ảnh chỉ biểu diễn dữ liệu; không có một physics body cho mỗi bông.
 
-Demo 90 bông và giỏ mở đầu 10 bông trong [DEMO_PLAN](../DEMO_PLAN.md) **chưa triển khai**. Chưa có cấu hình level riêng, save theo profile, quảng cáo, billing, analytics hoặc backend.
+Demo 90 bông và thử tải 504 bông đã tách cấu hình và save. Bố cục giỏ mở đầu 10 bông gần cửa thuộc D2 trong [DEMO_PLAN](../DEMO_PLAN.md).
 
 ## 2. Điểm vào và cây scene
 
@@ -21,7 +21,7 @@ Nguồn: [project.godot](../project.godot), [main_menu.tscn](../scenes/main_menu
 - Scene khởi động: `res://scenes/main_menu.tscn`.
 - Hai autoload: `GameState`, `SettingsManager`, tồn tại qua các lần đổi scene.
 - Renderer cấu hình: `gl_compatibility` cho desktop và mobile; viewport 1280 × 720, stretch `canvas_items`, landscape.
-- Menu chuyển sang `main.tscn` khi Chơi mới hoặc Tiếp tục; chơi mới xóa tiến độ qua `GameState.reset_game()` và hỏi xác nhận nếu đã có tiến độ.
+- Menu chọn chế độ qua `GameState.choose_level()`, rồi mở `main.tscn` khi Chơi mới hoặc Tiếp tục. Chơi mới chỉ reset chế độ đang chọn và hỏi xác nhận nếu chế độ đó đã có file save.
 - Về menu thay scene; Chơi lại ở màn hoàn thành reset rồi reload scene hiện tại.
 
 Cây khái quát khi chơi; các nhãn trong ngoặc vuông là nhóm mô tả, không phải tên node thật:
@@ -65,6 +65,7 @@ Thứ tự `main._ready()`: ánh sáng → phòng → đồ trang trí → giỏ
 
 | File | Kiểu / lớp | Trách nhiệm và điểm vào chính |
 |---|---|---|
+| [level_config.gd](../scripts/level_config.gd) | RefCounted / LevelConfig | ID, target, seed, phiên bản bố trí, vị trí giỏ, ô đặt hoa trên tủ và tên save |
 | [main.gd](../scripts/main.gd) | Node3D | Dựng phòng, cầu thang, props, vị trí/ID hoa, giỏ và player; `_build_level_objects()`, `_add_ramp()` |
 | [main_menu.gd](../scripts/main_menu.gd) | Control | Dựng menu, chuyển scene, Continue, xác nhận xóa, đọc Credits/Privacy |
 | [player.gd](../scripts/player.gd) | CharacterBody3D / FPSPlayer | Đi lại, camera, input desktop, nhận touch, ngắm/nhặt/đặt, dựng hoa đang cầm |
@@ -96,14 +97,14 @@ flowchart LR
 | `changed` | GameState → TouchControls, FPSPlayer, các giỏ | Cập nhật HUD, dựng lại hoa đang cầm, đồng bộ số hoa trong giỏ |
 | `notice(message)` | GameState → TouchControls | Thông báo ngắn, ví dụ đầy tay hoặc lưu thất bại |
 | `picked_up`, `placement_rejected`, `placed_correctly` | GameState → TouchControls | Phát SFX theo hành động |
-| `completed` | GameState → TouchControls | Chỉ hoàn thành toàn bộ 504 bông; hiện overlay và pause |
+| `completed` | GameState → TouchControls | Hoàn thành khi xếp đủ 90 hoặc 504 bông theo chế độ, hiện overlay và pause |
 | `closed`, `reset_requested` | SettingsPanel → menu hoặc TouchControls | Đóng panel hoặc mở xác nhận xóa |
 
 Nhặt thành công: `pickup()` thêm ID → ghi save → phát `changed` → phát `picked_up`; sau khi lời gọi trả về true, FlowerField ẩn instance. Đặt: tìm bông đầu tiên cùng loại trong inventory → chuyển sang `placed_ids` → lưu và phát signals. **Một lần tương tác đặt một bông**, không thả toàn bộ cùng loại. Sai loại giữ nguyên inventory. Chưa có signal hoàn thành riêng từng giỏ (`basket_completed`).
 
 ## 5. Dữ liệu 9 loài, giỏ và bố trí
 
-Nguồn định nghĩa tên/màu/mục tiêu là `GameState.FLOWER_TYPES`, `FLOWER_TARGETS`. Thứ tự loài và tọa độ giỏ được khai báo thêm trong `main._build_level_objects()`; hiện chưa gom thành resource dữ liệu dùng chung.
+Tên/màu lấy từ `GameState.FLOWER_TYPES`. Target và seed lấy từ `LevelConfig.PROFILES`. Thứ tự loài và tọa độ giỏ lấy từ `LevelConfig.BASKET_SPOTS`. Bảng dưới dùng số bông của chế độ 504, demo dùng 10 mỗi loại.
 
 | ID loài | Tên hiển thị trong code | Số bông | Vị trí giỏ (x, y, z) |
 |---|---|---:|---|
@@ -118,10 +119,10 @@ Nguồn định nghĩa tên/màu/mục tiêu là `GameState.FLOWER_TYPES`, `FLOW
 | cosmos | Hoa sao nhái | 56 | (0, 4.2, -2.4) |
 
 - ID bông sinh dạng `rose_01`…`rose_56`; lấy loài bằng phần trước `_`. Validator giới hạn số thứ tự theo mục tiêu của loài. Không đổi ID/target mà bỏ qua save cũ.
-- Khi chơi mới, mỗi tầng có 252 bông: 240 vị trí sàn ngẫu nhiên và 12 vị trí mặt tủ cố định; mỗi loài có 28 bông/tầng theo thứ tự phân phối hiện tại.
+- Bản 504 có 252 bông mỗi tầng gồm 240 bông trên sàn và 12 trên tủ. Demo có 45 mỗi tầng, gồm 41 trên sàn và 4 trên tủ.
 - RNG seed `20261119`; sinh vị trí, loại vùng bị chặn và xáo trộn hai danh sách. Khoảng cách tối thiểu sàn là 0.58 m dưới / 0.52 m trên. Hoa vẫn dùng mesh đứng thẳng, chưa ngẫu nhiên góc đổ/nghiêng.
 - Hoa trên tủ đặt ở y = cao độ tầng + 2.63, không có rigid body rơi. Vùng loại trừ dùng tọa độ viết sẵn, không tự truy vấn toàn bộ collision của phòng.
-- Khi Continue, vẫn sinh layout rồi bỏ ID đã mang/đã đặt. Vị trí chỉ ổn định khi thuật toán, seed và thứ tự sinh không đổi; chưa có `layout_version` lưu trong save.
+- Khi Continue, vẫn sinh layout rồi bỏ ID đã mang/đã đặt. D1 ghi `layout_version` vào save. Vị trí dựa vào seed, thuật toán và thứ tự sinh của phiên bản tương ứng.
 
 ## 6. Di chuyển, cảm ứng và chọn mục tiêu
 
@@ -168,6 +169,8 @@ Nguồn: `GameState.save_game()`, `load_game()`, `_notification()`.
 ```json
 {
   "schema_version": 1,
+  "level_id": "demo",
+  "layout_version": 1,
   "inventory": ["rose_01"],
   "placed_ids": ["tulip_02"]
 }
@@ -177,18 +180,16 @@ Ví dụ trên minh họa cấu trúc, không phải dữ liệu người dùng.
 
 | File trong `user://` | Vai trò |
 |---|---|
-| `little_bloom_save.json` | Save chính dùng chung cho prototype hiện tại |
-| `little_bloom_save.tmp` | File viết tạm trước khi thay save |
-| `little_bloom_save.bak` | Bản trước trong quá trình thay file, xóa sau khi lưu thành công |
+| `little_bloom_demo_save.json` | Tiến độ demo 90 |
+| `little_bloom_save.json` | Tiến độ thử tải 504, giữ đường dẫn cũ |
+| `*.tmp` / `*.bak` | File tạm và bản phục hồi riêng theo tên gốc của từng chế độ |
 | `settings.cfg` | ConfigFile lưu sensitivity, invert_y, music/SFX volume, tutorial_seen |
 
-Lưu sau nhặt/đặt/reset, và khi nhận `NOTIFICATION_APPLICATION_PAUSED` hoặc `NOTIFICATION_WM_CLOSE_REQUEST`. Ghi `.tmp`, flush/đóng, chuyển save cũ sang `.bak`, chuyển `.tmp` thành save chính; nếu thay thất bại thì thử phục hồi `.bak`. **Không giữ bản backup lâu dài sau mỗi lần lưu thành công.** Không tự đọc `.tmp` khi load.
+Lưu sau nhặt/đặt/reset. Khi vào nền hoặc đóng cửa sổ, GameState chỉ thử ghi lại nếu một lần ghi sau tương tác còn chờ. Luồng lưu ghi và đóng file tạm, sao chép save chính hợp lệ sang backup, rồi thay save chính bằng file tạm. Xóa backup sau khi ghi thành công. Chọn chế độ và nạp backup chỉ đọc file. Chế độ 504 chấp nhận schema 1 cũ chưa có metadata, còn save có metadata phải khớp chế độ và phiên bản bố trí.
 
-Load khi autoload GameState sẵn sàng: thử save chính, fallback `.bak` nếu cấu trúc/schema không hợp lệ. Chỉ nhận schema 1; lọc ID lạ/trùng, giới hạn inventory 5 và giới hạn từng loài. Inventory được xét trước placed IDs nên ID trùng hai danh sách được giữ ở inventory. Chưa có hàm nâng cấp schema hoặc profile.
+Continue dựng lại hoa và giỏ từ ID đã đặt hoặc mang. Nhân vật xuất hiện ở điểm spawn mặc định. Trạng thái xem tutorial nằm trong file cài đặt. Nếu lưu sau nhặt/đặt thất bại, trạng thái tiếp tục nằm trong RAM để thử ghi lại. Reset thất bại sẽ giữ tiến độ trong RAM.
 
-Không lưu vị trí/góc nhìn nhân vật, seed, transform hoa, `level_id` hay `layout_version`. Continue quay lại spawn mặc định, dựng lại hình giỏ và những hoa còn lại. Reset không xóa `tutorial_seen` vì nó ở file cài đặt riêng. Nếu ghi save thất bại, trạng thái trong RAM đã thay đổi và có notice; không rollback thao tác.
-
-Ràng buộc khi triển khai D1: không chỉ giảm target từ 56 xuống 10, vì validator có thể loại ID cũ. Cần profile/save riêng và phương án tương thích như [DEMO_PLAN](../DEMO_PLAN.md). Tổng số ID trên sàn + inventory + placed phải bằng tổng của profile, mỗi ID ở đúng một trạng thái.
+Tổng số ID trên sàn, đang mang và đã đặt phải bằng tổng của chế độ. Giữ ID và vị trí của chế độ 504 khi chỉnh bố cục demo ở D2.
 
 ## 10. UI, audio, asset và đóng gói
 
@@ -205,7 +206,7 @@ Ràng buộc khi triển khai D1: không chỉ giảm target từ 56 xuống 10,
 |---|---|---|
 | T0.6: ghi lỗi | Báo cáo người dùng + các điểm chưa kiểm chứng ở tài liệu này | Phân biệt lỗi đã tái hiện, báo cáo cũ và giả thuyết từ đọc code |
 | D0: cầu thang/spawn | `main.gd`, `player.gd` | Lên/xuống, lan can, tiếp giáp sàn; cần thử thao tác, không chỉ parse |
-| D1: demo90/thử tải504 | `game_state.gd`, `main.gd`, nơi dùng TOTAL_FLOWERS/targets | ID ổn định, save cũ, mục tiêu theo level; chưa có LevelConfig hiện tại |
+| D1: Demo 90 và thử tải 504 | `level_config.gd`, `game_state.gd`, `main.gd`, `main_menu.gd` | Đã xác minh ID, vị trí 504 và save riêng trên bản sao |
 | D2: giỏ đầu | `main.gd`, `touch_controls.gd` | Giỏ hồng hiện ở cuối tiệm, không ở gần spawn; cần bố trí lại và đo người mới |
 | D3: tương tác | `player.gd`, `flower_field.gd`, `basket.gd` | Che khuất/tầm với, hoa trên tủ, highlight; không làm mất/trùng ID |
 | D4: Android | `touch_controls.gd`, autoloads, export preset | Multitouch, vòng đời, file đóng gói, save và FPS trên máy thật |

@@ -7,8 +7,8 @@ Cập nhật: 21/11/2026. Tài liệu sản phẩm chuẩn: [PRODUCT_SPEC.md](PR
 - Người dùng chọn làm một cửa hàng demo trước, ưu tiên vòng chơi dễ hiểu và giỏ đầu trong 2–3 phút.
 - Người dùng xác nhận giữ 9 loại hoa hiện có trong demo; đổi loài để sau.
 - Giữ cửa hàng hai tầng đã dựng. Đi lên và xuống cầu thang là điều kiện bắt buộc trước khi mở rộng nội dung.
-- Mốc cân chỉnh đề xuất: **90 bông, 10 bông mỗi loại**, 9 giỏ, mang tối đa 5 bông. Đây là thiết kế đích chưa triển khai; code hiện vẫn có 504 bông, 56 mỗi loại.
-- Cấu hình 504 bông sẽ dùng để thử tải khi đã tách cấu hình level. Không cần hoàn thành 504 bông để chứng minh demo dễ hiểu.
+- D1 đã tách **Demo · 90 bông** (10 mỗi loại) và **Thử tải · 504 bông (save cũ)** (56 mỗi loại). Cả hai có 9 giỏ và sức chứa 5 bông. Demo mặc định chia 45 bông mỗi tầng, gồm 4 bông trên tủ mỗi tầng.
+- Chọn chế độ 504 rồi **Tiếp tục** để mở save cũ. Giỏ hướng dẫn gần cửa thuộc D2.
 - Không áp lịch 18 tuần của bản Claude vào demo. Các mốc dưới đây hoàn thành theo tiêu chí, sau đó mới ước lượng lịch bản đầy đủ.
 
 ## Nội dung demo
@@ -57,17 +57,24 @@ Một cửa hàng, hai tầng, một lượt dọn hoàn chỉnh: vào menu → 
 | D3 — Cửa hàng hoàn chỉnh | 80 bông còn lại, tương tác/nhãn focus, tủ và hai tầng, kết thúc 90/90 | Nhặt được mọi bông, không xuyên tường; mất focus/nhặt xong thì ẩn nhãn; hoàn thành và chơi lại được |
 | D4 — Android demo | Cấu hình SDK, build cài máy thật, kiểm tra cảm ứng, pause/resume, save/load, đo tải/FPS | Chơi được cả vòng trên Android, không mất save; hướng tới ≥30 FPS ổn định trên thiết bị baseline đã ghi nhận |
 
-Các mục trên là công việc còn phải làm. Việc Godot parse được script chưa chứng minh lên/xuống cầu thang hoặc vòng chơi đã hoạt động đúng.
+D1 đã triển khai và qua kiểm tra Godot trên bản sao. D0 còn thử bằng tay, còn D2–D4 theo tiêu chí trong bảng.
 
 ## Save và kiến trúc khi tách demo
 
-- Thêm `level_id` và `layout_version` vào dữ liệu level/save. Nạp mục tiêu theo cấu hình level, tính tổng từ mục tiêu từng loại.
-- File save của demo tách khỏi file prototype hiện tại. Giữ nguyên bản save 504 cũ và ghi rõ profile tương ứng.
-- Save schema cũ được nhận là profile prototype 504; không đọc bằng giới hạn 10 bông rồi loại bỏ ID lớn hơn 10.
+- D1 thêm `level_id` và `layout_version` vào save. Tổng tiến độ lấy từ số loài nhân mục tiêu từng loại của chế độ đã chọn.
+- Demo giữ dữ liệu trong `user://little_bloom_demo_save.json`. Bản 504 dùng `user://little_bloom_save.json` cùng seed và bố trí cũ. Đổi chế độ chỉ đọc tiến độ của chế độ được chọn.
+- Save schema 1 chưa ghi mã chế độ được nhận trong bản 504. Save mới ghi mã chế độ và phiên bản bố trí, với file tạm và bản dự phòng riêng cho từng chế độ.
 - Nếu cần chuyển tiến độ sang demo, phải có quy tắc chuyển riêng, bản sao lưu và lựa chọn của người chơi; demo mới không tự ghi đè save cũ.
-- Sinh vị trí với seed cố định trong một phiên bản layout để Continue không làm các bông còn lại đổi chỗ.
+- Sinh vị trí với seed cố định trong một phiên bản layout để Continue giữ vị trí hoa. Khi D2 thay đổi bố cục, cần giữ cách nạp bố cục demo cũ hoặc có phương án chuyển dữ liệu trước khi tăng phiên bản bố trí.
 - Giữ ID hoa ổn định giữa nhặt, inventory, giỏ và save. Geometry/nhãn/hiệu ứng là phần hiển thị.
 - Dùng chung một đối tượng highlight và nhãn cho bông đang ngắm, không tạo hàng trăm nhãn chạy animation đồng thời.
+
+### Kiểm chứng D1 trên bản sao
+
+- Godot 4.7.2 dựng đủ 9 giỏ và xác nhận 90/504 ID theo chế độ, gồm hoa trên sàn, hoa đang mang và hoa đã đặt. Luồng chọn chế độ, Chơi mới và Tiếp tục đã qua kiểm tra trong cửa sổ Godot trên Mac.
+- So sánh bản D0 với D1 trên cùng engine cho kết quả giống nhau ở toàn bộ 504 cặp ID và vị trí.
+- Save 504 mẫu dạng cũ nạp được cả các ID trên 10. Chơi demo, chuyển chế độ, phục hồi demo từ backup và chơi lại demo giữ nguyên từng byte file 504. Tiếp tục chơi ở chế độ 504 ghi lại tiến độ đúng file 504.
+- Hoàn thành demo trong cùng lượt hiển thị 90/90 và Chơi lại chỉ reset demo. Kiểm thử trên Android thuộc D4.
 
 ## Đổi loài sau demo
 
@@ -110,7 +117,7 @@ Trước D0, kiểm kê code và ghi số liệu nền; không cần tạo tài 
 | Bản nguồn v2 | Quyết định đang dùng |
 |---|---|
 | Giỏ đầu 6–8 bông, 5/5 người hoàn thành trong 3 phút | Giữ mốc thiết kế 10 bông, 4/5 người trong tối đa 3 phút; ghi cả 5 kết quả. Chỉ cân chỉnh số hoa sau khi có số đo, rồi cập nhật tổng/ID/save cùng nhau |
-| Giữ 504 bông trong nhiều tiêu chí | Code hiện là 504; demo dự kiến 90. Không đổi số lượng trong code ở lần cập nhật tài liệu này |
+| Giữ 504 bông trong nhiều tiêu chí | D1 đã tách demo 90 và thử tải 504. Mỗi tiêu chí dùng tổng của chế độ đang kiểm tra |
 | M1 yêu cầu lưu cả vị trí nhân vật; T1.2 có nút thoát kẹt và hoa rơi tự phục hồi | Demo bảo toàn tiến độ/inventory và điểm xuất phát an toàn; lưu vị trí chính xác, nút thoát kẹt và mô phỏng hoa rơi là mở rộng cần đánh giá riêng |
 | Chạm trực tiếp hoa/giỏ, bản đồ giỏ, song ngữ, biển Open | Backlog sau demo; chưa thay cơ chế ngắm rồi tương tác hoặc màn hoàn thành hiện tại |
 | Quảng cáo cơ bản ở M5; thử plugin ở M2; gỡ quảng cáo có điều kiện G2 | Ghi nhận hướng thương mại của bản nguồn; không đưa SDK quảng cáo, UMP, billing hay việc tạo tài khoản vào demo |

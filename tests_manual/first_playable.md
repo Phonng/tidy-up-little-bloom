@@ -1,6 +1,6 @@
 # First playable smoke checklist
 
-Current scope (21 Nov 2026): prototype 504 flowers, 56 per type, no first-person hands. The proposed 90-flower demo is not implemented. Track results against [KNOWN_ISSUES](../docs/KNOWN_ISSUES.md); record the exact commit and keep old baseline results separate.
+Current scope (21 Nov 2026): choose Demo (90, 10 per type) or stress test (504, 56 per type). Both have nine types and no first-person hands. Track results against [KNOWN_ISSUES](../docs/KNOWN_ISSUES.md); record the exact commit and keep old baseline results separate.
 
 Use isolated QA data for New Game/reset and malformed-save fixtures; do not overwrite personal progress. Continue restores flower state, not player position.
 
@@ -31,7 +31,7 @@ Run `python3 tools/check_stairs.py` for the isolated physics check; see [results
 - [ ] Progress increments once per successful placement; placed flowers appear in the basket.
 - [ ] LB-001: Complete five consecutive up/down staircase round trips, including empty/full inventory and approaches near both rails. Reach all nine baskets. Record the extended 50-round-trip keyboard and 50-round-trip joystick checks separately; do not mark Android verified from desktop results.
 - [ ] Check wall cabinets are attached to the walls and do not block the ramp, baskets, or flower pickups.
-- [ ] Find and sort all 504 flowers across nine types; completion appears once, plays the completion cue, and Replay resets the level.
+- [ ] Complete the 90-flower demo. Completion appears once, plays the cue and Replay resets only the selected mode. Repeat the 504-flower run when validating the stress mode.
 - [ ] LB-004: Complete from a valid QA save at 503 placed + the last flower carried; the completion label updates to 504 without reloading.
 - [ ] Music and SFX sliders independently control their audio; zero volume mutes the corresponding bus.
 - [ ] Pause, settings, reset confirmation, return to menu, Continue, New Game confirmation, and Credits work.
@@ -47,7 +47,7 @@ Run `python3 tools/check_stairs.py` for the isolated physics check; see [results
 - [ ] Check notches, system bars, text wrapping, modal sizes, and thumb reach in landscape.
 - [ ] Open pause while moving, then resume; the player remains still until the joystick is touched again.
 - [ ] Send the app to background while moving and while paused; resume without stuck input or lost saved progress.
-- [ ] Complete pickup, wrong basket, correct basket, full inventory, floor transition, reset, and 504/504 completion on device.
+- [ ] Complete pickup, wrong basket, correct basket, full inventory, floor transition, reset and 90/90 completion on device. Confirm an existing 504 save can resume after switching modes.
 - [ ] Run for 15 minutes; record FPS, load time, memory, temperature, OS version, and any crash.
 
 Record device model, Android version, Godot version, build date, result, and reproduction steps for every issue.

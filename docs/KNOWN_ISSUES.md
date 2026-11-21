@@ -22,7 +22,7 @@ Mức độ là mức ảnh hưởng nếu lỗi xảy ra, không phải mức c
 | LB-001 | P0 | Mắc khi lên hoặc xuống cầu thang | Chưa tái hiện kẹt trong probe, đã sửa mất bám sàn, thử tay và Android còn chờ | D0 / T1.1, ưu tiên đầu |
 | LB-002 | P1 | Chọn hoa/giỏ chưa xét vật cản thế giới | Có căn cứ từ code; chưa chạy tình huống che khuất | D3 |
 | LB-003 | P1 | Ngón chạm mới giành quyền xoay camera | Có căn cứ từ code; chưa kiểm thử multitouch trên máy | D4 |
-| LB-004 | P2 | Tổng hoa trên màn hoàn thành dùng số cũ | Có căn cứ từ code; chưa thử hoàn thành trong cùng phiên | D3 |
+| LB-004 | P2 | Tổng hoa trên màn hoàn thành dùng số cũ | D1 dùng tổng của chế độ. Bài thử 89 → 90 cùng phiên và chơi lại đã qua trên bản sao | D1/D4 |
 | LB-005 | P0 | Vào màn chơi chỉ thấy nền trống/trắng | Không tái hiện với Chơi mới và Tiếp tục trên bản QA Mac | Kiểm tra đầu D0 nếu còn xảy ra |
 | ENV-001 | P0 với kiểm thử Android | Không mở được thư mục Android build-tools | Log cũ của người dùng; chưa kiểm tra môi trường hiện tại | D4 / T0.3 |
 | DOC-001 | P2 | Checklist còn ghi 600 bông và hai bàn tay | Đã sửa tài liệu trong T0.6; chưa chạy lại checklist | T0.6 |
@@ -69,7 +69,7 @@ Mức độ là mức ảnh hưởng nếu lỗi xảy ra, không phải mức c
 
 ## LB-004 — Màn hoàn thành hiển thị số hoa lúc vào level
 
-**Bằng chứng code:** [touch_controls.gd](../scripts/touch_controls.gd), `_build_completion_overlay()` tạo label cục bộ `summary` và gán số từ `GameState.placed_ids.size()` ngay khi dựng UI. `_show_complete()` chỉ hiện overlay và pause, không cập nhật label.
+**Bằng chứng trước D1:** [touch_controls.gd](../scripts/touch_controls.gd), `_build_completion_overlay()` tạo label cục bộ `summary` và gán số từ `GameState.placed_ids.size()` ngay khi dựng UI. `_show_complete()` chỉ hiện overlay và pause, không cập nhật label.
 
 **Kịch bản:** trong dữ liệu QA riêng, dùng save hợp lệ 503 bông đã đặt và bông cuối trong inventory. Continue, đặt bông cuối vào đúng giỏ. Kiểm tra HUD, nội dung overlay và save; mở lại save hoàn thành để đối chiếu.
 
@@ -107,7 +107,7 @@ Mức độ là mức ảnh hưởng nếu lỗi xảy ra, không phải mức c
 |---|---|---|
 | Save khi vào nền/đóng app | GameState đã có lưu sau nhặt/đặt và notification; thử khi đang mang 5 bông, Home rồi đóng app, mở lại | Đúng tập inventory và placed IDs, không trùng/mất; trở lại spawn mặc định là hành vi hiện tại, không coi là lỗi mất save |
 | Phục hồi save lỗi | Chỉ thử trong bản QA/dữ liệu riêng: save chính sai JSON + `.bak` hợp lệ; thêm tình huống không có backup | Phục hồi mẫu hợp lệ; báo rõ trường hợp không thể phục hồi. `.bak` bị xóa sau lần lưu thành công, không hứa luôn có backup |
-| D1 chuyển 504 → 90 | Validator dùng target từng loài; chỉ giảm target sẽ lọc ID >10 khỏi save cũ | Save/profile riêng, giữ nguyên save cũ, kiểm tra ít nhất 3 mẫu như DEMO_PLAN; chưa đổi target ở task này |
+| D1 chuyển 504 → 90 | Validator dùng target từng loài; chỉ giảm target sẽ lọc ID >10 khỏi save cũ | Đã có save riêng. Bài thử với save 504 cũ, save demo đang mang hoa và save demo hỏng có backup đều qua. Android còn cần kiểm tra vòng đời app |
 | Khả năng lấy đủ mọi hoa | Hoa sàn/tủ sinh bằng tọa độ, chưa có kiểm chứng mọi điểm trong tầm và đường đi | Thử lấy đủ ID trên hai tầng, nhất là hoa trên tủ; nếu có điểm không lấy được thì mở lỗi riêng với ID/tọa độ |
 | FPS và thời gian vào level | Có MultiMesh, chưa có số đo nền; không suy ra nguyên nhân từ số lượng hoa | Ghi commit/profile/máy/cảnh, thời gian tải và FPS sau 10 phút; đo lại cùng điều kiện khi tối ưu |
 

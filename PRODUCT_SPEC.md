@@ -1,6 +1,6 @@
 # Little Bloom — Product Requirements Document
 
-**Phiên bản:** 1.3 · **Trạng thái:** Chốt hướng demo một cửa hàng; các thay đổi demo còn cần triển khai · **Cập nhật:** 21/11/2026
+**Phiên bản:** 1.4 · **Trạng thái:** Đã tách demo 90 bông và thử tải 504 bông · **Cập nhật:** 21/11/2026
 
 **Tên sản phẩm:** Little Bloom *(tên làm việc; chưa xác nhận khả năng đăng ký/phát hành)*  
 **Nền tảng đầu tiên:** Android · **Thể loại:** Cozy, dọn dẹp và sắp xếp, góc nhìn thứ nhất  
@@ -73,7 +73,7 @@ Một game dọn dẹp cửa hàng hoa góc nhìn thứ nhất, chơi bằng c�
 
 ### Nội dung bắt buộc
 
-Phạm vi dưới đây là thiết kế demo đích. Code hiện vẫn có 504 bông và chưa có luồng giỏ mở đầu riêng. Chi tiết triển khai, thứ tự công việc và cách bảo toàn save nằm trong [DEMO_PLAN.md](DEMO_PLAN.md).
+Phạm vi dưới đây là thiết kế demo đích. D1 đã triển khai demo 90 bông và thử tải 504 bông, mỗi chế độ có save riêng. Luồng giỏ mở đầu thuộc D2. Chi tiết triển khai, thứ tự công việc và cách bảo toàn save nằm trong [DEMO_PLAN.md](DEMO_PLAN.md).
 
 | Nội dung | Cam kết demo |
 |---|---|
@@ -81,7 +81,7 @@ Phạm vi dưới đây là thiết kế demo đích. Code hiện vẫn có 504 
 | Góc nhìn | 3D góc nhìn thứ nhất, camera nhìn tự do có giới hạn dọc |
 | Tay người chơi | Đã bỏ mô hình hai bàn tay theo quyết định của người dùng |
 | Loại hoa | Giữ 9 loại hiện tại: hồng, tulip, cúc, hướng dương, oải hương, mẫu đơn, lan, ly, sao nhái; đổi loài sau demo |
-| Số lượng | Mốc cân chỉnh demo: 90 bông, 10 bông mỗi loại. Giữ 504 bông như cấu hình thử tải riêng khi triển khai tách level |
+| Số lượng | Demo 90 bông, 10 mỗi loại. Thử tải 504 bông, 56 mỗi loại, dùng save 504 hiện có |
 | Giỏ | 9 giỏ đặt ở cả hai tầng; mỗi giỏ nhận một loại hoa |
 | Inventory | Mang tối đa 5 bông; cho phép mang nhiều loại cùng lúc |
 | Thao tác | Đi bộ, nhìn, nhặt và đặt; không có nhảy hoặc chiến đấu |
@@ -292,12 +292,12 @@ Mỗi tính năng mới cần trả lời được ba câu hỏi: nhu cầu ngư
 
 - Người dùng chọn làm một cửa hàng demo trước; các hệ thống mở rộng từ bản Claude để sau.
 - Ưu tiên giỏ đầu hoàn thành trong 2–3 phút và sửa dứt điểm đường đi hai tầng.
-- 90 bông là mốc cân chỉnh thiết kế ban đầu do người triển khai đề xuất, chưa phải số lượng đã đổi trong code.
+- 90 bông ban đầu là mốc cân chỉnh thiết kế. D1 đã triển khai mốc này thành chế độ riêng.
 - Người dùng đã xác nhận giữ 9 loại hiện có trong demo; đổi loài sau. Khi đổi phải có model, nhãn giỏ, tên hiển thị và kế hoạch chuyển save.
 - Thứ tự tài liệu: PRODUCT_SPEC.md → DEMO_PLAN.md → ROADMAP_CHECKLIST.md. Kế hoạch 16–20 tuần là tham khảo dài hạn.
 
 ## 18. Tiếp nhận kế hoạch bổ sung v2 ngày 21/11/2026
 
-Đã lưu [bản Claude v2](docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt) làm nguồn tham khảo và [đối chiếu vào kế hoạch demo](DEMO_PLAN.md#đối-chiếu-bản-claude-v2--21112026). Bổ sung kiểm kê kiến trúc, danh sách lỗi, số đo nền và bằng chứng kiểm thử theo từng task. Không thay phạm vi demo đã chốt: 9 loài hiện có, một tiệm hai tầng, mốc cân chỉnh 90 bông/giỏ đầu 10 bông; code hiện vẫn 504.
+Đã lưu [bản Claude v2](docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt) làm nguồn tham khảo và [đối chiếu vào kế hoạch demo](DEMO_PLAN.md#đối-chiếu-bản-claude-v2--21112026). Bổ sung kiểm kê kiến trúc, danh sách lỗi, số đo nền và bằng chứng kiểm thử theo từng task. Không thay phạm vi demo đã chốt: 9 loài hiện có, một tiệm hai tầng, demo 90 bông và giỏ đầu 10 bông. D1 đã tách chế độ 504 để thử tải, còn bố cục giỏ đầu thuộc D2.
 
 Các đề xuất bản 1.0/1.1, quảng cáo, lịch 18 tuần và tiêu chí khác demo trong bản nguồn không tự trở thành công việc của sprint hiện tại. Những thông tin chính sách, tương thích plugin và giấy phép phải được xác minh khi mở task liên quan.

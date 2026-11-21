@@ -12,12 +12,13 @@ func _ready() -> void:
 
 func run() -> void:
 	SettingsManager.tutorial_seen = true
+	GameState.choose_level(LevelConfig.STRESS)
 	var level: Node = load("res://scenes/main.tscn").instantiate()
 	add_child(level)
 	for child in level.get_children():
 		if child is FPSPlayer:
 			player = child
-	print("QA spawn=", player.position, " isolated_save=", GameState.SAVE_PATH)
+	print("QA spawn=", player.position, " isolated_save=", GameState.save_path())
 	await idle(30)
 	for control_mode in ["keyboard", "touch"]:
 		mode = control_mode

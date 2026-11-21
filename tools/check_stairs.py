@@ -27,8 +27,8 @@ def main():
     data = qa / "qa_data"
     data.mkdir()
     # Only the disposable copy gets absolute save/settings paths.
-    for name in ("game_state.gd", "settings_manager.gd"):
-        file = qa / "scripts" / "autoload" / name
+    for name in ("level_config.gd", "autoload/settings_manager.gd"):
+        file = qa / "scripts" / name
         file.write_text(file.read_text().replace("user://", data.as_posix() + "/"))
     shutil.copy2(source / "tests_manual/staircase_probe.gd.txt", qa / "qa.gd")
     (qa / "qa.tscn").write_text(

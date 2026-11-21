@@ -7,12 +7,8 @@ signal placement_rejected
 signal placed_correctly
 signal completed
 
-const SAVE_PATH := "user://little_bloom_save.json"
-const TEMP_SAVE_PATH := "user://little_bloom_save.tmp"
-const BACKUP_SAVE_PATH := "user://little_bloom_save.bak"
 const SCHEMA_VERSION := 1
 const MAX_CARRY := 5
-const TOTAL_FLOWERS := 504
 const FLOWER_TYPES := {
 	"rose": {"name": "Hoa hồng", "color": Color("#d96b78")},
 	"tulip": {"name": "Hoa tulip", "color": Color("#e6a34e")},
@@ -24,27 +20,41 @@ const FLOWER_TYPES := {
 	"lily": {"name": "Hoa ly", "color": Color("#f2eee0")},
 	"cosmos": {"name": "Hoa sao nhái", "color": Color("#e785a3")},
 }
-const FLOWER_TARGETS := {
-	"rose": 56,
-	"tulip": 56,
-	"daisy": 56,
-	"sunflower": 56,
-	"lavender": 56,
-	"peony": 56,
-	"orchid": 56,
-	"lily": 56,
-	"cosmos": 56,
-}
 
 var inventory: Array[String] = []
 var placed_ids: Array[String] = []
+var _level_id := LevelConfig.DEMO
+var _save_pending := false
 
 func _ready() -> void:
 	load_game()
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST:
+	if _save_pending and (what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST):
 		save_game()
+
+func level_id() -> String:
+	return _level_id
+
+func level_profile() -> Dictionary:
+	return LevelConfig.PROFILES[_level_id]
+
+func choose_level(id: String) -> bool:
+	if not LevelConfig.PROFILES.has(id):
+		return false
+	if id == _level_id:
+		return true
+	if _save_pending and not save_game():
+		return false
+	_level_id = id
+	load_game()
+	return true
+
+func save_path() -> String:
+	return str(level_profile().save_base) + ".json"
+
+func has_save_files() -> bool:
+	return FileAccess.file_exists(save_path()) or FileAccess.file_exists(str(level_profile().save_base) + ".bak")
 
 func pickup(flower_id: String) -> bool:
 	if is_complete() or not _is_valid_flower_id(flower_id):
@@ -89,10 +99,13 @@ func type_name(flower_type: String) -> String:
 	return str(FLOWER_TYPES.get(flower_type, {"name": "hoa"}).name)
 
 func flower_target(flower_type: String) -> int:
-	return int(FLOWER_TARGETS.get(flower_type, 0))
+	return int(level_profile().flowers_per_type) if FLOWER_TYPES.has(flower_type) else 0
+
+func total_flowers() -> int:
+	return FLOWER_TYPES.size() * int(level_profile().flowers_per_type)
 
 func progress_text() -> String:
-	return "Đã xếp %d/%d" % [placed_ids.size(), TOTAL_FLOWERS]
+	return "Đã xếp %d/%d" % [placed_ids.size(), total_flowers()]
 
 func placed_count(flower_type: String) -> int:
 	var count := 0
@@ -102,7 +115,7 @@ func placed_count(flower_type: String) -> int:
 	return count
 
 func is_complete() -> bool:
-	return placed_ids.size() >= TOTAL_FLOWERS
+	return placed_ids.size() >= total_flowers()
 
 func has_progress() -> bool:
 	return not inventory.is_empty() or not placed_ids.is_empty()
@@ -115,17 +128,25 @@ func _is_valid_flower_id(flower_id: String) -> bool:
 	return number >= 1 and number <= flower_target(parts[0])
 
 func _save_and_notify() -> void:
+	_save_pending = true
 	if not save_game():
 		notice.emit("Không lưu được tiến độ. Hãy kiểm tra dung lượng thiết bị.")
 	changed.emit()
 
 func save_game() -> bool:
-	var file := FileAccess.open(TEMP_SAVE_PATH, FileAccess.WRITE)
+	var profile := level_profile()
+	var base := str(profile.save_base)
+	var primary_path := base + ".json"
+	var temp_path := base + ".tmp"
+	var backup_path := base + ".bak"
+	var file := FileAccess.open(temp_path, FileAccess.WRITE)
 	if file == null:
 		push_warning("Could not open temporary save file")
 		return false
 	file.store_string(JSON.stringify({
 		"schema_version": SCHEMA_VERSION,
+		"level_id": _level_id,
+		"layout_version": profile.layout_version,
 		"inventory": inventory,
 		"placed_ids": placed_ids,
 	}))
@@ -133,28 +154,22 @@ func save_game() -> bool:
 	var write_error := file.get_error()
 	file.close()
 	if write_error != OK:
-		_remove_save_file(TEMP_SAVE_PATH)
+		_remove_save_file(temp_path)
 		push_warning("Could not flush temporary save file")
 		return false
 
-	var save_absolute := ProjectSettings.globalize_path(SAVE_PATH)
-	var temp_absolute := ProjectSettings.globalize_path(TEMP_SAVE_PATH)
-	var backup_absolute := ProjectSettings.globalize_path(BACKUP_SAVE_PATH)
-	if FileAccess.file_exists(SAVE_PATH):
-		_remove_save_file(BACKUP_SAVE_PATH)
-		var backup_error := DirAccess.rename_absolute(save_absolute, backup_absolute)
-		if backup_error != OK:
-			_remove_save_file(TEMP_SAVE_PATH)
+	# Keep an existing recovery copy when the primary cannot be read.
+	if FileAccess.file_exists(primary_path) and _is_save_valid(_read_save(primary_path)):
+		if DirAccess.copy_absolute(primary_path, backup_path) != OK:
+			_remove_save_file(temp_path)
 			push_warning("Could not preserve previous save file")
 			return false
-	var replace_error := DirAccess.rename_absolute(temp_absolute, save_absolute)
-	if replace_error != OK:
-		if FileAccess.file_exists(BACKUP_SAVE_PATH):
-			DirAccess.rename_absolute(backup_absolute, save_absolute)
-		_remove_save_file(TEMP_SAVE_PATH)
+	if DirAccess.rename_absolute(temp_path, primary_path) != OK:
+		_remove_save_file(temp_path)
 		push_warning("Could not replace save file")
 		return false
-	_remove_save_file(BACKUP_SAVE_PATH)
+	_remove_save_file(backup_path)
+	_save_pending = false
 	return true
 
 func _remove_save_file(path: String) -> void:
@@ -167,33 +182,29 @@ func _read_save(path: String) -> Variant:
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		return null
-	return JSON.parse_string(file.get_as_text())
+	var json := JSON.new()
+	if json.parse(file.get_as_text()) != OK:
+		return null
+	return json.data
 
 func _is_save_valid(parsed: Variant) -> bool:
-	if not parsed is Dictionary:
+	if not parsed is Dictionary or parsed.get("schema_version", 0) != SCHEMA_VERSION:
 		return false
-	if parsed.get("schema_version", 0) != SCHEMA_VERSION:
+	if not parsed.get("inventory") is Array or not parsed.get("placed_ids") is Array:
 		return false
-	return parsed.get("inventory", []) is Array and parsed.get("placed_ids", []) is Array
+	# Untagged schema 1 files are the original 504-flower layout.
+	if not parsed.has("level_id") and not parsed.has("layout_version"):
+		return _level_id == LevelConfig.STRESS and level_profile().layout_version == 1
+	return parsed.get("level_id") == _level_id and parsed.get("layout_version") == level_profile().layout_version
 
 func load_game() -> void:
-	var parsed: Variant = _read_save(SAVE_PATH)
-	var recovered_from_backup := false
+	inventory.clear()
+	placed_ids.clear()
+	var parsed: Variant = _read_save(save_path())
 	if not _is_save_valid(parsed):
-		var backup: Variant = _read_save(BACKUP_SAVE_PATH)
-		if _is_save_valid(backup):
-			parsed = backup
-			recovered_from_backup = true
+		parsed = _read_save(str(level_profile().save_base) + ".bak")
 	if not _is_save_valid(parsed):
-		if FileAccess.file_exists(SAVE_PATH) or FileAccess.file_exists(BACKUP_SAVE_PATH):
-			push_warning("Save file is invalid or uses an unsupported schema")
 		return
-	if recovered_from_backup:
-		_remove_save_file(SAVE_PATH)
-		DirAccess.rename_absolute(
-			ProjectSettings.globalize_path(BACKUP_SAVE_PATH),
-			ProjectSettings.globalize_path(SAVE_PATH)
-		)
 	var raw_inventory: Variant = parsed.get("inventory", [])
 	var raw_placed: Variant = parsed.get("placed_ids", [])
 	var restored_inventory: Array[String] = []
@@ -217,7 +228,15 @@ func load_game() -> void:
 	inventory = restored_inventory
 	placed_ids = restored_placed
 
-func reset_game() -> void:
+func reset_game() -> bool:
+	var old_inventory := inventory.duplicate()
+	var old_placed := placed_ids.duplicate()
 	inventory.clear()
 	placed_ids.clear()
-	_save_and_notify()
+	if not save_game():
+		inventory.assign(old_inventory)
+		placed_ids.assign(old_placed)
+		notice.emit("Không thể xóa tiến độ. Hãy kiểm tra dung lượng thiết bị.")
+		return false
+	changed.emit()
+	return true

@@ -6,20 +6,20 @@ Godot 4 / GDScript Android first-person flower-sorting prototype. The project is
 
 1. Install the current stable Godot editor. The current project baseline is Godot 4.7.2; see `ANDROID_RELEASE_GUIDE.md` for Android SDK and Play target API details.
 2. Open this folder or `project.godot` in Godot.
-3. Press Run. The title screen offers New Game, Continue, and Settings. Desktop controls: WASD/arrows to move, click to capture the mouse, mouse to look, E to interact, Esc to release the mouse.
+3. Press Run. Choose **Demo · 90 bông** or **Thử tải · 504 bông (save cũ)**, then select Chơi mới (New Game) or Tiếp tục (Continue). Desktop controls: WASD/arrows to move, click to capture the mouse, mouse to look, E to interact, Esc to release the mouse.
 4. Android uses landscape touch controls: left side to move, drag on the right to look, and the lower-right button to pick up/place.
 
 ## Current prototype
 
 - Small blockout flower shop, first-person movement and collision.
-- Nine flower types with 504 flowers total (56 of each), nine sorting baskets, wall cabinets, and a two-floor shop connected by a walkable ramp; five-item carry limit.
+- Nine flower types, nine baskets and a five-item carry limit across two floors. Demo uses 10 flowers per type and the stress test uses 56.
 - Context interaction, progress HUD, local save and resume.
 - The room, flower silhouettes, baskets and display props use original procedural meshes. Original synthesized SFX and shop ambience are included; no third-party assets are bundled.
 - Main menu includes a Godot Engine license entry under Credits & licenses.
 
 ## Demo scope agreed on 19 November 2026
 
-The next milestone is one playable shop demo. The proposed tuning baseline is 90 flowers (10 per type), with the first basket completed within 2–3 minutes. The current code still uses 504 flowers; splitting demo and load-testing configurations is pending. The user confirmed keeping the existing nine flower types in the demo; species changes are deferred. Ads, purchases, story notes, photo mode and seasonal content are deferred.
+The 90-flower demo is the default. Existing progress is available by choosing **Thử tải · 504 bông (save cũ)** and **Tiếp tục**. Each mode has its own save. New Game, reset and replay apply to the selected mode. The next demo milestone is the first basket near the entrance with a 2–3 minute target.
 
 See `DEMO_PLAN.md` for the opening layout, save compatibility and acceptance criteria. The updated Claude plan is preserved in [`docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt`](docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt); its task IDs are mapped to the demo in `DEMO_PLAN.md` (21 November update), while the full-release proposals remain outside the current demo scope. First-person hands have been removed; the staircase has 20 visible steps with a smooth collision surface, and D0 now keeps grounded movement through the transition and spawns the player on flat ground. The [staircase probe](docs/STAIRCASE_CHECK.md) passes 140 simulated round trips; A windowed Mac run rendered both ends of the staircase and reached all nine baskets with scripted input. Manual controls and Android traversal still need verification.
 

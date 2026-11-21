@@ -6,7 +6,7 @@ const PlayerScript = preload("res://scripts/player.gd")
 
 const ROOM_WIDTH := 24.0
 const ROOM_DEPTH := 22.0
-const UPPER_FLOOR_Y := 4.2
+const UPPER_FLOOR_Y := LevelConfig.UPPER_FLOOR_Y
 const RAMP_BOTTOM_Z := 9.0
 const RAMP_TOP_Z := -0.8
 const RAMP_RUN := RAMP_BOTTOM_Z - RAMP_TOP_Z
@@ -239,28 +239,21 @@ func _add_decorative_vase(at: Vector3, bloom_color: Color, leaf_color: Color) ->
 	add_child(bloom)
 
 func _build_level_objects() -> void:
-	var types: Array[String] = ["rose", "tulip", "daisy", "sunflower", "lavender", "peony", "orchid", "lily", "cosmos"]
+	var profile := GameState.level_profile()
+	var basket_spots := LevelConfig.BASKET_SPOTS
+	var types := basket_spots.keys()
 	var rng := RandomNumberGenerator.new()
-	rng.seed = 20261119
-	var basket_spots := {
-		"rose": Vector3(-9.5, 0, -7.6),
-		"tulip": Vector3(9.5, 0, -7.6),
-		"daisy": Vector3(-9.5, 0, -1.8),
-		"sunflower": Vector3(9.5, 0, -1.8),
-		"lavender": Vector3(-9.5, 0, 4.8),
-		"peony": Vector3(9.5, 0, 4.8),
-		"orchid": Vector3(-9.7, UPPER_FLOOR_Y, -7.8),
-		"lily": Vector3(9.7, UPPER_FLOOR_Y, -7.8),
-		"cosmos": Vector3(0.0, UPPER_FLOOR_Y, -2.4),
-	}
+	rng.seed = int(profile.seed)
 	for flower_type in types:
 		var tint: Color = GameState.FLOWER_TYPES[flower_type].color
 		var basket := BasketScript.new()
 		basket.setup(flower_type, tint)
 		basket.position = basket_spots[flower_type]
 		add_child(basket)
-	var flowers_per_floor := floori(float(GameState.TOTAL_FLOWERS) / 2.0)
-	var cabinet_flowers_per_floor := 12
+	var total_flowers := GameState.total_flowers()
+	var flowers_per_floor := floori(float(total_flowers) / 2.0)
+	var cabinet_slots: Array = profile.cabinet_slots
+	var cabinet_flowers_per_floor := cabinet_slots.size()
 	var floor_flowers_per_floor := flowers_per_floor - cabinet_flowers_per_floor
 	var lower_positions := _generate_random_floor_positions(
 		0.0,
@@ -274,8 +267,11 @@ func _build_level_objects() -> void:
 		rng,
 		basket_spots
 	)
-	lower_positions.append_array(_cabinet_flower_positions(0.0))
-	upper_positions.append_array(_cabinet_flower_positions(UPPER_FLOOR_Y))
+	var lower_cabinet_positions := _cabinet_flower_positions(0.0)
+	var upper_cabinet_positions := _cabinet_flower_positions(UPPER_FLOOR_Y)
+	for slot in cabinet_slots:
+		lower_positions.append(lower_cabinet_positions[slot])
+		upper_positions.append(upper_cabinet_positions[slot])
 	_shuffle_positions(lower_positions, rng)
 	_shuffle_positions(upper_positions, rng)
 	var type_counts: Dictionary = {}
@@ -283,7 +279,6 @@ func _build_level_objects() -> void:
 	for flower_type in types:
 		type_counts[flower_type] = 0
 		flowers_by_type[flower_type] = []
-	var total_flowers: int = GameState.TOTAL_FLOWERS
 	for flower_index in total_flowers:
 		var flower_type: String = types[flower_index % types.size()]
 		var type_number: int = type_counts[flower_type] + 1

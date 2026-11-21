@@ -246,7 +246,7 @@ func _build_pause_overlay(root: Control) -> void:
 	pause_overlay.add_child(settings_panel)
 	reset_dialog = ConfirmationDialog.new()
 	reset_dialog.title = "Xóa tiến độ?"
-	reset_dialog.dialog_text = "Tiến độ chơi đã lưu sẽ bị xóa. Bạn có muốn tiếp tục không?"
+	reset_dialog.dialog_text = "Xóa tiến độ đã lưu của chế độ %s?" % GameState.level_profile().label
 	reset_dialog.process_mode = Node.PROCESS_MODE_ALWAYS
 	reset_dialog.confirmed.connect(_reset_progress)
 	pause_overlay.add_child(reset_dialog)
@@ -282,7 +282,8 @@ func _confirm_reset() -> void:
 	reset_dialog.popup_centered()
 
 func _reset_progress() -> void:
-	GameState.reset_game()
+	if not GameState.reset_game():
+		return
 	get_tree().paused = false
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
@@ -427,7 +428,7 @@ func _build_completion_overlay(root: Control) -> void:
 	title.add_theme_font_size_override("font_size", 28)
 	column.add_child(title)
 	var summary := Label.new()
-	summary.text = "Bạn đã xếp đủ %d bông hoa." % GameState.placed_ids.size()
+	summary.text = "Bạn đã xếp đủ %d bông hoa." % GameState.total_flowers()
 	summary.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	column.add_child(summary)
 	var replay := Button.new()
@@ -438,7 +439,8 @@ func _build_completion_overlay(root: Control) -> void:
 	column.add_child(replay)
 
 func _restart_level() -> void:
+	if not GameState.reset_game():
+		return
 	get_tree().paused = false
-	GameState.reset_game()
 	get_tree().reload_current_scene()
 
