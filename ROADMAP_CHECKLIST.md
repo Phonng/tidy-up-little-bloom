@@ -22,7 +22,7 @@ Xem [bảng đối chiếu và tiêu chí](DEMO_PLAN.md#đối-chiếu-bản-cla
 - [x] Lưu bản nguồn v2 và đối chiếu với phạm vi demo; giữ riêng các đề xuất sau demo.
 - [x] T0.1 — soạn tài liệu: Đã viết [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) từ 10 script và 2 scene tại mốc code `6fc071c`; kiểm tra tĩnh, không sửa hoặc chạy game.
 - [ ] T0.1 — duyệt hiện trạng: Chủ dự án đọc tài liệu kiến trúc và xác nhận; chưa có xác nhận, chưa coi toàn bộ cổng T0.1 đã được duyệt.
-- [ ] T0.6: Tạo `docs/KNOWN_ISSUES.md`, ghi bước tái hiện lỗi cầu thang và mức độ.
+- [x] T0.6: Đã lập [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md): mức độ, bằng chứng, kịch bản và tiêu chí đóng; LB-001 cầu thang ưu tiên D0. Đã sửa checklist test lỗi thời; chưa sửa hoặc đóng lỗi gameplay.
 - [ ] T0.3–T0.4: Ghi `docs/DEVICES.md` và `docs/BASELINE.md`; đo FPS, thời gian giỏ và số chuyến trên build/profile xác định.
 - [ ] T1.1: Sau kiểm tra nhanh D0, thử mở rộng 50 vòng lên/xuống bằng mỗi kiểu điều khiển, gồm cả khi mang đủ hoa.
 - [ ] T1.3–T1.4: Kiểm tra 3 mẫu save và vòng vào nền/đóng/mở lại; bảo toàn ID theo profile.

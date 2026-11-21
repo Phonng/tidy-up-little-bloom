@@ -103,7 +103,7 @@ Trước D0, kiểm kê code và ghi số liệu nền; không cần tạo tài 
 | T2.2/T2.6 → D2/D3 | Kiểm tra nhặt trong tầm, che khuất và đo giỏ mở đầu | Không nhặt xuyên tường/tầng; ghi thời gian từng người mới theo tiêu chí demo hiện tại |
 | T4.7–T4.8 → D4 | Đo hiệu năng trước/sau thay đổi; kiểm kê tài sản thực sự được đóng gói | Cùng máy/cảnh/profile, đo sau 10 phút; mục tiêu ≥30 FPS trên máy baseline; asset nhập mới có nguồn và giấy phép đã kiểm tra |
 
-Đã soạn [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) ngày 21/11/2026 từ code hiện tại; phần xác nhận của chủ dự án còn chờ. Các file `docs/DEVICES.md`, `docs/BASELINE.md` và `docs/KNOWN_ISSUES.md` ở bảng trên là đầu ra còn phải tạo, không phải báo cáo đã có. Số hoa phải bảo toàn theo **tổng của profile đang chơi**: trên sàn + đang mang + trong giỏ = 90 cho demo hoặc 504 cho thử tải, đồng thời từng ID chỉ thuộc một trạng thái.
+Đã soạn [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) ngày 21/11/2026 từ code hiện tại; phần xác nhận của chủ dự án còn chờ. Đã lập [docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md) trong T0.6, gồm lỗi cầu thang và các kịch bản cần tái hiện; chưa đóng lỗi gameplay. Các file `docs/DEVICES.md` và `docs/BASELINE.md` ở bảng trên là đầu ra còn phải tạo, không phải báo cáo đã có. Số hoa phải bảo toàn theo **tổng của profile đang chơi**: trên sàn + đang mang + trong giỏ = 90 cho demo hoặc 504 cho thử tải, đồng thời từng ID chỉ thuộc một trạng thái.
 
 ### Những khác biệt chưa đổi thành yêu cầu demo
 
