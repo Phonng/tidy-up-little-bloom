@@ -19,7 +19,7 @@ Godot 4 / GDScript Android first-person flower-sorting prototype. The project is
 
 ## Demo scope agreed on 19 November 2026
 
-The 90-flower demo is the default. Existing progress is available by choosing **Thử tải · 504 bông (save cũ)** and **Tiếp tục**. Each mode has its own save. New Game, reset and replay apply to the selected mode. The next demo milestone is the first basket near the entrance with a 2–3 minute target.
+The 90-flower demo is the default. Existing progress is available by choosing **Thử tải · 504 bông (save cũ)** and **Tiếp tục**. Each mode has its own save. New Game, reset and replay apply to the selected mode. The demo opens beside ten roses and their basket, with step-by-step guidance during play. Existing demo progress carries into the new layout. The 2–3 minute target is pending first-time player testing.
 
 See `DEMO_PLAN.md` for the opening layout, save compatibility and acceptance criteria. The updated Claude plan is preserved in [`docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt`](docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt); its task IDs are mapped to the demo in `DEMO_PLAN.md` (21 November update), while the full-release proposals remain outside the current demo scope. First-person hands have been removed; the staircase has 20 visible steps with a smooth collision surface, and D0 now keeps grounded movement through the transition and spawns the player on flat ground. The [staircase probe](docs/STAIRCASE_CHECK.md) passes 140 simulated round trips; A windowed Mac run rendered both ends of the staircase and reached all nine baskets with scripted input. Manual controls and Android traversal still need verification.
 

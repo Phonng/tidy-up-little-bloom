@@ -240,7 +240,10 @@ func _add_decorative_vase(at: Vector3, bloom_color: Color, leaf_color: Color) ->
 
 func _build_level_objects() -> void:
 	var profile := GameState.level_profile()
-	var basket_spots := LevelConfig.BASKET_SPOTS
+	var has_starter := GameState.level_id() == LevelConfig.DEMO
+	var basket_spots := LevelConfig.BASKET_SPOTS.duplicate()
+	if has_starter:
+		basket_spots["rose"] = LevelConfig.DEMO_ROSE_BASKET
 	var types := basket_spots.keys()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(profile.seed)
@@ -250,8 +253,12 @@ func _build_level_objects() -> void:
 		basket.setup(flower_type, tint)
 		basket.position = basket_spots[flower_type]
 		add_child(basket)
-	var total_flowers := GameState.total_flowers()
-	var flowers_per_floor := floori(float(total_flowers) / 2.0)
+	var scattered_types := types.duplicate()
+	var scattered_total := GameState.total_flowers()
+	if has_starter:
+		scattered_types.erase("rose")
+		scattered_total -= LevelConfig.DEMO_ROSE_SPOTS.size()
+	var flowers_per_floor := floori(float(scattered_total) / 2.0)
 	var cabinet_slots: Array = profile.cabinet_slots
 	var cabinet_flowers_per_floor := cabinet_slots.size()
 	var floor_flowers_per_floor := flowers_per_floor - cabinet_flowers_per_floor
@@ -274,30 +281,38 @@ func _build_level_objects() -> void:
 		upper_positions.append(upper_cabinet_positions[slot])
 	_shuffle_positions(lower_positions, rng)
 	_shuffle_positions(upper_positions, rng)
+	if lower_positions.size() != flowers_per_floor or upper_positions.size() != flowers_per_floor:
+		push_error("Not enough positions for the scattered flowers")
+		return
 	var type_counts: Dictionary = {}
 	var flowers_by_type: Dictionary = {}
 	for flower_type in types:
 		type_counts[flower_type] = 0
 		flowers_by_type[flower_type] = []
-	for flower_index in total_flowers:
-		var flower_type: String = types[flower_index % types.size()]
+	if has_starter:
+		for index in LevelConfig.DEMO_ROSE_SPOTS.size():
+			_append_uncollected_flower(flowers_by_type, "rose", index + 1, LevelConfig.DEMO_ROSE_SPOTS[index])
+	for flower_index in scattered_total:
+		var flower_type: String = scattered_types[flower_index % scattered_types.size()]
 		var type_number: int = type_counts[flower_type] + 1
 		type_counts[flower_type] = type_number
-		var flower_id := "%s_%02d" % [flower_type, type_number]
-		if flower_id in GameState.placed_ids or flower_id in GameState.inventory:
-			continue
-		var floor_index := 0 if flower_index < flowers_per_floor else 1
-		var floor_flowers_before := flower_index if floor_index == 0 else flower_index - flowers_per_floor
-		var candidates: Array[Vector3] = lower_positions if floor_index == 0 else upper_positions
-		if candidates.size() < flowers_per_floor:
-			push_error("Not enough flower positions on floor %d" % floor_index)
-			return
-		var flower_spawn_position: Vector3 = candidates[floor_flowers_before]
-		flowers_by_type[flower_type].append({"id": flower_id, "position": flower_spawn_position})
+		var flower_position: Vector3
+		if flower_index < flowers_per_floor:
+			flower_position = lower_positions[flower_index]
+		else:
+			flower_position = upper_positions[flower_index - flowers_per_floor]
+		_append_uncollected_flower(flowers_by_type, flower_type, type_number, flower_position)
 	var flower_field := FlowerFieldScript.new()
 	flower_field.name = "FlowerField"
 	flower_field.initialize(flowers_by_type)
 	add_child(flower_field)
+
+func _append_uncollected_flower(
+	flowers_by_type: Dictionary, flower_type: String, number: int, flower_position: Vector3
+) -> void:
+	var flower_id := "%s_%02d" % [flower_type, number]
+	if flower_id not in GameState.placed_ids and flower_id not in GameState.inventory:
+		flowers_by_type[flower_type].append({"id": flower_id, "position": flower_position})
 
 func _generate_random_floor_positions(
 	floor_y: float,
@@ -337,6 +352,8 @@ func _is_flower_position_blocked(candidate_position: Vector3, basket_spots: Dict
 	var x := candidate_position.x
 	var z := candidate_position.z
 	if is_zero_approx(candidate_position.y):
+		if GameState.level_id() == LevelConfig.DEMO and LevelConfig.DEMO_STARTER_AREA.has_point(Vector2(x, z)):
+			return true
 		if absf(x) < 2.25 and z > -1.2:
 			return true
 		if absf(x) < 2.25 and z > -8.9 and z < -7.25:
@@ -379,7 +396,7 @@ func _shuffle_positions(positions: Array[Vector3], rng: RandomNumberGenerator) -
 
 func _build_player() -> void:
 	var player := PlayerScript.new()
-	player.position = PLAYER_SPAWN
+	player.position = LevelConfig.DEMO_SPAWN if GameState.level_id() == LevelConfig.DEMO else PLAYER_SPAWN
 	add_child(player)
 
 func _add_window_at(center_y: float) -> void:

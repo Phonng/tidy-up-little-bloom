@@ -1,6 +1,6 @@
 # Little Bloom — Product Requirements Document
 
-**Phiên bản:** 1.4 · **Trạng thái:** Đã tách demo 90 bông và thử tải 504 bông · **Cập nhật:** 21/11/2026
+**Phiên bản:** 1.5 · **Trạng thái:** Đã triển khai giỏ đầu trong demo 90 bông · **Cập nhật:** 21/11/2026
 
 **Tên sản phẩm:** Little Bloom *(tên làm việc; chưa xác nhận khả năng đăng ký/phát hành)*  
 **Nền tảng đầu tiên:** Android · **Thể loại:** Cozy, dọn dẹp và sắp xếp, góc nhìn thứ nhất  
@@ -73,7 +73,7 @@ Một game dọn dẹp cửa hàng hoa góc nhìn thứ nhất, chơi bằng c�
 
 ### Nội dung bắt buộc
 
-Phạm vi dưới đây là thiết kế demo đích. D1 đã triển khai demo 90 bông và thử tải 504 bông, mỗi chế độ có save riêng. Luồng giỏ mở đầu thuộc D2. Chi tiết triển khai, thứ tự công việc và cách bảo toàn save nằm trong [DEMO_PLAN.md](DEMO_PLAN.md).
+Phạm vi dưới đây là thiết kế demo đích. D1 đã triển khai demo 90 bông và thử tải 504 bông, mỗi chế độ có save riêng. D2 đã triển khai giỏ hồng gần cửa. Mục tiêu thời gian còn chờ thử với người mới. Chi tiết triển khai, thứ tự công việc và cách bảo toàn save nằm trong [DEMO_PLAN.md](DEMO_PLAN.md).
 
 | Nội dung | Cam kết demo |
 |---|---|
@@ -298,6 +298,6 @@ Mỗi tính năng mới cần trả lời được ba câu hỏi: nhu cầu ngư
 
 ## 18. Tiếp nhận kế hoạch bổ sung v2 ngày 21/11/2026
 
-Đã lưu [bản Claude v2](docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt) làm nguồn tham khảo và [đối chiếu vào kế hoạch demo](DEMO_PLAN.md#đối-chiếu-bản-claude-v2--21112026). Bổ sung kiểm kê kiến trúc, danh sách lỗi, số đo nền và bằng chứng kiểm thử theo từng task. Không thay phạm vi demo đã chốt: 9 loài hiện có, một tiệm hai tầng, demo 90 bông và giỏ đầu 10 bông. D1 đã tách chế độ 504 để thử tải, còn bố cục giỏ đầu thuộc D2.
+Đã lưu [bản Claude v2](docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt) làm nguồn tham khảo và [đối chiếu vào kế hoạch demo](DEMO_PLAN.md#đối-chiếu-bản-claude-v2--21112026). Bổ sung kiểm kê kiến trúc, danh sách lỗi, số đo nền và bằng chứng kiểm thử theo từng task. Không thay phạm vi demo đã chốt: 9 loài hiện có, một tiệm hai tầng, demo 90 bông và giỏ đầu 10 bông. D1 đã tách chế độ 504 để thử tải, D2 đã thêm bố cục giỏ đầu và giữ được tiến độ demo D1.
 
 Các đề xuất bản 1.0/1.1, quảng cáo, lịch 18 tuần và tiêu chí khác demo trong bản nguồn không tự trở thành công việc của sprint hiện tại. Những thông tin chính sách, tương thích plugin và giấy phép phải được xác minh khi mở task liên quan.

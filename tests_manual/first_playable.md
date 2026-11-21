@@ -38,6 +38,13 @@ Run `python3 tools/check_stairs.py` for the isolated physics check; see [results
 - [ ] Reset confirmation clears inventory and placed progress; canceling it preserves both.
 - [ ] Quit/reopen restores inventory and placed flowers. Test a deliberately malformed save and backup recovery.
 
+## Demo first basket (D2)
+
+- [ ] Start Demo with isolated QA data, then follow the instructions on screen with no spoken coaching.
+- [ ] Pick up and place ten roses in two loads using the starter basket on the ground floor. Check that the HUD and basket label reach 10/10 and the player can still walk.
+- [ ] Resume a demo layout 1 save with roses on both the carried and placed lists. Confirm those roses do not respawn and the progress count matches.
+- [ ] Record elapsed time from first control to 10/10 for five first-time players, plus misplacements, inventory-full events and any outside help. At least four should reach 10/10 within three minutes. Faster runs count.
+
 ## Android device playthrough
 
 - [ ] Install the debug build on a small landscape phone and a mid-range phone.

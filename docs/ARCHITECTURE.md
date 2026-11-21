@@ -12,7 +12,7 @@ Game hiện là prototype một cửa hàng hai tầng, **demo 90 bông (10 mỗ
 
 `GameState` giữ tiến độ bằng ID hoa. `main.gd` dựng thế giới, `FPSPlayer` điều khiển và chọn mục tiêu, `FlowerField` quản lý hoa ngoài giỏ, `FlowerBasket` gọi thao tác đặt. Hình ảnh chỉ biểu diễn dữ liệu; không có một physics body cho mỗi bông.
 
-Demo 90 bông và thử tải 504 bông đã tách cấu hình và save. Bố cục giỏ mở đầu 10 bông gần cửa thuộc D2 trong [DEMO_PLAN](../DEMO_PLAN.md).
+Demo 90 bông và thử tải 504 bông đã tách cấu hình và save. D2 thêm khu giỏ mở đầu và hướng dẫn trong lúc chơi. Chi tiết và kết quả thử ở [DEMO_PLAN](../DEMO_PLAN.md).
 
 ## 2. Điểm vào và cây scene
 
@@ -104,7 +104,7 @@ Nhặt thành công: `pickup()` thêm ID → ghi save → phát `changed` → ph
 
 ## 5. Dữ liệu 9 loài, giỏ và bố trí
 
-Tên/màu lấy từ `GameState.FLOWER_TYPES`. Target và seed lấy từ `LevelConfig.PROFILES`. Thứ tự loài và tọa độ giỏ lấy từ `LevelConfig.BASKET_SPOTS`. Bảng dưới dùng số bông của chế độ 504, demo dùng 10 mỗi loại.
+Tên/màu lấy từ `GameState.FLOWER_TYPES`. Target và seed lấy từ `LevelConfig.PROFILES`. Thứ tự loài và tọa độ giỏ lấy từ `LevelConfig.BASKET_SPOTS`. Demo dùng tọa độ riêng cho giỏ hồng và 10 vị trí hồng cố định ở khu mở đầu. Bảng dưới dùng số bông của chế độ 504, demo dùng 10 mỗi loại.
 
 | ID loài | Tên hiển thị trong code | Số bông | Vị trí giỏ (x, y, z) |
 |---|---|---:|---|
@@ -119,7 +119,7 @@ Tên/màu lấy từ `GameState.FLOWER_TYPES`. Target và seed lấy từ `Level
 | cosmos | Hoa sao nhái | 56 | (0, 4.2, -2.4) |
 
 - ID bông sinh dạng `rose_01`…`rose_56`; lấy loài bằng phần trước `_`. Validator giới hạn số thứ tự theo mục tiêu của loài. Không đổi ID/target mà bỏ qua save cũ.
-- Bản 504 có 252 bông mỗi tầng gồm 240 bông trên sàn và 12 trên tủ. Demo có 45 mỗi tầng, gồm 41 trên sàn và 4 trên tủ.
+- Bản 504 có 252 bông mỗi tầng gồm 240 bông trên sàn và 12 trên tủ. Demo có 40 bông loại khác mỗi tầng, gồm 36 trên sàn và 4 trên tủ. Tầng trệt có thêm 10 bông hồng.
 - RNG seed `20261119`; sinh vị trí, loại vùng bị chặn và xáo trộn hai danh sách. Khoảng cách tối thiểu sàn là 0.58 m dưới / 0.52 m trên. Hoa vẫn dùng mesh đứng thẳng, chưa ngẫu nhiên góc đổ/nghiêng.
 - Hoa trên tủ đặt ở y = cao độ tầng + 2.63, không có rigid body rơi. Vùng loại trừ dùng tọa độ viết sẵn, không tự truy vấn toàn bộ collision của phòng.
 - Khi Continue, vẫn sinh layout rồi bỏ ID đã mang/đã đặt. D1 ghi `layout_version` vào save. Vị trí dựa vào seed, thuật toán và thứ tự sinh của phiên bản tương ứng.
@@ -170,7 +170,7 @@ Nguồn: `GameState.save_game()`, `load_game()`, `_notification()`.
 {
   "schema_version": 1,
   "level_id": "demo",
-  "layout_version": 1,
+  "layout_version": 2,
   "inventory": ["rose_01"],
   "placed_ids": ["tulip_02"]
 }
@@ -185,7 +185,7 @@ Ví dụ trên minh họa cấu trúc, không phải dữ liệu người dùng.
 | `*.tmp` / `*.bak` | File tạm và bản phục hồi riêng theo tên gốc của từng chế độ |
 | `settings.cfg` | ConfigFile lưu sensitivity, invert_y, music/SFX volume, tutorial_seen |
 
-Lưu sau nhặt/đặt/reset. Khi vào nền hoặc đóng cửa sổ, GameState chỉ thử ghi lại nếu một lần ghi sau tương tác còn chờ. Luồng lưu ghi và đóng file tạm, sao chép save chính hợp lệ sang backup, rồi thay save chính bằng file tạm. Xóa backup sau khi ghi thành công. Chọn chế độ và nạp backup chỉ đọc file. Chế độ 504 chấp nhận schema 1 cũ chưa có metadata, còn save có metadata phải khớp chế độ và phiên bản bố trí.
+Lưu sau nhặt/đặt/reset. Khi vào nền hoặc đóng cửa sổ, GameState chỉ thử ghi lại nếu một lần ghi sau tương tác còn chờ. Luồng lưu ghi và đóng file tạm, sao chép save chính hợp lệ sang backup, rồi thay save chính bằng file tạm. Xóa backup sau khi ghi thành công. Chọn chế độ và nạp backup chỉ đọc file. Chế độ 504 chấp nhận schema 1 cũ chưa có metadata, và bố cục 1. Demo nhận cả bố cục 1 và 2 vì tiến độ lưu bằng ID. Lần ghi thành công sau khi nạp bố cục 1 sẽ ghi bố cục 2.
 
 Continue dựng lại hoa và giỏ từ ID đã đặt hoặc mang. Nhân vật xuất hiện ở điểm spawn mặc định. Trạng thái xem tutorial nằm trong file cài đặt. Nếu lưu sau nhặt/đặt thất bại, trạng thái tiếp tục nằm trong RAM để thử ghi lại. Reset thất bại sẽ giữ tiến độ trong RAM.
 
@@ -207,7 +207,7 @@ Tổng số ID trên sàn, đang mang và đã đặt phải bằng tổng của
 | T0.6: ghi lỗi | Báo cáo người dùng + các điểm chưa kiểm chứng ở tài liệu này | Phân biệt lỗi đã tái hiện, báo cáo cũ và giả thuyết từ đọc code |
 | D0: cầu thang/spawn | `main.gd`, `player.gd` | Lên/xuống, lan can, tiếp giáp sàn; cần thử thao tác, không chỉ parse |
 | D1: Demo 90 và thử tải 504 | `level_config.gd`, `game_state.gd`, `main.gd`, `main_menu.gd` | Đã xác minh ID, vị trí 504 và save riêng trên bản sao |
-| D2: giỏ đầu | `main.gd`, `touch_controls.gd` | Giỏ hồng hiện ở cuối tiệm, không ở gần spawn; cần bố trí lại và đo người mới |
+| D2: giỏ đầu | `main.gd`, `touch_controls.gd` | Đã bố trí 10 hồng và giỏ gần cửa, thử được hai chuyến. Còn đo người mới |
 | D3: tương tác | `player.gd`, `flower_field.gd`, `basket.gd` | Che khuất/tầm với, hoa trên tủ, highlight; không làm mất/trùng ID |
 | D4: Android | `touch_controls.gd`, autoloads, export preset | Multitouch, vòng đời, file đóng gói, save và FPS trên máy thật |
 

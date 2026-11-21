@@ -195,7 +195,11 @@ func _is_save_valid(parsed: Variant) -> bool:
 	# Untagged schema 1 files are the original 504-flower layout.
 	if not parsed.has("level_id") and not parsed.has("layout_version"):
 		return _level_id == LevelConfig.STRESS and level_profile().layout_version == 1
-	return parsed.get("level_id") == _level_id and parsed.get("layout_version") == level_profile().layout_version
+	if parsed.get("level_id") != _level_id:
+		return false
+	var saved_layout: Variant = parsed.get("layout_version")
+	# D1 demo saves store flower IDs, so the entrance layout can reuse all progress.
+	return saved_layout == level_profile().layout_version or (_level_id == LevelConfig.DEMO and saved_layout == 1)
 
 func load_game() -> void:
 	inventory.clear()

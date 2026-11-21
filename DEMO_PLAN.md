@@ -7,8 +7,8 @@ Cập nhật: 21/11/2026. Tài liệu sản phẩm chuẩn: [PRODUCT_SPEC.md](PR
 - Người dùng chọn làm một cửa hàng demo trước, ưu tiên vòng chơi dễ hiểu và giỏ đầu trong 2–3 phút.
 - Người dùng xác nhận giữ 9 loại hoa hiện có trong demo; đổi loài để sau.
 - Giữ cửa hàng hai tầng đã dựng. Đi lên và xuống cầu thang là điều kiện bắt buộc trước khi mở rộng nội dung.
-- D1 đã tách **Demo · 90 bông** (10 mỗi loại) và **Thử tải · 504 bông (save cũ)** (56 mỗi loại). Cả hai có 9 giỏ và sức chứa 5 bông. Demo mặc định chia 45 bông mỗi tầng, gồm 4 bông trên tủ mỗi tầng.
-- Chọn chế độ 504 rồi **Tiếp tục** để mở save cũ. Giỏ hướng dẫn gần cửa thuộc D2.
+- D1 đã tách **Demo · 90 bông** (10 mỗi loại) và **Thử tải · 504 bông (save cũ)** (56 mỗi loại). Cả hai có 9 giỏ và sức chứa 5 bông. Demo có 10 bông hồng ở khu mở đầu, cộng 40 bông loại khác mỗi tầng, gồm 4 bông trên tủ mỗi tầng.
+- Chọn chế độ 504 rồi **Tiếp tục** để mở save cũ. D2 đã bố trí giỏ hồng gần cửa.
 - Không áp lịch 18 tuần của bản Claude vào demo. Các mốc dưới đây hoàn thành theo tiêu chí, sau đó mới ước lượng lịch bản đầy đủ.
 
 ## Nội dung demo
@@ -30,6 +30,10 @@ Một cửa hàng, hai tầng, một lượt dọn hoàn chỉnh: vào menu → 
 Đây là danh sách hoa của demo, không quảng bá như bộ 9 loài bản địa Việt Nam. Mô hình hai bàn tay đã bỏ theo yêu cầu người dùng.
 
 ## Giỏ mở đầu: mục tiêu 2–3 phút
+
+D2 đã triển khai khu hoa hồng ở sàn phẳng bên phải cầu thang, gần cửa vào. Người chơi thấy tên giỏ và tiến độ 0/10 khi vào demo. Chỉ dẫn đổi theo thao tác nhặt, cầm và đặt. Giỏ đầy đổi màu nhãn, hiện lời xác nhận ngắn và người chơi tiếp tục điều khiển được.
+
+Bản QA riêng trên Mac đã ngắm, nhặt và đặt 10 bông qua luồng tương tác thật của game. Hai chuyến mang đủ năm bông đi khoảng 17 m, đều ở tầng trệt. Đã xem hình ảnh lúc bắt đầu và lúc đạt 10/10. Kết quả này xác nhận tuyến chơi và thao tác. Phép đo 2–3 phút với người mới vẫn để mở.
 
 - Chọn giỏ hoa hồng làm giỏ hướng dẫn, đủ 10 bông để hoàn thành trong hai chuyến mang tối đa 5 bông.
 - Đặt người chơi tại một khoảng sàn phẳng cạnh cửa vào, nhìn thấy giỏ và vài bông đầu tiên. Không xuất phát dưới hoặc bên trong collider cầu thang.
@@ -57,7 +61,7 @@ Một cửa hàng, hai tầng, một lượt dọn hoàn chỉnh: vào menu → 
 | D3 — Cửa hàng hoàn chỉnh | 80 bông còn lại, tương tác/nhãn focus, tủ và hai tầng, kết thúc 90/90 | Nhặt được mọi bông, không xuyên tường; mất focus/nhặt xong thì ẩn nhãn; hoàn thành và chơi lại được |
 | D4 — Android demo | Cấu hình SDK, build cài máy thật, kiểm tra cảm ứng, pause/resume, save/load, đo tải/FPS | Chơi được cả vòng trên Android, không mất save; hướng tới ≥30 FPS ổn định trên thiết bị baseline đã ghi nhận |
 
-D1 đã triển khai và qua kiểm tra Godot trên bản sao. D0 còn thử bằng tay, còn D2–D4 theo tiêu chí trong bảng.
+D1 và phần triển khai D2 đã qua kiểm tra Godot trên bản sao. D0 còn thử bằng tay, D2 còn đo với người mới, D3–D4 theo tiêu chí trong bảng.
 
 ## Save và kiến trúc khi tách demo
 
@@ -65,9 +69,15 @@ D1 đã triển khai và qua kiểm tra Godot trên bản sao. D0 còn thử b�
 - Demo giữ dữ liệu trong `user://little_bloom_demo_save.json`. Bản 504 dùng `user://little_bloom_save.json` cùng seed và bố trí cũ. Đổi chế độ chỉ đọc tiến độ của chế độ được chọn.
 - Save schema 1 chưa ghi mã chế độ được nhận trong bản 504. Save mới ghi mã chế độ và phiên bản bố trí, với file tạm và bản dự phòng riêng cho từng chế độ.
 - Nếu cần chuyển tiến độ sang demo, phải có quy tắc chuyển riêng, bản sao lưu và lựa chọn của người chơi; demo mới không tự ghi đè save cũ.
-- Sinh vị trí với seed cố định trong một phiên bản layout để Continue giữ vị trí hoa. Khi D2 thay đổi bố cục, cần giữ cách nạp bố cục demo cũ hoặc có phương án chuyển dữ liệu trước khi tăng phiên bản bố trí.
+- Sinh vị trí với seed cố định trong một phiên bản layout để Continue giữ vị trí hoa. D2 dùng bố cục demo 2 trên cùng file save. Bản demo 1 nạp được với toàn bộ ID đã mang và đã đặt, hoa còn lại được dựng theo bố cục 2. Tiếp tục chỉ đọc file, lần lưu thành công sau đó ghi phiên bản 2.
 - Giữ ID hoa ổn định giữa nhặt, inventory, giỏ và save. Geometry/nhãn/hiệu ứng là phần hiển thị.
 - Dùng chung một đối tượng highlight và nhãn cho bông đang ngắm, không tạo hàng trăm nhãn chạy animation đồng thời.
+
+### Kiểm chứng save D2 trên bản sao
+
+- Save demo bố cục 1 chứa hoa hồng và các loài khác ở cả hai trạng thái đang mang và đã xếp. Nạp lại giữ nguyên ID, không sinh trùng và chỉ ghi bố cục 2 khi nhặt thêm.
+- Save 504 cũ giữ nguyên từng byte sau khi chơi xong giỏ hồng và nạp lại demo. Chế độ 504 vẫn đọc được ID trên 10. Toàn bộ 504 cặp ID và vị trí khớp mốc D1.
+- Nạp lại demo sau khi xếp đủ hoa hồng giữ 10/10 đã xếp và không phát lại thông báo hoàn thành.
 
 ### Kiểm chứng D1 trên bản sao
 

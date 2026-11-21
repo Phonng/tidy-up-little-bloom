@@ -6,11 +6,12 @@ Tài liệu sản phẩm chuẩn là [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md). Các 
 
 ## Ưu tiên demo từ 19/11/2026
 
-Các dấu hoàn thành dưới đây ghi nhận code prototype hiện có, không chứng nhận bản demo đã đạt. Code có demo 90 bông và thử tải 504 bông. Bố cục giỏ đầu 10 bông thuộc D2. Xem [DEMO_PLAN.md](DEMO_PLAN.md).
+Các dấu hoàn thành dưới đây ghi nhận code prototype hiện có, không chứng nhận bản demo đã đạt. Code có demo 90 bông, khu hoa hồng mở đầu và thử tải 504 bông. Xem [DEMO_PLAN.md](DEMO_PLAN.md).
 
 - [ ] D0: Đã sửa mất bám sàn và chuyển spawn ra sàn phẳng; [probe trước/sau](docs/STAIRCASE_CHECK.md) đạt 140 vòng, 0 tick mất bám sau sửa. Bản có cửa sổ trên Mac hiển thị hai đầu thang và đi tới 9/9 giỏ bằng điều khiển mô phỏng. Còn thử bằng tay và trên Android.
 - [x] D1: Tách demo 90 bông và thử tải 504 bông trong menu. Đã kiểm tra cả hai tổng, resume, khôi phục save demo và bảo toàn save 504 cũ trên bản sao.
-- [ ] D2: Bố trí giỏ mở đầu 10 bông, hai chuyến mang; đo với 5 người mới.
+- [x] D2 triển khai: Giỏ hồng gần cửa, 10 bông ở tầng trệt, chỉ dẫn trong lúc chơi và phản hồi 10/10. Bản QA qua hai chuyến, nạp được save demo 1 và giữ nguyên save 504.
+- [ ] D2 đo với người mới: Ghi thời gian của 5 người chưa biết game, mục tiêu ít nhất 4/5 xong giỏ trong tối đa 3 phút.
 - [ ] D3: Hoàn thiện 9 loại hoa, 9 giỏ, hoa rải tự nhiên và trên mặt tủ; nhãn tên/hiệu ứng focus.
 - [ ] D4: Chạy demo Android thật, kiểm tra cảm ứng, lưu/phục hồi và hiệu năng.
 - [ ] Chỉ mở backlog sau demo khi các tiêu chí demo đã đạt.

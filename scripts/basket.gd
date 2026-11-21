@@ -9,6 +9,7 @@ var contents_root: Node3D
 var drawn_count := -1
 var _placed_stems: MultiMesh
 var _placed_blooms: MultiMesh
+var _starter_label: Label3D
 
 func setup(type: String, color: Color) -> void:
 	flower_type = type
@@ -50,6 +51,15 @@ func _ready() -> void:
 	add_child(contents_root)
 	_placed_stems = _make_contents_batch(FlowerScript.build_stem_mesh(), Color("#5c9567"))
 	_placed_blooms = _make_contents_batch(FlowerScript.build_bloom_mesh(flower_type), tint)
+	if GameState.level_id() == LevelConfig.DEMO and flower_type == "rose":
+		_starter_label = Label3D.new()
+		_starter_label.position.y = 0.96
+		_starter_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		_starter_label.font_size = 40
+		_starter_label.pixel_size = 0.0034
+		_starter_label.modulate = Color("#fff1dc")
+		_starter_label.outline_modulate = Color("#503d33")
+		add_child(_starter_label)
 	GameState.changed.connect(_sync_contents)
 	_sync_contents()
 
@@ -74,6 +84,10 @@ func _sync_contents() -> void:
 	if count == drawn_count:
 		return
 	drawn_count = count
+	if is_instance_valid(_starter_label):
+		var target := GameState.flower_target(flower_type)
+		_starter_label.text = "Giỏ hoa hồng · %d/%d" % [count, target]
+		_starter_label.modulate = Color("#dff8dc") if count == target else Color("#fff1dc")
 	_placed_stems.instance_count = count
 	_placed_blooms.instance_count = count
 	for index in count:

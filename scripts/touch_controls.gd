@@ -34,6 +34,9 @@ var _interact_rect := Rect2()
 var _pause_rect := Rect2()
 var _completion_overlay: Control
 var _sfx_player: AudioStreamPlayer
+var _starter_panel: PanelContainer
+var _starter_hint: Label
+var _starter_finished := false
 
 func _ready() -> void:
 	layer = 10
@@ -51,7 +54,7 @@ func _ready() -> void:
 	_refresh()
 	if GameState.is_complete():
 		_show_complete()
-	elif not SettingsManager.tutorial_seen:
+	elif GameState.level_id() == LevelConfig.STRESS and not SettingsManager.tutorial_seen:
 		_show_tutorial()
 
 func _notification(what: int) -> void:
@@ -118,6 +121,8 @@ func _build_ui() -> void:
 	pause_button.position = Vector2(-82, 20)
 	pause_button.pressed.connect(_toggle_pause)
 	root.add_child(pause_button)
+	if GameState.level_id() == LevelConfig.DEMO:
+		_build_starter_hint(root)
 	_build_pause_overlay(root)
 	_build_tutorial_overlay(root)
 	_build_completion_overlay(root)
@@ -186,6 +191,58 @@ func _refresh() -> void:
 			if carried_counts.has(flower_type):
 				carried.append("%s ×%d" % [GameState.type_name(flower_type), carried_counts[flower_type]])
 		inventory_label.text = "Đang cầm %d/%d: %s" % [GameState.inventory.size(), GameState.MAX_CARRY, " · ".join(PackedStringArray(carried))]
+		if is_instance_valid(_starter_panel):
+			_refresh_starter_hint(int(carried_counts.get("rose", 0)))
+
+func _build_starter_hint(root: Control) -> void:
+	_starter_finished = GameState.placed_count("rose") >= GameState.flower_target("rose")
+	_starter_panel = PanelContainer.new()
+	_starter_panel.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_starter_panel.position = Vector2(-266, 150)
+	_starter_panel.custom_minimum_size = Vector2(532, 74)
+	_starter_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_starter_panel.visible = not _starter_finished
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("#352924e8")
+	style.set_corner_radius_all(10)
+	style.content_margin_left = 14.0
+	style.content_margin_right = 14.0
+	style.content_margin_top = 8.0
+	style.content_margin_bottom = 8.0
+	_starter_panel.add_theme_stylebox_override("panel", style)
+	root.add_child(_starter_panel)
+	_starter_hint = Label.new()
+	_starter_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_starter_hint.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_starter_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_starter_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_starter_hint.add_theme_font_size_override("font_size", 17)
+	_starter_panel.add_child(_starter_hint)
+
+func _refresh_starter_hint(rose_carried: int) -> void:
+	if _starter_finished:
+		return
+	var target := GameState.flower_target("rose")
+	var placed := GameState.placed_count("rose")
+	if placed == target:
+		_starter_finished = true
+		_starter_hint.text = "Xong giỏ hồng · %d/%d\nBạn có thể dạo tiệm và xếp các loại hoa còn lại." % [placed, target]
+		await get_tree().create_timer(4.0, false).timeout
+		_starter_panel.hide()
+		return
+	var action := "NHẶT / ĐẶT" if OS.has_feature("mobile") else "E"
+	var hint: String
+	if rose_carried > 0 and (GameState.inventory.size() == GameState.MAX_CARRY or placed + rose_carried == target):
+		hint = "Ngắm giỏ hoa hồng. Nhấn %s một lần cho mỗi bông." % action
+	elif GameState.inventory.size() == GameState.MAX_CARRY:
+		hint = "Tay đã đầy. Đặt hoa đang cầm vào giỏ đúng loại để lấy chỗ."
+	elif rose_carried > 0:
+		hint = "Đang cầm %d bông hồng. Nhặt thêm hoặc mang đến giỏ." % rose_carried
+	elif OS.has_feature("mobile"):
+		hint = "Kéo bên trái để đi, vuốt bên phải để ngắm hoa hồng. Bấm %s." % action
+	else:
+		hint = "WASD để đi. Bấm vào cửa sổ, dùng chuột ngắm hoa hồng rồi nhấn E."
+	_starter_hint.text = "Giỏ đầu tiên · Hoa hồng %d/%d\n%s" % [placed, target, hint]
 
 func _show_notice(message: String) -> void:
 	if not is_instance_valid(notice_label):
