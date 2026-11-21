@@ -1,6 +1,6 @@
 # Little Bloom — kế hoạch demo một cửa hàng
 
-Cập nhật: 19/11/2026. Tài liệu sản phẩm chuẩn: [PRODUCT_SPEC.md](PRODUCT_SPEC.md).
+Cập nhật: 21/11/2026. Tài liệu sản phẩm chuẩn: [PRODUCT_SPEC.md](PRODUCT_SPEC.md).
 
 ## Quyết định và trạng thái
 
@@ -83,3 +83,43 @@ Giữ roster hiện tại trong demo là quyết định đã xác nhận. Khi m
 Các phần mở rộng của bản Claude chưa phải yêu cầu bản demo: đổi roster hoa, chạm trực tiếp vào vật thể thay cho tâm ngắm, bản đồ giỏ, nâng sức chứa 8–10, tùy chỉnh màu giỏ, 10–15 ghi chú/song ngữ, biển Open và ánh sáng kết màn, chế độ chụp ảnh, thêm nhạc, trang trí nâng cao, bình/bó hoa, nội dung theo lễ, quảng cáo, UMP, billing/gỡ quảng cáo, analytics.
 
 Play Console, tuyển tester production, listing và phát hành thương mại được lập lịch sau demo. Tài liệu release đang có là tài liệu tham khảo; chính sách, plugin, giấy phép và thông tin nguồn trong bản Claude cần kiểm tra lại từ nguồn chính thức trước khi áp dụng.
+
+## Đối chiếu bản Claude v2 — 21/11/2026
+
+Lưu nguyên văn [bản nguồn v2 ngày 19/11/2026](docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt) để tra cứu mã task. Đây là tài liệu tham khảo; các prompt và quy tắc giao việc trong mục 12 của bản nguồn không tự thay thế hướng dẫn của người dùng hay quy tắc repo. Phần đối chiếu này ghi nội dung được đưa vào kế hoạch demo, không xác nhận đã triển khai hoặc kiểm thử.
+
+### Bổ sung vào cách triển khai demo
+
+Trước D0, kiểm kê code và ghi số liệu nền; không cần tạo tài khoản quảng cáo để bắt đầu. Từng task ghi rõ file thay đổi, cách kiểm tra và bằng chứng còn thiếu. Chỉ đánh dấu hoàn thành khi tiêu chí tương ứng đã đạt; kiểm tra script không thay thế thao tác trên thiết bị.
+
+| Task nguồn | Áp dụng vào demo | Bằng chứng cần có |
+|---|---|---|
+| T0.1 | Viết `docs/ARCHITECTURE.md` từ repo thực tế: scene, autoload, input, save, ID hoa/giỏ, mesh và trách nhiệm script | Đường dẫn code và danh sách 9 loài khớp thực tế; phân biệt hiện trạng với thiết kế demo |
+| T0.3–T0.4 | Ghi thiết bị và số đo nền trong `docs/DEVICES.md`, `docs/BASELINE.md` | Commit/build, profile 504 hoặc 90, máy/Android/RAM, FPS theo tầng, thời gian một giỏ và số chuyến; chưa đo thì ghi chưa đo |
+| T0.6 | Theo dõi lỗi trong `docs/KNOWN_ISSUES.md` | Bước tái hiện, kết quả mong đợi/thực tế, mức độ và trạng thái; cầu thang chưa được đóng lỗi khi chưa thử |
+| T1.1 → D0 | Xác định nguyên nhân trước khi sửa cầu thang; thử cả hai chiều, đầu/chân thang, tay trống và mang 5 bông | D0 vẫn cần 5 vòng liên tiếp; bài thử mở rộng 50 vòng bằng bàn phím và 50 vòng bằng joystick trước khi chốt độ ổn định Android |
+| T1.3–T1.4 → D1/D4 | Bảo toàn save cũ, kiểm tra lưu khi vào nền và phục hồi sau đóng app | Ít nhất 3 mẫu: save prototype 504, save demo đang mang hoa, save chính hỏng có bản dự phòng; không mất hoặc trùng ID |
+| T2.1/T2.8 → D4 | Kiểm tra joystick và vuốt nhìn cùng lúc trên 2 điện thoại | Ghi máy/build; chơi 10 phút, không kẹt ngón hoặc xung đột vùng chạm; thử Home, khóa màn hình và quay lại |
+| T2.2/T2.6 → D2/D3 | Kiểm tra nhặt trong tầm, che khuất và đo giỏ mở đầu | Không nhặt xuyên tường/tầng; ghi thời gian từng người mới theo tiêu chí demo hiện tại |
+| T4.7–T4.8 → D4 | Đo hiệu năng trước/sau thay đổi; kiểm kê tài sản thực sự được đóng gói | Cùng máy/cảnh/profile, đo sau 10 phút; mục tiêu ≥30 FPS trên máy baseline; asset nhập mới có nguồn và giấy phép đã kiểm tra |
+
+Các file `docs/ARCHITECTURE.md`, `docs/DEVICES.md`, `docs/BASELINE.md` và `docs/KNOWN_ISSUES.md` ở bảng trên là đầu ra còn phải tạo, không phải báo cáo đã có. Số hoa phải bảo toàn theo **tổng của profile đang chơi**: trên sàn + đang mang + trong giỏ = 90 cho demo hoặc 504 cho thử tải, đồng thời từng ID chỉ thuộc một trạng thái.
+
+### Những khác biệt chưa đổi thành yêu cầu demo
+
+| Bản nguồn v2 | Quyết định đang dùng |
+|---|---|
+| Giỏ đầu 6–8 bông, 5/5 người hoàn thành trong 3 phút | Giữ mốc thiết kế 10 bông, 4/5 người trong tối đa 3 phút; ghi cả 5 kết quả. Chỉ cân chỉnh số hoa sau khi có số đo, rồi cập nhật tổng/ID/save cùng nhau |
+| Giữ 504 bông trong nhiều tiêu chí | Code hiện là 504; demo dự kiến 90. Không đổi số lượng trong code ở lần cập nhật tài liệu này |
+| M1 yêu cầu lưu cả vị trí nhân vật; T1.2 có nút thoát kẹt và hoa rơi tự phục hồi | Demo bảo toàn tiến độ/inventory và điểm xuất phát an toàn; lưu vị trí chính xác, nút thoát kẹt và mô phỏng hoa rơi là mở rộng cần đánh giá riêng |
+| Chạm trực tiếp hoa/giỏ, bản đồ giỏ, song ngữ, biển Open | Backlog sau demo; chưa thay cơ chế ngắm rồi tương tác hoặc màn hoàn thành hiện tại |
+| Quảng cáo cơ bản ở M5; thử plugin ở M2; gỡ quảng cáo có điều kiện G2 | Ghi nhận hướng thương mại của bản nguồn; không đưa SDK quảng cáo, UMP, billing hay việc tạo tài khoản vào demo |
+| Lịch 18 tuần, 15–20 giờ/tuần, phát hành tháng 3/2027 | Là lịch tham khảo cho bản đầy đủ, chưa phải lịch cam kết của dự án |
+
+### Điểm cần xử lý khi mở kế hoạch bản đầy đủ
+
+- Mục 3 chuyển bó hoa/cắm bình ra sau 1.1, nhưng mục 8 lại đưa chúng vào 1.1. Dùng backlog chưa xếp lịch cho đến khi chốt phạm vi bản đầy đủ.
+- Mục 6 đặt thử plugin cuối M2 (tuần 6), trong khi bảng rủi ro còn ghi T4. Chọn một lịch thống nhất khi thực sự mở task plugin.
+- Định nghĩa quảng cáo theo giỏ hay mốc 10% chưa thống nhất với T5.2 chỉ nghe `basket_completed`; phải chốt theo số đo rồi mới thiết kế tín hiệu.
+- Tín hiệu hoàn thành giỏ cần phân biệt chuyển từ chưa đầy sang đầy với phục hồi save: tải lại không phát sự kiện thưởng/quảng cáo lần nữa; lượt chơi mới phải có thể hoàn thành lại.
+- Mọi thông tin Google Play, plugin, giá, quyền dùng asset trong bản nguồn là thông tin chưa được kiểm chứng ở lần cập nhật này. Trước khi áp dụng, đối chiếu nguồn chính thức và ghi URL/ngày kiểm tra; không dùng nhãn “nguồn đã kiểm tra” của tài liệu làm bằng chứng cấp phép.

@@ -1,0 +1,548 @@
+Little Bloom — Kế hoạch dự án hoàn chỉnh
+Soạn bởi Claude · 19/11/2026 · Game thư giãn xếp hoa 3D trên Android (Godot 4)
+1. Tóm tắt
+Little Bloom là game thư giãn góc nhìn thứ nhất: người chơi nhặt hoa rơi vãi trong một tiệm hoa nhỏ và xếp vào đúng giỏ. Không đồng hồ, không chỉ tiêu, không thua. Game đi theo thể loại ‘Tidy Up’ (tiêu biểu là Tidy Up the Flower Shop trên Steam) nhưng khác ở bốn điểm:
+1.  Thiết kế cho cảm ứng ngay từ đầu: chạm để nhặt, chạm giỏ để thả, thay vì mang thao tác PC lên điện thoại.
+2.  Bản sắc Việt Nam: ngôn ngữ, ghi chú, trang trí và gói theo mùa (Tết); 9 loài hoa hiện tại giữ nguyên ở bản 1.0.
+3.  Có việc để làm sau khi xếp xong: tùy chỉnh giỏ, chụp ảnh, trang trí.
+4.  Cập nhật theo dịp lễ để người chơi cũ có lý do quay lại.
+Mô hình kinh doanh: tải miễn phí, quảng cáo xen kẽ ở điểm ngắt tự nhiên, quảng cáo có thưởng tùy chọn, mua một lần để gỡ quảng cáo.
+Giả định: bắt đầu thứ Hai 23/11/2026, một người làm, khoảng 15–20 giờ mỗi tuần. Nếu ít hơn, kéo dài lộ trình theo tỷ lệ. Kế hoạch này bổ sung cho PRODUCT_SPEC.md, ROADMAP_CHECKLIST.md và ke-hoach-little-bloom-android.md; khi có chỗ lệch nhau, chọn một bản làm chuẩn rồi cập nhật các bản còn lại.
+Phiên bản 2 (19/11/2026): đã sửa theo nhận xét của ChatGPT. Bản 1.0 thu gọn, giữ nguyên 9 loài hoa hiện tại, quảng cáo làm sau khi cảm ứng, cảm giác chơi và hình ảnh đã ổn, và mỗi việc có ID, tiêu chí hoàn thành kiểm tra được (mục 6). Cách giao việc cho AI nằm ở mục 12. Tài liệu chuẩn của dự án vẫn là PRODUCT_SPEC.md; tài liệu này là nguồn bổ sung. Quảng cáo là quyết định của chủ dự án, không phải đề xuất thêm.
+2. Nguyên tắc thiết kế
+• Không áp lực. Không đếm giờ, không phạt, không bắt quay lại mỗi ngày. Quảng cáo là chỗ duy nhất có ma sát nên phải đặt thật cẩn thận.
+• Năm phút đầu quyết định tất cả. Giỏ đầu tiên xong trong 2–3 phút, không cần đọc hướng dẫn dài.
+• Mỗi giỏ xong là một điểm dừng tự nhiên. Thoát lúc nào cũng không áy náy, tự lưu luôn hoạt động.
+• Một phong cách duy nhất. Tối đa hai nguồn asset cùng kiểu low-poly sáng màu, thống nhất bằng bảng màu và ánh sáng.
+• Offline vẫn chơi được. Không có mạng thì không có quảng cáo, nhưng game không bao giờ bị chặn.
+3. Phạm vi bản 1.0
+Bản 1.0 chỉ gồm những gì làm cho game chạy tốt trên điện thoại, đẹp vừa đủ, có quảng cáo cơ bản và phát hành được. Mọi thứ khác chuyển sang 1.1.
+Bản 1.0 (bắt buộc)
+• Sửa dứt điểm cầu thang giữa hai tầng.
+• Cảm ứng: joystick, vuốt nhìn, chạm hoa để nhặt (tự chọn bông gần nhất), chạm giỏ để thả hoa đúng loại.
+• HUD: tên và hình hoa đang cầm, số bông trên sức chứa, đổi hoa, bản đồ giỏ, giỏ đỏ khi bỏ nhầm, nút thoát kẹt, hoa rơi mất tự đặt lại.
+• Giỏ khởi đầu nhỏ để người lạ xong giỏ đầu trong 3 phút.
+• Giữ nguyên 9 loài hoa hiện tại (theo mã: hồng, tulip, cúc, hướng dương, oải hương, mẫu đơn, lan, ly, sao nhái; AI xác nhận ở T0.1). Dữ liệu lưu dùng mã loài dạng chuỗi.
+• Cảm giác chơi: âm thanh, cánh hoa, rung nhẹ, hiệu ứng đầy giỏ, tự lưu bền khi thoát đột ngột.
+• Hình ảnh đợt 1: Theme UI, phông có dấu tiếng Việt, ánh sáng, vật liệu, tối ưu hiệu năng.
+• Màn kết đơn giản: bật biển Open.
+• Quảng cáo xen kẽ cơ bản, hộp thoại đồng ý UMP, chính sách quyền riêng tư cập nhật.
+• Cài đặt, màn Credits và giấy phép, tiếng Việt và tiếng Anh.
+Cổng G2 (đầu mốc M5): nút mua một lần để gỡ quảng cáo chỉ vào 1.0 nếu lịch còn đúng hạn và quảng cáo cơ bản chạy ổn. Nếu không thì làm ở 1.1.
+Bản 1.1: gỡ quảng cáo (nếu chưa có), quảng cáo có thưởng, tùy chỉnh màu giỏ, 10–15 ghi chú kể chuyện, nâng cấp sức chứa, chế độ chụp ảnh.
+Sau đó: cắm bình và bó hoa, gói theo mùa (Tết với đào và mai cần mô hình, tên và dữ liệu lưu mới).
+4. Quảng cáo và kiếm tiền
+4.1 Quyết định
+Dùng quảng cáo xen kẽ sau mỗi 2–3 lượt. Game không có lượt, nên định nghĩa một lượt = hoàn thành một giỏ. Đó là điểm ngắt tự nhiên, phù hợp yêu cầu của Google Play.
+Cập nhật v2: quảng cáo là quyết định của chủ dự án và được làm sau khi cảm ứng, cảm giác chơi và hình ảnh đã ổn (mốc M5), không làm trước. Có một giả định cần hiệu chỉnh: mỗi loại có 56 bông và mang tối đa 5 bông một lần, nên một giỏ cần ít nhất 12 chuyến. Hãy đo thời gian thật của một giỏ ở mốc M0 rồi mới chốt đơn vị lượt: mỗi giỏ, hoặc mỗi mốc 10% tiến độ. Nếu một giỏ mất 8–10 phút thì 3 giỏ là gần nửa tiếng giữa hai quảng cáo.
+Cảnh báo thẳng: người chơi thể loại thư giãn nhạy cảm với quảng cáo, và điểm đánh giá trên Play Store là tài sản lớn nhất của một game nhỏ. Các quy tắc dưới đây giảm rủi ro đó. Nếu điểm đánh giá tụt dưới 4.0 sau vài tuần, hãy giảm tần suất.
+4.2 Quy tắc hiển thị (đặt thành hằng số trong một file cấu hình)
+Tham số
+Giá trị đề xuất
+Số giỏ giữa hai quảng cáo
+Mặc định 3 giỏ; chốt sau khi đo thời gian thật của một giỏ
+Khoảng cách tối thiểu giữa hai quảng cáo
+4 phút
+Không quảng cáo trong
+10 phút chơi đầu tiên sau khi cài
+Thời điểm hiện
+Ngay sau khi hiệu ứng hoàn thành giỏ kết thúc
+• Không hiện khi mở app, khi quay lại app, trong menu, hay lúc đang di chuyển hoặc cầm hoa.
+• Không hiện ngay sau khi người chơi bấm nút và trước khi hành động đó có tác dụng. Google xếp dạng này vào quảng cáo gây khó chịu.
+• Quảng cáo xen kẽ phải đóng được trong vòng 15 giây (quảng cáo có thưởng người chơi tự chọn thì được miễn).
+• Nếu quảng cáo chưa tải xong thì bỏ qua, không bao giờ chặn game để chờ. Tải trước quảng cáo kế tiếp ngay sau khi đóng.
+• Tự lưu trước khi hiện quảng cáo, tắt nhạc khi quảng cáo chạy, tiếp tục khi đóng.
+4.3 Quảng cáo có thưởng và gỡ quảng cáo
+• Quảng cáo có thưởng: nút tùy chọn, ví dụ xem để mở một bộ màu giỏ hoặc đồ trang trí. Không tính vào bộ đếm quảng cáo xen kẽ. Làm ở bản 1.1.
+• Gỡ quảng cáo: mua một lần, tắt quảng cáo xen kẽ, giữ quảng cáo có thưởng tùy chọn. Cần plugin Google Play Billing cho Godot (kiểm tra bản tương thích với phiên bản Godot đang dùng). Đặt nút ở menu chính và trên màn hình giỏ hoàn thành. Chỉ đưa vào 1.0 nếu qua cổng G2 (mục 3); nếu không, bản 1.0 dùng tần suất quảng cáo thấp hơn.
+4.4 Kỹ thuật
+• Plugin gợi ý: AdMob của Poing Studios (Godot 4.2+, hỗ trợ interstitial, rewarded và UMP). README ghi dự án đang dùng Godot 4.7.2, nên phải kiểm tra bản plugin hỗ trợ đúng phiên bản này.
+• Thử trên máy thật ngay cuối mốc M2 (khoảng tuần 6). Đã có người báo quảng cáo có thưởng chạy được trong editor nhưng lỗi trên điện thoại Android.
+• Dùng ID quảng cáo thử của Google trong suốt quá trình phát triển. Không bấm vào quảng cáo thật của chính mình vì có thể bị khóa tài khoản.
+• Gói toàn bộ vào một autoload tên AdManager với các tín hiệu: sẵn sàng, đã hiện, đã đóng, lỗi. Phần còn lại của game chỉ gọi một hàm.
+4.5 Tuân thủ chính sách
+• Google Play cho phép quảng cáo xen kẽ ở điểm ngắt như hết màn hay hết phần nội dung. Cấm quảng cáo bất ngờ, quảng cáo ở đầu màn hay đầu phần nội dung, và quảng cáo toàn màn hình không đóng được sau 15 giây.
+• Khai báo app có quảng cáo trong Play Console và cập nhật mục An toàn dữ liệu (Data safety).
+• Cập nhật PRIVACY_POLICY.md: nêu SDK quảng cáo, mã định danh quảng cáo, email hỗ trợ có người theo dõi; đăng ở một địa chỉ HTTPS công khai.
+• Bật hộp thoại đồng ý UMP cho người dùng ở EEA và Anh.
+• Chọn đối tượng mục tiêu cẩn thận. Nếu bao gồm trẻ em dưới 13 tuổi sẽ áp dụng chính sách Gia đình với yêu cầu quảng cáo chặt hơn. Khuyến nghị bản 1.0 nhắm 13+, rồi xem lại sau.
+• README hiện ghi game offline và không có bên thứ ba. Sau khi thêm quảng cáo, sửa lại cho đúng.
+4.6 Theo dõi doanh thu
+Doanh thu xấp xỉ: số người chơi hoạt động mỗi ngày × số quảng cáo hiện cho mỗi người × eCPM ÷ 1000. eCPM khác nhau nhiều theo quốc gia và thời điểm, nên đừng ước tính trước. Hãy đọc số thật trong AdMob sau 2–4 tuần đầu.
+5. Kế hoạch asset (hình ảnh, âm thanh, phông chữ)
+5.1 Nguyên tắc
+• Ưu tiên CC0 (không cần ghi công, dùng thương mại được) và OFL cho phông chữ. CC-BY dùng được nhưng phải ghi công trong màn Credits.
+• Không dùng bất kỳ thứ gì CC-BY-NC hoặc chỉ cho cá nhân. Game có quảng cáo là game kiếm tiền, dù tải miễn phí.
+• Kiểm tra giấy phép từng file, nhất là trên Freesound và OpenGameArt, nơi giấy phép khác nhau theo từng mục.
+• Chọn một bộ UI và một bộ 3D làm chuẩn. Trộn nhiều phong cách là cách nhanh nhất để game trông dang dở.
+5.2 Nguồn đã kiểm tra
+Nguồn
+Giấy phép
+Dùng cho
+Ghi chú
+Quaternius, Stylized Nature MegaKit (quaternius.com)
+CC0
+Cây, hoa, đá cho tiệm và ngoại cảnh
+116 mô hình, gồm 35 cây và hoa; glTF, FBX, OBJ; bản miễn phí là phần lớn pack
+Quaternius, 150+ LowPoly Nature Models (itch.io)
+CC0
+Cây cối, chậu, trang trí
+Tải miễn phí hoặc trả tùy tâm
+Kenney, Nature Kit (kenney.nl)
+CC0
+Mô hình thiên nhiên đơn giản
+Phong cách thống nhất
+Kenney, UI Pack
+CC0
+Nút, khung, thanh trượt cho HUD và menu
+430 asset
+Kenney, Mobile Controls và Fonts
+CC0
+Nút ảo cảm ứng, phông hiển thị
+Cùng tác giả với UI Pack
+OpenGameArt, free plant pack (rubberduck)
+CC0
+13 mẫu cây và hoa low-poly
+Chất lượng không đồng đều
+Poly Haven (polyhaven.com)
+CC0
+HDRI ánh sáng cửa sổ, vật liệu gỗ
+Toàn bộ asset là CC0
+ambientCG (ambientcg.com)
+CC0
+Vật liệu sàn gỗ, tường, vải
+Hơn 2.000 vật liệu PBR
+Be Vietnam Pro (Google Fonts)
+OFL 1.1
+Phông chữ chính, đủ dấu tiếng Việt
+Kèm file giấy phép trong bản build
+Baloo 2 (Google Fonts)
+OFL (xác nhận lại trên trang phông)
+Phông tiêu đề tròn
+Có bộ ký tự tiếng Việt, thử trước khi chọn
+Kenney, Interface Sounds
+CC0
+Âm thanh nút bấm
+Bổ sung cho âm thanh tự tạo hiện có
+Freesound (lọc CC0)
+Theo từng file
+Âm thanh cụ thể
+Không dùng file CC-BY-NC
+Pixabay Music
+Pixabay License
+Nhạc nền
+Đọc kỹ điều khoản
+Incompetech
+CC-BY 4.0
+Nhạc nền
+Phải ghi công
+5.3 Lưu ý
+• Nhiều gói hoa trên CGTrader hiện ra khi tìm kiếm là gói trả phí (khoảng 9–30 USD), không phải miễn phí. FreePBR chỉ miễn phí cho cá nhân, dùng thương mại phải trả phí.
+• Gói thiên nhiên thường là hoa dại và cỏ, không phải hoa cắt cành, và sẽ không có đúng hoa đào, mai, sen. Hướng đi: giữ hoa procedural hiện có làm nền, nâng cấp bằng vật liệu, màu, biến thể cánh học từ các pack, và chỉnh nhẹ trong Blender (miễn phí) khi cần.
+• Hiệu năng: 504 bông trên điện thoại cần giảm draw call (ví dụ MultiMeshInstance3D). Thử trên một máy tầm trung hoặc thấp, mục tiêu ổn định khoảng 30 FPS.
+5.4 Quy trình ghi sổ
+Với mỗi asset ghi: tên, tác giả, URL, giấy phép, ngày tải, đã chỉnh sửa gì. Chụp ảnh trang giấy phép và lưu zip gốc trong thư mục licenses/. Cập nhật ASSET_LEDGER.md, thêm vào màn Credits nếu là CC-BY hoặc OFL, và sửa README (hiện ghi không có asset bên thứ ba).
+6. Lộ trình 18 tuần
+6.1 Tổng quan các mốc
+Lộ trình kéo dài 18 tuần, từ 23/11/2026 đến phát hành khoảng 22/3/2027, và mỗi mốc có một cổng kiểm tra trước khi sang mốc sau. Thời gian tính theo 15–20 giờ mỗi tuần; nếu bạn làm ít hơn thì kéo dài từng mốc nhưng giữ nguyên thứ tự và cổng.
+Mốc
+Tuần (bắt đầu)
+Mục tiêu
+Cổng
+M0
+T1 (23/11)
+Kiểm kê, đo nền, tạo tài khoản
+G0: có số FPS, thời gian một giỏ, số chuyến mang hoa
+M1
+T2–T3 (30/11)
+Sửa cầu thang, thoát kẹt, lưu bền
+Lên xuống cầu thang 50 lần không kẹt
+M2
+T4–T6 (14/12)
+Cảm ứng nhặt và thả, HUD, giỏ khởi đầu, thử plugin quảng cáo
+5 người lạ xong giỏ đầu trong 3 phút
+M3
+T7–T8 (4/1)
+Cảm giác chơi, màn kết
+Tín hiệu hoàn thành giỏ phát đúng một lần mỗi giỏ
+M4
+T9–T10 (18/1)
+Hình ảnh đợt 1, hiệu năng
+G1: từ 30 FPS trên máy yếu nhất, chạy ổn trên 2 máy thật
+Tết
+T11–T12 (1/2)
+Việc nhẹ: chính sách quyền riêng tư, tuyển tester, nội dung cửa hàng
+Có từ 15 email tester; quyết định cổng G2
+M5
+T13–T14 (15/2)
+Quảng cáo, và gỡ quảng cáo nếu qua G2
+8 kiểm thử quảng cáo đạt
+M6
+T13–T15 (15/2)
+Closed test 14 ngày, sửa lỗi
+12 tester liên tục 14 ngày; crash-free từ 99%
+M7
+T16–T18 (8/3)
+Cửa hàng, QA, phát hành
+Phát hành khoảng 22/3/2027
+Tết Đinh Mùi rơi vào khoảng 6/2/2027, nên T11–T12 chỉ giao việc nhẹ. ID dạng T2.3 nghĩa là mốc M2, việc số 3. Cột Ai trong các bảng sau: AI là giao cho ChatGPT hoặc Codex, Bạn là bạn tự làm, Cả hai là AI làm và bạn kiểm tra.
+6.2 Mốc M0: kiểm kê và đo nền (T1, 23/11–29/11)
+M0 không viết tính năng mới. Mục tiêu là biết chính xác game đang ở đâu trước khi sửa.
+ID
+Việc
+Tiêu chí hoàn thành
+Ai
+T0.1
+Đọc toàn bộ repo và viết docs/ARCHITECTURE.md: cây scene chính, autoload, nơi xử lý input, nơi lưu và đọc dữ liệu, cách định nghĩa loài hoa và giỏ, cách tạo mesh procedural, danh sách script kèm nhiệm vụ. Không sửa mã.
+File có đủ các mục; bạn đọc và xác nhận không sai về dự án của bạn; ghi rõ 9 loài hoa đúng như trong mã
+AI, bạn duyệt
+T0.2
+Chốt phạm vi 1.0 (mục 3), số giờ mỗi tuần, tên game, nhắm 13+ hay không
+Bạn trả lời bằng văn bản; PRODUCT_SPEC.md được cập nhật
+Bạn (AI soạn nháp)
+T0.3
+Tạo nhánh Git ổn định, đặt tag baseline-v0, cài APK debug lên một điện thoại thật
+docs/DEVICES.md ghi tên máy, phiên bản Android, RAM, kết quả chạy
+Bạn (AI hướng dẫn)
+T0.4
+Đo nền: FPS trung bình và thấp nhất ở khu dày hoa nhất của mỗi tầng; thời gian bạn tự xong một giỏ từ đầu; số chuyến mang hoa
+docs/BASELINE.md có đủ 3 số, kèm tên máy đo
+Bạn
+T0.5
+Tạo tài khoản Play Console (phí một lần 25 USD) và AdMob
+Cả hai đăng nhập được; ghi ngày tạo tài khoản Play để biết có bị yêu cầu closed test hay không
+Bạn
+T0.6
+Lập danh sách lỗi đã biết, gắn mức P0 (không chơi được), P1 (khó chịu), P2 (nhỏ)
+docs/KNOWN_ISSUES.md, có lỗi cầu thang
+Cả hai
+6.3 Mốc M1: sửa nền (T2–T3, 30/11–13/12)
+Chưa làm tính năng mới cho đến khi game không còn kẹt và không mất dữ liệu.
+ID
+Việc
+Tiêu chí hoàn thành
+Ai
+T1.1
+Sửa dứt điểm cầu thang giữa hai tầng. AI nêu giả thuyết nguyên nhân (va chạm, bước leo, bám xuống dốc, tốc độ) trước khi sửa, và đặt các thông số thành hằng số có tên
+Lên và xuống 50 lần liên tiếp bằng bàn phím và bằng joystick ảo không kẹt, không rơi xuyên sàn, không bay lên; cầm 5 bông vẫn đúng; đóng lỗi trong KNOWN_ISSUES.md
+AI sửa, bạn thử trên máy thật
+T1.2
+Nút thoát kẹt và tự đặt lại hoa rơi ra ngoài vùng chơi
+Bấm nút đưa người chơi về điểm an toàn gần nhất trong 1 giây, giữ nguyên hoa đang cầm; hoa rơi dưới sàn quay lại vị trí hợp lệ trong 5 giây; tổng hoa trên sàn, đang cầm và trong giỏ luôn bằng 504
+AI
+T1.3
+Dữ liệu lưu có phiên bản: thêm save_version, mã loài hoa dạng chuỗi, hàm nâng cấp file lưu cũ
+File lưu của bản hiện tại vẫn tiếp tục chơi được; thêm một loài giả lập không làm hỏng file; thử bằng 3 file lưu mẫu
+AI
+T1.4
+Tự lưu khi app bị đưa xuống nền hoặc đóng đột ngột (dùng thông báo vòng đời ứng dụng của Godot; AI kiểm tra tên đúng trong tài liệu Godot 4.7). Ghi ra file tạm rồi đổi tên để không hỏng khi bị ngắt giữa chừng
+Đang cầm hoa, bấm Home rồi vuốt đóng app, mở lại: vị trí, hoa đang cầm và số bông trong từng giỏ đều đúng
+AI, bạn thử
+T1.5
+Dọn lỗi và cảnh báo trong cửa sổ Output của Godot
+Chơi 10 phút không có lỗi đỏ mới
+AI
+Cổng M1: T1.1 và T1.4 đạt, và bạn đã thử bằng tay trên máy thật. Chưa đạt thì chưa sang M2.
+6.4 Mốc M2: cảm ứng và nhặt, thả (T4–T6, 14/12–3/1)
+Đây là mốc quyết định game có dễ chơi trên điện thoại hay không. Cuối mỗi tuần phải cài lại APK lên máy thật.
+ID
+Việc
+Tiêu chí hoàn thành
+Ai
+T2.1
+Joystick di chuyển (nửa trái màn hình) và vuốt nhìn quanh (nửa phải); vùng chạm từ 48dp trở lên; độ nhạy chỉnh được
+Chơi 10 phút trên máy thật không kẹt ngón tay, không vuốt nhầm vào nút; dùng được khi hai ngón chạm cùng lúc
+AI, bạn thử
+T2.2
+Chạm để nhặt: vòng sáng quanh bông gần nhất trong tầm; chạm vào bông hoặc nút nhặt thì cầm lên; đầy sức chứa thì báo nhẹ
+Nhặt đủ 5 bông trong 15 giây ở khu hoa dày; không nhặt nhầm bông ở tầng khác hoặc sau tường
+AI
+T2.3
+Chạm giỏ để thả: thả tất cả bông đúng loại đang cầm. Bông sai loại: giỏ đỏ, có âm báo nhẹ, hoa quay về tay hoặc rơi cạnh giỏ (chọn một cách và ghi rõ); có cách lấy hoa sai ra khỏi giỏ
+Thả 5 bông đúng trong tối đa 2 chạm; không có hoa biến mất
+AI
+T2.4
+Đổi hoa đang cầm bằng chạm hoặc vuốt; hiện tên, hình nhỏ và số bông trên sức chứa
+Đọc được tên đủ dấu tiếng Việt ở cỡ chữ thường dùng trên máy 6 inch
+AI
+T2.5
+Bản đồ giỏ: nút mở sơ đồ hai tầng, đánh dấu 9 giỏ bằng màu và tên
+Người lạ tìm được giỏ cho một loài hoa bất kỳ trong 30 giây
+AI
+T2.6
+Giỏ khởi đầu: lần chơi đầu đặt 6–8 bông cùng loại gần cửa và giỏ tương ứng ngay gần đó, dẫn hướng bằng viền sáng hoặc mũi tên thay cho chữ dài
+5 người lạ chưa từng chơi xong giỏ khởi đầu trong 3 phút mà không ai chỉ; ghi thời gian từng người
+AI làm, bạn tổ chức thử
+T2.7
+Cài đặt cảm ứng: độ nhạy nhìn, cỡ nút (3 mức), bật tắt rung; lưu cài đặt
+Thoát và mở lại app, cài đặt vẫn còn
+AI
+T2.8
+Chạy thử trên ít nhất 2 điện thoại, ghi lỗi vào KNOWN_ISSUES.md
+Không còn lỗi P0; lỗi P1 có kế hoạch sửa
+Bạn
+T2.9
+Thử khả thi plugin quảng cáo: dùng ID thử của Google, một quảng cáo xen kẽ trên máy thật. Chỉ để kiểm tra, không đưa vào bản chính
+Quảng cáo thử hiện, đóng được, không crash. Nếu plugin không hỗ trợ Godot 4.7.2, ghi phương án thay thế vào KNOWN_ISSUES.md
+AI, bạn thử
+Cổng M2: T2.6 đạt với 5 người lạ. Nếu cần thiết kế lại giỏ khởi đầu thì làm trước khi sang M3.
+6.5 Mốc M3: cảm giác chơi và màn kết (T7–T8, 4/1–17/1)
+ID
+Việc
+Tiêu chí hoàn thành
+Ai
+T3.1
+Âm thanh nhặt và thả với cao độ tăng dần theo số bông liên tiếp; giới hạn số âm phát chồng nhau
+Không vỡ tiếng khi thả 5 bông nhanh; tắt âm trong cài đặt hoạt động
+AI
+T3.2
+Hiệu ứng cánh hoa khi thả vào giỏ (ưu tiên hạt chạy trên CPU, số lượng nhỏ)
+FPS không tụt quá 3 so với trước khi thêm, cùng cảnh, cùng máy
+AI, bạn đo
+T3.3
+Rung nhẹ khi thả đúng, rung khác khi sai (cần quyền rung trong preset xuất; có tùy chọn tắt)
+Chạy trên máy thật; tắt được trong cài đặt
+AI, bạn thử
+T3.4
+Hiệu ứng đầy giỏ: giỏ sáng nhẹ, âm kết, thanh tiến độ đổi; không chặn điều khiển quá 2 giây. Phát một tín hiệu duy nhất basket_completed với mã loài
+Tín hiệu phát đúng một lần mỗi giỏ, kể cả sau khi tải lại file lưu. Đây là tín hiệu mà AdManager sẽ dùng ở M5
+AI
+T3.5
+Màn kết: đủ 9 giỏ thì người chơi bật biển Open ở cửa, ánh sáng chuyển nhẹ sang cuối ngày, có màn cảm ơn ngắn và nút tiếp tục dạo tiệm. Thêm chế độ debug ẩn (chỉ có trong bản debug) để điền đầy giỏ khi cần thử
+Hoàn thành được từ file lưu gần xong mà không phải chơi lại từ đầu; tiếp tục chơi được sau khi kết thúc
+AI
+T3.6
+Tạm dừng và tiếp tục sạch khi có cuộc gọi, khóa màn hình, quay lại app
+Âm thanh dừng và tiếp tục đúng; vị trí người chơi không nhảy
+AI, bạn thử
+Cổng M3: T3.4 đạt, vì mọi việc ở M5 dựa vào tín hiệu này.
+6.6 Mốc M4: hình ảnh đợt 1 và hiệu năng (T9–T10, 18/1–31/1)
+Chỉ làm hình ảnh sau khi cảm ứng và cảm giác chơi đã ổn, để không phải làm lại giao diện khi gameplay đổi.
+ID
+Việc
+Tiêu chí hoàn thành
+Ai
+T4.1
+Chốt hướng nghệ thuật trong docs/ART_DIRECTION.md: bảng 5 màu, 1 phông, 1 bộ 3D, 1 bộ UI, kèm 3–5 ảnh tham chiếu (có thể nhờ ChatGPT tạo moodboard)
+Bạn duyệt trước khi AI nhập bất kỳ asset nào
+Bạn duyệt, AI soạn
+T4.2
+Tạo một Theme resource duy nhất và dùng phông hỗ trợ tiếng Việt; bỏ hết style và ghi đè font cục bộ ở các scene UI
+Tìm trong repo không còn StyleBox hay font ghi đè cục bộ ở scene UI; chuỗi mẫu có dấu (ắ, ữ, ợ, ế, ặ) hiển thị đúng ở mọi màn
+AI
+T4.3
+Làm lại màn title, HUD, tạm dừng, cài đặt, credits bằng Theme; nút từ 48dp; tránh tai thỏ và thanh điều hướng (safe area)
+Ảnh chụp 6 màn ở tỉ lệ 16:9 và 20:9 không bị cắt hay chồng nhau
+AI, bạn thử
+T4.4
+Ánh sáng và môi trường: WorldEnvironment, ánh sáng cửa sổ ấm, ambient nhẹ, bầu trời hoặc HDRI; thử bóng đổ ở mức thấp. Mỗi thay đổi đo FPS
+Ảnh chụp trước và sau; FPS không dưới mục tiêu ở T4.7
+AI, bạn đo
+T4.5
+Vật liệu sàn, tường, quầy từ ambientCG hoặc Poly Haven; nén texture phù hợp Android, cạnh tối đa 1024 px
+Mỗi asset có dòng trong ASSET_LEDGER.md; ghi dung lượng APK trước và sau
+AI
+T4.6
+Nâng cấp hoa: giữ mesh procedural, thêm vật liệu và biến thể; mỗi loài phân biệt được bằng hình dáng chứ không chỉ bằng màu
+5 người nhìn ảnh 9 loài ở khoảng cách chơi gọi đúng ít nhất 8 loài
+AI, bạn tổ chức thử
+T4.7
+Tối ưu hiệu năng: gom draw call (ví dụ MultiMeshInstance3D cho hoa trên sàn), tầm nhìn, LOD. Ghi số liệu trước và sau trong docs/PERF.md
+Từ 30 FPS ổn định trên máy yếu nhất bạn có, ở khu dày hoa nhất, sau 10 phút chơi liên tục
+AI, bạn đo
+T4.8
+Ghi sổ asset: ASSET_LEDGER.md, thư mục licenses/, màn Credits trong game, sửa README
+Mọi file asset nhập vào đều có dòng trong sổ, kèm URL và giấy phép; bạn đã mở trang gốc để xác nhận
+Cả hai
+T4.9
+Chụp bộ ảnh màn hình đẹp (ít nhất 6) cho cửa hàng
+6 ảnh landscape, không có HUD lỗi hay chữ bị cắt
+Bạn
+Cổng G1: T4.7 đạt, game chạy ổn trên ít nhất 2 máy thật, và bạn đồng ý với ảnh chụp ở T4.9.
+6.7 Mốc M5: quảng cáo (T13–T14, 15/2–28/2)
+T11–T12 (dịp Tết) chỉ làm việc nhẹ: soạn nháp chính sách quyền riêng tư (T5.4), tuyển tester (T6.1) và viết nội dung cửa hàng (T7.1). Đầu M5 là cổng G2: quyết định có làm nút gỡ quảng cáo ở bản 1.0 hay không.
+ID
+Việc
+Tiêu chí hoàn thành
+Ai
+T5.1
+Tạo AdManager (autoload) với một cửa vào duy nhất. Trạng thái lưu trong file lưu: số giỏ kể từ quảng cáo trước, thời điểm quảng cáo gần nhất, tổng thời gian chơi. Mọi hằng số (số giỏ, khoảng cách tối thiểu, số phút đầu không quảng cáo) nằm trong một file cấu hình
+Chạy đúng bảng ở mục 4.2 trong 10 tình huống thử bằng bản debug
+AI
+T5.2
+Hiển thị theo quy tắc mục 4.2: chỉ sau tín hiệu basket_completed và hiệu ứng xong; tải trước quảng cáo kế; bỏ qua nếu chưa sẵn sàng; tự lưu trước khi hiện; tắt nhạc trong lúc quảng cáo
+Đạt đủ 8 kiểm thử tay bên dưới bảng
+AI, bạn thử
+T5.3
+Hộp thoại đồng ý UMP cho người dùng EEA và Anh, thử bằng chế độ giả lập vị trí; làm theo tài liệu của plugin và AdMob
+Mô phỏng được cả hai trường hợp đồng ý và từ chối; quảng cáo tuân theo lựa chọn
+AI, bạn thử
+T5.4
+Cập nhật chính sách quyền riêng tư và README (đã có quảng cáo). AI soạn nháp; bạn thêm email hỗ trợ và đăng ở một địa chỉ HTTPS công khai
+URL mở được khi chưa đăng nhập; nêu SDK quảng cáo và mã định danh quảng cáo
+Cả hai
+T5.5
+Khai báo trong Play Console: có quảng cáo, An toàn dữ liệu, đối tượng mục tiêu 13+, phân loại nội dung. AI soạn nháp câu trả lời
+Các mục hiện trạng thái hoàn tất trong Play Console
+Bạn
+T5.6
+Chỉ làm nếu qua cổng G2: gỡ quảng cáo bằng plugin Play Billing, một sản phẩm mua một lần, có khôi phục mua; AdManager kiểm tra quyền
+Mua thử bằng tài khoản thử thì quảng cáo xen kẽ tắt; gỡ và cài lại vẫn khôi phục được
+AI, bạn thử
+8 kiểm thử tay cho T5.2: (a) quảng cáo hiện đúng sau giỏ thứ N; (b) không hiện khi không có mạng; (c) không hiện trong 10 phút đầu; (d) không hiện ngay khi mở app hoặc quay lại app; (e) không hiện hai lần trong 4 phút; (f) đóng được trong 15 giây; (g) đã tự lưu trước khi hiện và nhạc tiếp tục sau khi đóng; (h) app không crash khi bấm Back hoặc Home trong lúc quảng cáo chạy.
+Cổng G2: nếu đến đầu T13 mà T4.7 và M3 chưa đạt, hoãn gỡ quảng cáo sang 1.1 và chỉ làm T5.1 đến T5.5.
+6.8 Mốc M6: closed test (T11–T15, tuyển tester từ T11, chạy test từ 15/2)
+Chỉ áp dụng nếu tài khoản Play cá nhân của bạn tạo sau 13/11/2023: cần ít nhất 12 tester đồng ý tham gia liên tục 14 ngày trước khi xin quyền phát hành chính thức. Nếu tài khoản cũ hơn hoặc là tài khoản tổ chức thì bỏ qua T6.1, T6.3 và T6.5, nhưng vẫn nên chạy beta để bắt lỗi.
+ID
+Việc
+Tiêu chí hoàn thành
+Ai
+T6.1
+Tuyển 15–25 tester có điện thoại Android (bạn bè, nhóm game, mạng xã hội) và thu email tài khoản Google của họ
+Danh sách từ 15 email trước 15/2
+Bạn
+T6.2
+Soạn hướng dẫn tester bằng tiếng Việt (cài app, chơi ít nhất 10 phút mỗi ngày, cách báo lỗi) và mẫu biểu mẫu phản hồi với câu hỏi cụ thể
+Một trang hướng dẫn và một biểu mẫu sẵn sàng gửi
+AI soạn, bạn gửi
+T6.3
+Đăng bản beta lên closed track và mời tester
+Từ 12 tester đồng ý tham gia; theo dõi số tester mỗi 2 ngày trong Play Console
+Bạn
+T6.4
+Mỗi tuần: AI đọc phản hồi và báo cáo lỗi, đề xuất danh sách ưu tiên; sửa lỗi P0 và P1; đưa bản mới lên cùng track
+Lỗi P0 bằng 0; crash-free từ 99% ở tuần cuối nếu Play Console đã có dữ liệu
+Cả hai
+T6.5
+Sau đủ 14 ngày liên tục, nộp đơn xin quyền phát hành chính thức và trả lời các câu hỏi về quá trình test
+Đơn đã nộp (khoảng 1/3); Google thường xét trong khoảng 7 ngày và có thể yêu cầu test thêm nếu tester ít hoạt động
+Bạn
+6.9 Mốc M7: cửa hàng, QA và phát hành (T16–T18, 8/3–28/3)
+ID
+Việc
+Tiêu chí hoàn thành
+Ai
+T7.1
+Hồ sơ cửa hàng: tên, mô tả ngắn và dài (vi, en), icon 512, feature graphic, ảnh chụp, video tùy chọn. Dùng bản nháp trong PLAY_STORE_DRAFT.md và store/
+Tên, icon và hình không giống game gốc; có email hỗ trợ có người theo dõi
+Cả hai
+T7.2
+Ma trận QA: ít nhất 3 máy (một yếu, một trung, một có tai thỏ), ít nhất 2 phiên bản Android. Kịch bản: cài mới, tiếp tục, không mạng, bị ngắt giữa chừng, thiếu bộ nhớ, tắt tiếng, 8 kiểm thử quảng cáo
+docs/QA.md có bảng kết quả; không còn lỗi P0 và P1
+Bạn (AI lập kịch bản)
+T7.3
+Build phát hành: AAB ký bằng keystore giữ ngoài Git; kiểm tra mức API mục tiêu theo ANDROID_RELEASE_GUIDE.md; tắt log debug và chế độ debug điền giỏ; dùng ID quảng cáo thật cho bản phát hành
+Danh sách kiểm tra trước khi gửi đã tick hết; không có keystore, ID tài khoản hay mật khẩu trong Git
+Cả hai
+T7.4
+Phát hành theo tỷ lệ tăng dần nếu Play Console cho phép; theo dõi 7 ngày đầu
+Không có crash hàng loạt; trả lời mọi đánh giá trong 48 giờ
+Bạn
+Cổng phát hành: T7.2 đạt và T6.5 đã được duyệt (nếu áp dụng). Không đạt thì lùi ngày phát hành, không bỏ bước.
+7. Checklist phát hành Google Play
+• Tài khoản cá nhân tạo sau 13/11/2023 phải chạy closed test với ít nhất 12 tester opt-in liên tục 14 ngày trước khi xin quyền production. Tài khoản cũ hơn hoặc tài khoản tổ chức không bị áp dụng. Tuyển 15–25 người để dự phòng người rời đi.
+• Hồ sơ cửa hàng: tên, mô tả ngắn và dài (vi, en), icon 512, feature graphic, ảnh chụp màn hình, video tùy chọn. Đã có bản nháp trong PLAY_STORE_DRAFT.md và store/.
+• Chính sách quyền riêng tư công khai, email hỗ trợ có người theo dõi.
+• Khai báo: phân loại nội dung, đối tượng mục tiêu, có quảng cáo, Data safety.
+• Ký bản build: keystore giữ riêng, .godot/export_credentials.cfg không đưa lên Git; xuất AAB; application ID com.phonng.littlebloom.
+• Trước ngày phát hành, đọc lại chính sách quảng cáo và yêu cầu API mục tiêu trong ANDROID_RELEASE_GUIDE.md, vì các yêu cầu này có thể đã thay đổi.
+• Tên, icon và ảnh cửa hàng phải riêng, không giống game gốc.
+8. Sau phát hành
+• Tuần 1–2: theo dõi crash, ANR, đánh giá; trả lời mọi đánh giá; hotfix nhanh.
+• Tuần 3–4: đọc số AdMob; chỉnh tần suất quảng cáo; nếu điểm dưới 4.0 thì nâng lên mỗi 4 giỏ một quảng cáo.
+• v1.1 (khoảng 6–8 tuần sau): cắm bình và bó hoa, thêm đồ trang trí.
+• Gói theo mùa: 20/10/2027, Tết 2028 (cuối tháng 1/2028), 8/3/2028. Mỗi gói gồm vài loại hoa ngày lễ, đồ trang trí, nhạc nền; làm trong không quá 3 tuần.
+9. Rủi ro và cách giảm
+Rủi ro
+Mức
+Cách giảm
+Quảng cáo làm giảm điểm đánh giá
+Cao
+Giới hạn tần suất, 10 phút đầu không quảng cáo, có gỡ quảng cáo, theo dõi điểm hằng tuần
+Thiếu tester, kéo dài lịch
+Cao
+Tuyển từ T10, chuẩn bị 15–25 người, nhắc tester dùng app trong 14 ngày
+Phạm vi phình to, kiệt sức
+Cao
+Đóng băng phạm vi ở T1; việc mới đưa vào v1.1; xem lại mỗi tuần
+Plugin quảng cáo hoặc billing không khớp Godot
+Trung bình
+Thử máy thật ở T4; sẵn phương án đổi plugin hoặc phiên bản
+Asset miễn phí không thống nhất phong cách
+Trung bình
+Hai nguồn, một bảng màu, ánh sáng và shader màu chung
+Sai giấy phép
+Trung bình
+Chỉ CC0, OFL, CC-BY; ghi sổ; chụp trang giấy phép
+Hiệu năng yếu trên máy thấp
+Trung bình
+Giảm draw call, MultiMesh, tùy chọn chất lượng
+Quá giống game gốc
+Thấp đến trung bình
+Tên, icon, cốt truyện, hoa Việt riêng
+Giỏ đầu quá lâu (56 bông mỗi loại, mang tối đa 5 bông)
+Cao
+Giỏ khởi đầu nhỏ (T2.6); đo thời gian thật ở M0; chốt tần suất quảng cáo theo số đo
+Lỗi cầu thang làm kẹt người chơi
+Cao
+Sửa đầu tiên ở M1; thử 50 lượt lên xuống trên máy thật
+AI sửa lan man, vượt phạm vi, đổi định dạng lưu
+Trung bình
+Mỗi phiên một task, nhánh Git riêng, bạn xem diff; làm theo mục 12
+Tuyển tester đúng dịp Tết
+Trung bình
+Bắt đầu hỏi từ T10; chuẩn bị 20–25 người
+10. Chỉ số thành công (mục tiêu, không phải cam kết)
+• Điểm đánh giá từ 4.2 trở lên; crash-free từ 99% trở lên.
+• Tỷ lệ quay lại ngày 1 và ngày 7: xem trong Play Console, so giữa các bản.
+• Tỷ lệ xếp xong tiệm: cần công cụ phân tích (ví dụ Firebase Analytics). Nếu thêm, phải cập nhật chính sách quyền riêng tư.
+• Doanh thu AdMob và tỷ lệ mua gỡ quảng cáo: đọc sau 2–4 tuần.
+11. Việc cần làm trong tuần này
+1.  Cho AI đọc repo và viết docs/ARCHITECTURE.md (T0.1); bạn đọc và sửa chỗ sai.
+2.  Trả lời ba câu hỏi: số giờ mỗi tuần, tên game, nhắm 13+ hay không (T0.2).
+3.  Tạo nhánh Git ổn định và cài APK debug lên một điện thoại thật (T0.3).
+4.  Tự chơi và đo: FPS ở khu dày hoa nhất, thời gian xong một giỏ, số chuyến mang hoa (T0.4).
+5.  Tạo tài khoản Play Console và AdMob, ghi lại ngày tạo tài khoản Play (T0.5).
+6.  Đồng bộ PRODUCT_SPEC.md với mục 3, rồi giao task T1.1 (sửa cầu thang) cho AI theo mục 12.
+12. Cách giao việc cho AI
+Mỗi phiên làm việc chỉ giao đúng một task trong mục 6, kèm tiêu chí hoàn thành của task đó. Làm vậy AI không lan man và bạn dễ kiểm tra kết quả.
+12.1 Quy tắc cho AI
+• Một phiên, một task (ID ở mục 6).
+• Trước khi sửa: đọc docs/ARCHITECTURE.md, PRODUCT_SPEC.md và các file liên quan, rồi nêu kế hoạch tối đa 10 dòng cùng danh sách file sẽ sửa. Việc lớn như đổi định dạng lưu, thêm plugin hay đổi cấu trúc scene thì chờ bạn đồng ý.
+• Không đổi phạm vi, không thêm plugin, thư viện hay asset khi chưa hỏi.
+• Thay đổi nhỏ, dễ xem lại (khoảng dưới 300 dòng mỗi lần), mỗi task một nhánh Git.
+• Không đổi định dạng file lưu nếu task không yêu cầu. Nếu đổi thì phải có hàm nâng cấp file cũ (T1.3).
+• Sửa một lỗi hỏng 2 lần thì dừng, nêu giả thuyết và log, rồi hỏi bạn thay vì thử mò tiếp.
+• Thông tin về chính sách Google Play, plugin quảng cáo và giấy phép asset phải đối chiếu từ trang gốc, ghi URL và ngày xem.
+12.2 Khi nào một task là xong
+• Tiêu chí của task trong mục 6 đã đạt, và AI ghi lại cách đã kiểm tra.
+• Chạy được trên desktop. Với task liên quan cảm ứng, âm thanh, rung hoặc hiệu năng thì APK debug đã chạy trên máy thật.
+• Không có lỗi hay cảnh báo mới trong cửa sổ Output của Godot.
+• Đã cập nhật ROADMAP_CHECKLIST.md và docs/KNOWN_ISSUES.md.
+• Asset mới đều có dòng trong ASSET_LEDGER.md.
+• Không có keystore, mật khẩu hay ID tài khoản thật trong Git. ID quảng cáo thử chỉ dùng khi phát triển.
+• Báo cáo cuối phiên gồm: file đã sửa, cách kiểm thử, điều chưa chắc, bước tiếp theo.
+12.3 Prompt mở đầu (dán một lần ở đầu mỗi cuộc trò chuyện)
+Bạn là kỹ sư Godot 4 hỗ trợ tôi làm game Android Little Bloom (Godot 4.7.2, GDScript).
+Tài liệu chuẩn: PRODUCT_SPEC.md. Kế hoạch từng mốc và tiêu chí hoàn thành: tài liệu Little Bloom, mục 6. Quy tắc làm việc: mục 12.
+Quy tắc: mỗi phiên một task; đọc docs/ARCHITECTURE.md và các file liên quan trước, rồi nêu kế hoạch tối đa 10 dòng; không đổi phạm vi, không thêm plugin hay asset khi chưa hỏi; thay đổi nhỏ, dễ xem lại; xong thì báo file đã sửa, cách kiểm thử và điều chưa chắc; sửa lỗi hỏng 2 lần thì dừng và hỏi; thông tin về chính sách Google Play, plugin, giấy phép phải đối chiếu từ trang gốc.
+12.4 Mẫu giao một task
+Task <ID>: <tên việc>.
+Mô tả: <dán từ bảng>.
+Tiêu chí hoàn thành: <dán từ bảng>.
+Hãy bắt đầu bằng kế hoạch ngắn và danh sách file sẽ sửa. Chưa viết mã cho đến khi tôi đồng ý.
+12.5 Việc chỉ bạn làm được
+• Tạo tài khoản Play Console và AdMob, khai báo trong Play Console.
+• Cài và thử trên điện thoại thật, đo FPS, tổ chức 5 người lạ chơi thử.
+• Tuyển tester và gửi hướng dẫn.
+• Chọn tên game, duyệt hướng nghệ thuật, viết email hỗ trợ.
+• Mở trang gốc để xác nhận giấy phép và chính sách trước khi áp dụng.
+12.6 Chọn công cụ theo việc
+Lập kế hoạch và soạn tài liệu: dùng chế độ suy nghĩ vừa. Sửa nhiều file trong repo: dùng công cụ làm việc trực tiếp trên mã (Codex). Lỗi khó, như lỗi chỉ xảy ra trên điện thoại thật hay plugin quảng cáo: dùng mức suy nghĩ cao và dán log đầy đủ. Tên model của ChatGPT đổi rất nhanh, nên hãy chọn theo menu hiện có trong app của bạn.
+Nguồn tham khảo
+• Chính sách quảng cáo Google Play: support.google.com/googleplay/android-developer/answer/9857753 và answer/12271244
+• Yêu cầu closed test: support.google.com/googleplay/android-developer/answer/14151465
+• Plugin AdMob cho Godot: github.com/poingstudios/godot-admob-android và store.godotengine.org/asset/poingstudios/admob
+• Quaternius: quaternius.com/packs/stylizednaturemegakit.html
+• Kenney UI Pack: kenney.nl/assets/ui-pack
+• Giấy phép Poly Haven: polyhaven.com/license

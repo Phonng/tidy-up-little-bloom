@@ -1,6 +1,6 @@
 # Little Bloom — Product Requirements Document
 
-**Phiên bản:** 1.2 · **Trạng thái:** Chốt hướng demo một cửa hàng; các thay đổi demo còn cần triển khai · **Cập nhật:** 19/11/2026
+**Phiên bản:** 1.3 · **Trạng thái:** Chốt hướng demo một cửa hàng; các thay đổi demo còn cần triển khai · **Cập nhật:** 21/11/2026
 
 **Tên sản phẩm:** Little Bloom *(tên làm việc; chưa xác nhận khả năng đăng ký/phát hành)*  
 **Nền tảng đầu tiên:** Android · **Thể loại:** Cozy, dọn dẹp và sắp xếp, góc nhìn thứ nhất  
@@ -295,3 +295,9 @@ Mỗi tính năng mới cần trả lời được ba câu hỏi: nhu cầu ngư
 - 90 bông là mốc cân chỉnh thiết kế ban đầu do người triển khai đề xuất, chưa phải số lượng đã đổi trong code.
 - Người dùng đã xác nhận giữ 9 loại hiện có trong demo; đổi loài sau. Khi đổi phải có model, nhãn giỏ, tên hiển thị và kế hoạch chuyển save.
 - Thứ tự tài liệu: PRODUCT_SPEC.md → DEMO_PLAN.md → ROADMAP_CHECKLIST.md. Kế hoạch 16–20 tuần là tham khảo dài hạn.
+
+## 18. Tiếp nhận kế hoạch bổ sung v2 ngày 21/11/2026
+
+Đã lưu [bản Claude v2](docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt) làm nguồn tham khảo và [đối chiếu vào kế hoạch demo](DEMO_PLAN.md#đối-chiếu-bản-claude-v2--21112026). Bổ sung kiểm kê kiến trúc, danh sách lỗi, số đo nền và bằng chứng kiểm thử theo từng task. Không thay phạm vi demo đã chốt: 9 loài hiện có, một tiệm hai tầng, mốc cân chỉnh 90 bông/giỏ đầu 10 bông; code hiện vẫn 504.
+
+Các đề xuất bản 1.0/1.1, quảng cáo, lịch 18 tuần và tiêu chí khác demo trong bản nguồn không tự trở thành công việc của sprint hiện tại. Những thông tin chính sách, tương thích plugin và giấy phép phải được xác minh khi mở task liên quan.

@@ -21,7 +21,7 @@ Godot 4 / GDScript Android first-person flower-sorting prototype. The project is
 
 The next milestone is one playable shop demo. The proposed tuning baseline is 90 flowers (10 per type), with the first basket completed within 2–3 minutes. The current code still uses 504 flowers; splitting demo and load-testing configurations is pending. The user confirmed keeping the existing nine flower types in the demo; species changes are deferred. Ads, purchases, story notes, photo mode and seasonal content are deferred.
 
-See `DEMO_PLAN.md` for the opening layout, save compatibility and acceptance criteria. First-person hands have been removed; the staircase has 20 visible steps with a smooth collision surface, and traversal still needs gameplay verification.
+See `DEMO_PLAN.md` for the opening layout, save compatibility and acceptance criteria. The updated Claude plan is preserved in [`docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt`](docs/reference/CLAUDE_PLAN_V2_2026-11-19.txt); its task IDs are mapped to the demo in `DEMO_PLAN.md` (21 November update), while the full-release proposals remain outside the current demo scope. First-person hands have been removed; the staircase has 20 visible steps with a smooth collision surface, and traversal still needs gameplay verification.
 
 ## Next steps
 

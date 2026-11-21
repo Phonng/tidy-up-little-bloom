@@ -15,6 +15,18 @@ Các dấu hoàn thành dưới đây ghi nhận code prototype hiện có, khô
 - [ ] D4: Chạy demo Android thật, kiểm tra cảm ứng, lưu/phục hồi và hiệu năng.
 - [ ] Chỉ mở backlog sau demo khi các tiêu chí demo đã đạt.
 
+## Bổ sung từ bản Claude v2 — 21/11/2026
+
+Xem [bảng đối chiếu và tiêu chí](DEMO_PLAN.md#đối-chiếu-bản-claude-v2--21112026). Các mục dưới đây chưa thực hiện; T là mã nguồn tham khảo, D là mốc demo đang áp dụng.
+
+- [x] Lưu bản nguồn v2 và đối chiếu với phạm vi demo; giữ riêng các đề xuất sau demo.
+- [ ] T0.1: Viết `docs/ARCHITECTURE.md` dựa trên code hiện tại, trước khi sửa D0/D1.
+- [ ] T0.6: Tạo `docs/KNOWN_ISSUES.md`, ghi bước tái hiện lỗi cầu thang và mức độ.
+- [ ] T0.3–T0.4: Ghi `docs/DEVICES.md` và `docs/BASELINE.md`; đo FPS, thời gian giỏ và số chuyến trên build/profile xác định.
+- [ ] T1.1: Sau kiểm tra nhanh D0, thử mở rộng 50 vòng lên/xuống bằng mỗi kiểu điều khiển, gồm cả khi mang đủ hoa.
+- [ ] T1.3–T1.4: Kiểm tra 3 mẫu save và vòng vào nền/đóng/mở lại; bảo toàn ID theo profile.
+- [ ] T2.8/T4.7: Ghi kết quả 10 phút trên ít nhất 2 điện thoại; không đánh dấu đạt chỉ dựa trên parse script.
+
 ## Trạng thái nhanh
 
 | Phần | Hạng mục | Trạng thái |
